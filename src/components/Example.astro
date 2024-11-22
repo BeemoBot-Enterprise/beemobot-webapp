@@ -1,0 +1,9 @@
+---
+interface ExampleProps {
+  test: string;
+}
+
+const { test = "Salut" } = Astro.props as ExampleProps;
+---
+
+<p><slot /> + {test}</p>

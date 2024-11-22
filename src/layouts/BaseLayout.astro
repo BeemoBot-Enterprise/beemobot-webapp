@@ -1,0 +1,24 @@
+---
+interface BaseLayoutProps {
+  title: string;
+}
+
+const { title } = Astro.props as BaseLayoutProps;
+---
+
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="stylesheet" href="/src/styles/global.css" />
+
+    <title>{title}</title>
+  </head>
+
+  <body>
+    <slot />
+  </body>
+</html>
