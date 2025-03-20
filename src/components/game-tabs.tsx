@@ -12,24 +12,6 @@ const GameTabs: React.FC = () => {
       icon: "🍄",
       description: "Find all the mushrooms without stepping on them!",
     },
-    // {
-    //   id: 'dash',
-    //   title: 'Teemo Dash',
-    //   icon: '🦊',
-    //   description: 'Collect mushrooms and avoid obstacles!'
-    // },
-    // {
-    //   id: 'breakout',
-    //   title: 'Teemo Brick Breaker',
-    //   icon: '🧱',
-    //   description: 'Break bricks and collect power-ups!'
-    // },
-    // {
-    //   id: 'coming-soon',
-    //   title: 'Coming Soon',
-    //   icon: '🎮',
-    //   description: 'More games are on the way!'
-    // }
   ];
 
   return (
@@ -107,7 +89,7 @@ const GameTabs: React.FC = () => {
         )}
       </div>
 
-      <style jsx>{`
+      <style>{`
         .glassmorphism-dark {
           background: rgba(25, 28, 40, 0.7);
           backdrop-filter: blur(8px);
