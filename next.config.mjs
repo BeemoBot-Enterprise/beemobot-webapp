@@ -8,6 +8,7 @@ const nextConfig = {
   // Environment variables will be accessed through process.env instead of astro:env
   env: {
     API_URL: process.env.API_URL || "http://localhost:3000",
+    BOT_INVITE_URL: process.env.BOT_INVITE_URL,
   },
 };
 

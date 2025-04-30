@@ -24,7 +24,12 @@ const HeroSection = () => {
               passer gold
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
-              <Button className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 px-8 py-4 rounded-md text-lg shadow-lg transition-all duration-300 hover:scale-105">
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 px-8 py-4 rounded-md text-lg shadow-lg transition-all duration-300 hover:scale-105"
+                onClick={() =>
+                  window.open(process.env.BOT_INVITE_URL, "_blank")
+                }
+              >
                 <DiscordIcon height={24} width={24} color="white" />
                 Ajouter le bot
               </Button>
