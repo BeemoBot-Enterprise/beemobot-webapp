@@ -296,7 +296,7 @@ const TeemoMinesweeper = () => {
             } transition-all duration-300 hover:scale-105`}
             onClick={() => setGameDifficulty("easy")}
           >
-            Easy
+            Facile
           </button>
           <button
             className={`px-4 py-2 text-sm rounded-lg ${
@@ -306,7 +306,7 @@ const TeemoMinesweeper = () => {
             } transition-all duration-300 hover:scale-105`}
             onClick={() => setGameDifficulty("medium")}
           >
-            Medium
+            Moyen
           </button>
           <button
             className={`px-4 py-2 text-sm rounded-lg ${
@@ -316,7 +316,7 @@ const TeemoMinesweeper = () => {
             } transition-all duration-300 hover:scale-105`}
             onClick={() => setGameDifficulty("hard")}
           >
-            Hard
+            Difficile
           </button>
         </div>
 
@@ -337,16 +337,17 @@ const TeemoMinesweeper = () => {
       {gameState === "lost" && (
         <div className="mb-6 bg-gradient-to-r from-red-900/70 to-red-800/70 backdrop-blur-md text-center py-4 px-6 rounded-xl w-full border border-red-500/20 shadow-lg">
           <p className="text-2xl font-bold mb-2">
-            You hit a Teemo shroom! Game over!
+            Vous avez marché sur un champignon de Teemo ! Partie terminée !
           </p>
           <p className="text-gray-300 mb-4">
-            Don't worry, you'll have better mushroom detection next time.
+            Ne vous inquiétez pas, vous détecterez mieux les champignons la
+            prochaine fois.
           </p>
           <button
             className="mt-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg"
             onClick={initializeBoard}
           >
-            Try Again
+            Réessayer
           </button>
         </div>
       )}
@@ -354,16 +355,16 @@ const TeemoMinesweeper = () => {
       {gameState === "won" && (
         <div className="mb-6 bg-gradient-to-r from-green-900/70 to-green-800/70 backdrop-blur-md text-center py-4 px-6 rounded-xl w-full border border-green-500/20 shadow-lg">
           <p className="text-2xl font-bold mb-2">
-            You cleared the field! Victory!
+            Vous avez nettoyé le champ ! Victoire !
           </p>
           <p className="text-gray-300 mb-4">
-            Even Captain Teemo couldn't outsmart you!
+            Même le Capitaine Teemo n'a pas pu vous piéger !
           </p>
           <button
             className="mt-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg"
             onClick={initializeBoard}
           >
-            Play Again
+            Rejouer
           </button>
         </div>
       )}
