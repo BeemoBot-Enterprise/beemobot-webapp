@@ -1,23 +1,46 @@
 import { useEffect, useState } from "react";
 
+interface Cell {
+  hasMine: boolean;
+  isRevealed: boolean;
+  isFlagged: boolean;
+  adjacentMines: number;
+}
+
+interface BoardSize {
+  rows: number;
+  cols: number;
+}
+
+type GameState = "waiting" | "playing" | "won" | "lost";
+type Difficulty = "easy" | "medium" | "hard";
+
+interface CellProps {
+  cell: Cell;
+  row: number;
+  col: number;
+}
+
 const TeemoMinesweeper = () => {
-  const [boardSize, setBoardSize] = useState({ rows: 10, cols: 10 });
-  const [mineCount, setMineCount] = useState(15);
-  const [board, setBoard] = useState([]);
-  const [gameState, setGameState] = useState("waiting"); // waiting, playing, won, lost
-  const [flagsPlaced, setFlagsPlaced] = useState(0);
-  const [timer, setTimer] = useState(0);
-  const [timerInterval, setTimerInterval] = useState(null);
-  const [difficulty, setDifficulty] = useState("medium");
+  const [boardSize, setBoardSize] = useState<BoardSize>({ rows: 10, cols: 10 });
+  const [mineCount, setMineCount] = useState<number>(15);
+  const [board, setBoard] = useState<Cell[][]>([]);
+  const [gameState, setGameState] = useState<GameState>("waiting");
+  const [flagsPlaced, setFlagsPlaced] = useState<number>(0);
+  const [timer, setTimer] = useState<number>(0);
+  const [timerInterval, setTimerInterval] = useState<ReturnType<
+    typeof setInterval
+  > | null>(null);
+  const [difficulty, setDifficulty] = useState<Difficulty>("medium");
 
   // Initialize the game board
-  const initializeBoard = () => {
+  const initializeBoard = (): void => {
     // Create empty board
-    const newBoard = Array(boardSize.rows)
-      .fill()
+    const newBoard: Cell[][] = Array(boardSize.rows)
+      .fill(null)
       .map(() =>
         Array(boardSize.cols)
-          .fill()
+          .fill(null)
           .map(() => ({
             hasMine: false,
             isRevealed: false,
@@ -75,7 +98,7 @@ const TeemoMinesweeper = () => {
     setTimer(0);
 
     // Start timer
-    if (timerInterval) clearInterval(timerInterval);
+    if (timerInterval) clearInterval(timerInterval as NodeJS.Timeout);
     const interval = setInterval(() => {
       setTimer((prev) => prev + 1);
     }, 1000);
@@ -83,7 +106,7 @@ const TeemoMinesweeper = () => {
   };
 
   // Handle cell click
-  const handleCellClick = (row, col) => {
+  const handleCellClick = (row: number, col: number): void => {
     if (
       gameState !== "playing" ||
       board[row][col].isRevealed ||
@@ -105,12 +128,12 @@ const TeemoMinesweeper = () => {
       }
       setBoard(newBoard);
       setGameState("lost");
-      clearInterval(timerInterval);
+      if (timerInterval) clearInterval(timerInterval as NodeJS.Timeout);
       return;
     }
 
     // Recursively reveal empty cells
-    const revealCell = (r, c) => {
+    const revealCell = (r: number, c: number): void => {
       if (
         r < 0 ||
         r >= boardSize.rows ||
@@ -144,12 +167,16 @@ const TeemoMinesweeper = () => {
 
     if (hasWon) {
       setGameState("won");
-      clearInterval(timerInterval);
+      clearInterval(timerInterval as ReturnType<typeof setInterval>);
     }
   };
 
   // Handle right click (flag placement)
-  const handleRightClick = (e, row, col) => {
+  const handleRightClick = (
+    e: React.MouseEvent,
+    row: number,
+    col: number
+  ): void => {
     e.preventDefault();
 
     if (gameState !== "playing" || board[row][col].isRevealed) return;
@@ -171,8 +198,8 @@ const TeemoMinesweeper = () => {
   };
 
   // Set difficulty
-  const setGameDifficulty = (level) => {
-    let size, mines;
+  const setGameDifficulty = (level: Difficulty): void => {
+    let size: BoardSize, mines: number;
 
     switch (level) {
       case "easy":
@@ -211,8 +238,8 @@ const TeemoMinesweeper = () => {
   }, [timerInterval]);
 
   // Cell component
-  const Cell = ({ cell, row, col }) => {
-    let content = "";
+  const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
+    let content: React.ReactNode = "";
     let cellClass =
       "w-10 h-10 flex items-center justify-center font-bold transition-all duration-200 relative rounded-md overflow-hidden";
 
