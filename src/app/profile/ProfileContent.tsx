@@ -67,48 +67,70 @@ export default function ProfileContent() {
         process.env.API_URL ||
         "https://fb8ff02b18f6.ngrok-free.app";
 
-      // Décoder le token pour extraire les informations utilisateur
-      const tokenData = token.replace("beemo_", "");
-      const decodedToken = JSON.parse(atob(tokenData.split(".")[1]));
+      // Décoder le token JWT pour extraire les informations utilisateur
+      try {
+        const tokenData = token.replace("beemo_", "");
+        const parts = tokenData.split(".");
 
-      const discordUsername =
-        decodedToken.username || decodedToken.global_name || "User";
-      const discordId = decodedToken.id || decodedToken.user_id || "0";
-      const discordAvatar = decodedToken.avatar || null;
-      const discordDiscriminator = decodedToken.discriminator || "0";
+        if (parts.length !== 3) {
+          throw new Error("Token invalide: format incorrect");
+        }
 
-      // Récupérer les statistiques de l'utilisateur
-      const statsResponse = await fetch(
-        `${apiUrl}/game/stats/${encodeURIComponent(discordUsername)}`,
-        {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          },
-        },
-      );
+        const payload = parts[1];
+        const decodedToken = JSON.parse(atob(payload));
 
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        setStats(statsData);
-      } else {
-        // Si l'utilisateur n'a pas encore de stats, initialiser à 0
-        setStats({
+        console.log("Token décodé:", decodedToken);
+
+        const discordUsername =
+          decodedToken.username ||
+          decodedToken.global_name ||
+          decodedToken.name ||
+          "User";
+        const discordId = decodedToken.id || decodedToken.sub || "0";
+        const discordAvatar = decodedToken.avatar || null;
+        const discordDiscriminator = decodedToken.discriminator || "0";
+
+        // Définir les informations utilisateur Discord
+        setUser({
+          id: discordId,
           username: discordUsername,
-          totalShrooms: 0,
-          totalRespects: 0,
+          discriminator: discordDiscriminator,
+          avatar: discordAvatar,
         });
-      }
 
-      // Définir les informations utilisateur Discord
-      setUser({
-        id: discordId,
-        username: discordUsername,
-        discriminator: discordDiscriminator,
-        avatar: discordAvatar,
-      });
+        // Récupérer les statistiques de l'utilisateur
+        const statsResponse = await fetch(
+          `${apiUrl}/game/stats/${encodeURIComponent(discordUsername)}`,
+          {
+            headers: {
+              "ngrok-skip-browser-warning": "true",
+            },
+          },
+        );
+
+        if (statsResponse.ok) {
+          const statsData = await statsResponse.json();
+          setStats(statsData);
+        } else {
+          // Si l'utilisateur n'a pas encore de stats, initialiser à 0
+          setStats({
+            username: discordUsername,
+            totalShrooms: 0,
+            totalRespects: 0,
+          });
+        }
+      } catch (decodeError) {
+        console.error("Erreur décodage token:", decodeError);
+        throw new Error(
+          "Impossible de décoder le token. Veuillez vous reconnecter.",
+        );
+      }
     } catch (err) {
-      console.error("Erreur lors du décodage du token:", err);
+      console.error("Erreur lors de la récupération des données:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement");
+      // En cas d'erreur, effacer le token invalide
+      localStorage.removeItem("beemobot_token");
+      setToken(null);
     } finally {
       setLoading(false);
     }
