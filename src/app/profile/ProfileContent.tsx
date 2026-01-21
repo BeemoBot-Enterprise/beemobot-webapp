@@ -40,7 +40,7 @@ export default function ProfileContent() {
     if (tokenFromUrl) {
       setToken(tokenFromUrl);
       localStorage.setItem("beemobot_token", tokenFromUrl);
-      router.replace("/profil");
+      router.replace("/profile");
     } else {
       const storedToken = localStorage.getItem("beemobot_token");
       if (storedToken) {
