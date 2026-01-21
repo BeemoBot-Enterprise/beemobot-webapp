@@ -14,9 +14,8 @@ export function EpicHeroSection() {
   const [typingComplete, setTypingComplete] = useState(false);
 
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-slate-900 via-[#0a0a0f] to-black">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background layers */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       <ParallaxBackground />
       <ParticleCanvas particleCount={60} speed={0.3} color="#00A0FF" />
 
