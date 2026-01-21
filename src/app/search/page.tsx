@@ -108,6 +108,11 @@ export default function SearchPage() {
       // Appel à l'endpoint /lol/summoner/:summonerName/profile
       const response = await fetch(
         `${apiUrl}/lol/summoner/${encodeURIComponent(formattedQuery)}/profile?region=${region}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
+        },
       );
 
       if (!response.ok) {
