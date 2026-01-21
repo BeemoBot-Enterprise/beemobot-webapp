@@ -36,30 +36,30 @@
     --radius: 0.5rem;
 
     /* Hextech Blue Magic - Primary CTAs */
-    --hextech-blue: #00A0FF;
-    --hextech-blue-glow: #33B3FF;
-    --hextech-blue-dark: #0080CC;
+    --hextech-blue: #00a0ff;
+    --hextech-blue-glow: #33b3ff;
+    --hextech-blue-dark: #0080cc;
 
     /* Hextech Gold - Secondary Actions */
-    --hextech-gold: #FFD700;
-    --hextech-gold-light: #FFE54C;
-    --hextech-gold-dark: #B8860B;
+    --hextech-gold: #ffd700;
+    --hextech-gold-light: #ffe54c;
+    --hextech-gold-dark: #b8860b;
 
     /* Beemo Honey Theme */
-    --beemo-honey: #F5A623;
-    --beemo-honey-light: #FFE066;
-    --beemo-honey-dark: #CC8800;
+    --beemo-honey: #f5a623;
+    --beemo-honey-light: #ffe066;
+    --beemo-honey-dark: #cc8800;
 
     /* Dark Void Backgrounds */
-    --bg-void: #0A0A0F;
-    --bg-deep: #12141C;
-    --bg-surface: #1A1D28;
+    --bg-void: #0a0a0f;
+    --bg-deep: #12141c;
+    --bg-surface: #1a1d28;
     --bg-elevated: #252838;
 
     /* Runeterra Accents */
-    --rune-cyan: #00E5CC;
-    --rune-purple: #9B59E6;
-    --rune-pink: #E91E8C;
+    --rune-cyan: #00e5cc;
+    --rune-purple: #9b59e6;
+    --rune-pink: #e91e8c;
   }
 }
 
@@ -91,9 +91,9 @@ body::after {
   height: 100%;
   background: radial-gradient(
     circle at bottom left,
-    rgba(0, 160, 255, 0.15) 0%,
-    rgba(155, 89, 230, 0.1) 30%,
-    rgba(245, 166, 35, 0.08) 60%,
+    rgba(0, 160, 255, 0.05) 0%,
+    rgba(155, 89, 230, 0.03) 30%,
+    rgba(245, 166, 35, 0.02) 60%,
     transparent 80%
   );
   z-index: -10;
@@ -103,39 +103,39 @@ body::after {
 /* Hextech Glow Effects */
 @layer utilities {
   .glow-hextech-blue {
-    box-shadow: 0 0 20px var(--hextech-blue),
-                0 0 40px rgba(0, 160, 255, 0.3),
-                0 0 60px rgba(0, 160, 255, 0.1);
+    box-shadow:
+      0 0 8px rgba(0, 160, 255, 0.3),
+      0 0 15px rgba(0, 160, 255, 0.15);
   }
 
   .glow-hextech-gold {
-    box-shadow: 0 0 20px var(--hextech-gold),
-                0 0 40px rgba(255, 215, 0, 0.3),
-                0 0 60px rgba(255, 215, 0, 0.1);
+    box-shadow:
+      0 0 8px rgba(255, 215, 0, 0.3),
+      0 0 15px rgba(255, 215, 0, 0.15);
   }
 
   .glow-beemo-honey {
-    box-shadow: 0 0 20px var(--beemo-honey),
-                0 0 40px rgba(245, 166, 35, 0.3),
-                0 0 60px rgba(245, 166, 35, 0.1);
+    box-shadow:
+      0 0 8px rgba(245, 166, 35, 0.3),
+      0 0 15px rgba(245, 166, 35, 0.15);
   }
 
   .text-glow-blue {
-    text-shadow: 0 0 10px var(--hextech-blue),
-                 0 0 20px rgba(0, 160, 255, 0.5),
-                 0 0 30px rgba(0, 160, 255, 0.3);
+    text-shadow:
+      0 0 5px rgba(0, 160, 255, 0.4),
+      0 0 10px rgba(0, 160, 255, 0.2);
   }
 
   .text-glow-gold {
-    text-shadow: 0 0 10px var(--hextech-gold),
-                 0 0 20px rgba(255, 215, 0, 0.5),
-                 0 0 30px rgba(255, 215, 0, 0.3);
+    text-shadow:
+      0 0 5px rgba(255, 215, 0, 0.4),
+      0 0 10px rgba(255, 215, 0, 0.2);
   }
 
   .text-glow-honey {
-    text-shadow: 0 0 10px var(--beemo-honey),
-                 0 0 20px rgba(245, 166, 35, 0.5),
-                 0 0 30px rgba(245, 166, 35, 0.3);
+    text-shadow:
+      0 0 5px rgba(245, 166, 35, 0.4),
+      0 0 10px rgba(245, 166, 35, 0.2);
   }
 
   /* Hextech Border Effects */
@@ -148,7 +148,12 @@ body::after {
     content: "";
     position: absolute;
     inset: -2px;
-    background: linear-gradient(135deg, var(--hextech-blue), transparent, var(--hextech-gold));
+    background: linear-gradient(
+      135deg,
+      var(--hextech-blue),
+      transparent,
+      var(--hextech-gold)
+    );
     z-index: -1;
     border-radius: inherit;
     opacity: 0.5;
@@ -156,15 +161,15 @@ body::after {
 
   /* Glassmorphism */
   .glass {
-    background: rgba(26, 29, 40, 0.8);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: rgba(26, 29, 40, 0.7);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
   .glass-hextech {
-    background: rgba(0, 160, 255, 0.1);
-    backdrop-filter: blur(12px);
-    border: 1px solid rgba(0, 160, 255, 0.2);
+    background: rgba(0, 160, 255, 0.08);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(0, 160, 255, 0.15);
   }
 
   /* Honeycomb Pattern */
@@ -184,14 +189,22 @@ body::after {
 
   /* Gradient Text */
   .gradient-text-hextech {
-    background: linear-gradient(135deg, var(--hextech-blue) 0%, var(--hextech-gold) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--hextech-blue) 0%,
+      var(--hextech-gold) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }
 
   .gradient-text-beemo {
-    background: linear-gradient(135deg, var(--beemo-honey) 0%, var(--hextech-gold) 100%);
+    background: linear-gradient(
+      135deg,
+      var(--beemo-honey) 0%,
+      var(--hextech-gold) 100%
+    );
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;

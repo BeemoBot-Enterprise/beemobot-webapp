@@ -282,20 +282,22 @@ export default function Documentation() {
   };
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen bg-[#0f1117]">
       {/* Sidebar */}
-      <div className="w-64 bg-[#2a2e3b] p-4 sticky top-0 h-screen overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-6 text-white">Commandes</h2>
+      <div className="w-72 bg-[#1a1d28] border-r border-gray-700/50 p-6 sticky top-0 h-screen overflow-y-auto">
+        <h2 className="text-2xl font-bold mb-8 text-white border-b border-gray-700 pb-4">
+          Commandes
+        </h2>
         <nav>
-          <ul className="space-y-2">
+          <ul className="space-y-1">
             {commands.map((cmd) => (
               <li key={cmd.id}>
                 <button
                   onClick={() => handleSetActiveSection(cmd.id)}
-                  className={`w-full text-left px-3 py-2 rounded transition-colors ${
+                  className={`w-full text-left px-4 py-3 rounded-md transition-colors text-sm font-medium ${
                     activeSection === cmd.id
-                      ? "bg-blue-500 text-white"
-                      : "text-blue-400 hover:bg-[#363a49]"
+                      ? "bg-[#5865F2] text-white"
+                      : "text-gray-300 hover:bg-[#2a2e3b] hover:text-white"
                   }`}
                 >
                   {cmd.name}
@@ -307,8 +309,8 @@ export default function Documentation() {
       </div>
 
       {/* Main content */}
-      <div className="flex-1 p-8">
-        <h1 className="text-4xl font-bold mb-8 text-center">
+      <div className="flex-1 p-10 max-w-5xl">
+        <h1 className="text-5xl font-bold mb-12 text-white">
           Documentation BeemoBot
         </h1>
 
@@ -316,44 +318,46 @@ export default function Documentation() {
           <section
             key={cmd.id}
             id={cmd.id}
-            className={`mb-12 bg-[#2a2e3b] p-6 rounded-lg shadow-lg ${
-              activeSection === cmd.id ? "border-l-4 border-blue-500" : ""
+            className={`mb-16 bg-[#1a1d28] p-8 rounded-xl border transition-all ${
+              activeSection === cmd.id
+                ? "border-[#5865F2] shadow-lg"
+                : "border-gray-700/30"
             }`}
           >
-            <h2 className="text-2xl font-bold mb-4 text-white">{cmd.name}</h2>
+            <h2 className="text-3xl font-bold mb-6 text-white">{cmd.name}</h2>
 
-            <div className="mb-6 bg-[#363a49] p-4 rounded-lg">
-              <h3 className="text-lg font-semibold mb-2 text-gray-300">
+            <div className="mb-8 bg-[#0f1117] p-5 rounded-lg border border-gray-700/30">
+              <h3 className="text-base font-semibold mb-3 text-gray-200 uppercase tracking-wide">
                 Syntaxe
               </h3>
-              <code className="block p-3 bg-[#1e2029] rounded text-green-400 font-mono">
+              <code className="block p-4 bg-[#0a0a0f] rounded-md text-emerald-400 font-mono text-sm leading-relaxed border border-gray-800">
                 {cmd.syntax}
               </code>
             </div>
 
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-300">
+            <div className="mb-8 leading-relaxed">
+              <h3 className="text-base font-semibold mb-3 text-gray-200 uppercase tracking-wide">
                 Description
               </h3>
-              <p className="text-white">{cmd.description}</p>
-              <p className="mt-2 text-gray-300">{cmd.details}</p>
+              <p className="text-white text-base mb-3">{cmd.description}</p>
+              <p className="text-gray-300 text-base">{cmd.details}</p>
             </div>
 
-            <div className="mb-6">
-              <h3 className="text-lg font-semibold mb-2 text-gray-300">
+            <div className="mb-8">
+              <h3 className="text-base font-semibold mb-4 text-gray-200 uppercase tracking-wide">
                 Paramètres
               </h3>
-              <div className="bg-[#363a49] rounded-lg overflow-hidden">
+              <div className="bg-[#0f1117] rounded-lg overflow-hidden border border-gray-700/30">
                 <table className="w-full">
                   <thead>
-                    <tr className="bg-[#1e2029]">
-                      <th className="py-2 px-4 text-left text-gray-300">
+                    <tr className="bg-[#0a0a0f] border-b border-gray-700">
+                      <th className="py-4 px-5 text-left text-gray-200 font-semibold text-sm">
                         Paramètre
                       </th>
-                      <th className="py-2 px-4 text-left text-gray-300">
+                      <th className="py-4 px-5 text-left text-gray-200 font-semibold text-sm">
                         Description
                       </th>
-                      <th className="py-2 px-4 text-left text-gray-300">
+                      <th className="py-4 px-5 text-left text-gray-200 font-semibold text-sm">
                         Exemple
                       </th>
                     </tr>
@@ -362,13 +366,17 @@ export default function Documentation() {
                     {cmd.params.map((param, idx) => (
                       <tr
                         key={idx}
-                        className={idx % 2 === 0 ? "bg-[#2a2e3b]" : ""}
+                        className={`border-b border-gray-800/50 last:border-b-0 ${
+                          idx % 2 === 0 ? "bg-[#12141c]/50" : "bg-transparent"
+                        }`}
                       >
-                        <td className="py-2 px-4 font-mono text-blue-300">
+                        <td className="py-4 px-5 font-mono text-blue-400 text-sm">
                           {param.name}
                         </td>
-                        <td className="py-2 px-4 text-white">{param.desc}</td>
-                        <td className="py-2 px-4 text-gray-300 font-mono">
+                        <td className="py-4 px-5 text-gray-200 text-sm">
+                          {param.desc}
+                        </td>
+                        <td className="py-4 px-5 text-gray-400 font-mono text-sm">
                           {param.example}
                         </td>
                       </tr>
@@ -379,14 +387,14 @@ export default function Documentation() {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold mb-2 text-gray-300">
+              <h3 className="text-base font-semibold mb-4 text-gray-200 uppercase tracking-wide">
                 Exemples
               </h3>
-              <ul className="space-y-2">
+              <ul className="space-y-3">
                 {cmd.examples.map((example, idx) => (
                   <li
                     key={idx}
-                    className="bg-[#363a49] p-3 rounded-lg text-yellow-300 font-mono"
+                    className="bg-[#0f1117] p-4 rounded-lg text-amber-400 font-mono text-sm border border-gray-700/30"
                   >
                     {example}
                   </li>
