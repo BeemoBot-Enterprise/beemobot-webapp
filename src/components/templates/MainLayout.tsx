@@ -1,5 +1,12 @@
+"use client";
+
+import dynamic from "next/dynamic";
 import Footer from "@/components/organisms/Footer";
-import Header from "@/components/organisms/Header";
+
+// Import Header dynamically with no SSR to avoid localStorage issues
+const Header = dynamic(() => import("@/components/organisms/Header"), {
+  ssr: false,
+});
 
 interface MainLayoutProps {
   children: React.ReactNode;

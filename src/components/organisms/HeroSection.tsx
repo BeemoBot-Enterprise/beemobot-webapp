@@ -1,9 +1,9 @@
 "use client";
 
 import { BEEMO } from "@/assets/images";
-import DiscordIcon from "@/assets/svg/DiscordIcon";
 import Button from "@/components/atoms/Button";
 import Image from "next/image";
+import { FaDiscord } from "react-icons/fa";
 
 const HeroSection = () => {
   return (
@@ -27,10 +27,14 @@ const HeroSection = () => {
               <Button
                 className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 px-8 py-4 rounded-md text-lg shadow-lg transition-all duration-300 hover:scale-105"
                 onClick={() =>
-                  window.open(process.env.BOT_INVITE_URL, "_blank")
+                  window.open(
+                    process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
+                      process.env.BOT_INVITE_URL,
+                    "_blank",
+                  )
                 }
               >
-                <DiscordIcon height={24} width={24} color="white" />
+                <FaDiscord className="w-6 h-6" />
                 Ajouter le bot
               </Button>
               <Button

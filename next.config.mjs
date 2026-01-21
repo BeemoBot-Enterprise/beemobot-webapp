@@ -3,12 +3,13 @@ const nextConfig = {
   reactStrictMode: true,
   // You can add image domains if needed for external images
   images: {
-    domains: [],
+    domains: ["ddragon.leagueoflegends.com"],
   },
   // Environment variables will be accessed through process.env instead of astro:env
   env: {
-    API_URL: process.env.API_URL || "http://localhost:3000",
-    BOT_INVITE_URL: process.env.BOT_INVITE_URL,
+    API_URL: "https://8818cad887f0.ngrok-free.app",
+    BOT_INVITE_URL:
+      "https://discord.com/oauth2/authorize?client_id=1316056047936471133&permissions=8&integration_type=0&scope=bot",
   },
 };
 

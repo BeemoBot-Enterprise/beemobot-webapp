@@ -10,44 +10,52 @@ export type User = {
 };
 
 export const getUser = async (): Promise<User | null> => {
+  // Ensure we're only running in the browser
   if (typeof window === "undefined") {
-    return null; // Return null during server-side rendering
+    return null;
   }
 
-  const user = sessionStorage.getItem("user");
+  try {
+    const user = window.sessionStorage.getItem("user");
+    if (user) return JSON.parse(user);
 
-  if (user) return JSON.parse(user);
+    const token = getToken();
+    if (token) {
+      try {
+        const response = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}/user`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          },
+        );
 
-  const token = getToken();
-  if (token) {
-    try {
-      const response = await axios.get(`${process.env.API_URL}/user`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+        const userData: User = response.data;
+        setUser(userData);
 
-      const userData: User = response.data;
-      setUser(userData);
-
-      return userData;
-    } catch (e) {
-      removeToken();
-      return null;
+        return userData;
+      } catch (e) {
+        removeToken();
+        return null;
+      }
     }
-  }
 
-  return null;
+    return null;
+  } catch (error) {
+    console.error("Error in getUser:", error);
+    return null;
+  }
 };
 
 export const setUser = (user: User) => {
   if (typeof window !== "undefined") {
-    sessionStorage.setItem("user", JSON.stringify(user));
+    window.sessionStorage.setItem("user", JSON.stringify(user));
   }
 };
 
 export const removeUser = () => {
   if (typeof window !== "undefined") {
-    sessionStorage.removeItem("user");
+    window.sessionStorage.removeItem("user");
   }
 };

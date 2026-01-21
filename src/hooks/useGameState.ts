@@ -27,13 +27,13 @@ interface UseGameStateReturn<T> {
 
 export function useGameState<T = Record<string, unknown>>(
   initialData: T,
-  storageKey?: string
+  storageKey?: string,
 ): UseGameStateReturn<T> {
   const getInitialState = (): GameState<T> => {
     let highScore = 0;
 
     if (storageKey && typeof window !== "undefined") {
-      const saved = localStorage.getItem(`${storageKey}_highscore`);
+      const saved = window.localStorage.getItem(`${storageKey}_highscore`);
       if (saved) {
         highScore = parseInt(saved, 10) || 0;
       }
@@ -52,11 +52,18 @@ export function useGameState<T = Record<string, unknown>>(
 
   const saveHighScore = useCallback(
     (score: number) => {
-      if (storageKey && typeof window !== "undefined" && score > state.highScore) {
-        localStorage.setItem(`${storageKey}_highscore`, score.toString());
+      if (
+        storageKey &&
+        typeof window !== "undefined" &&
+        score > state.highScore
+      ) {
+        window.localStorage.setItem(
+          `${storageKey}_highscore`,
+          score.toString(),
+        );
       }
     },
-    [storageKey, state.highScore]
+    [storageKey, state.highScore],
   );
 
   const startGame = useCallback(() => {
@@ -81,7 +88,7 @@ export function useGameState<T = Record<string, unknown>>(
         };
       });
     },
-    [saveHighScore]
+    [saveHighScore],
   );
 
   const pauseGame = useCallback(() => {

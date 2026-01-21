@@ -53,7 +53,10 @@ const SponsorsSection = () => {
                     </p>
                     <div className="mt-3">
                       <a
-                        href={process.env.BOT_INVITE_URL}
+                        href={
+                          process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
+                          process.env.BOT_INVITE_URL
+                        }
                         target="_blank"
                         rel="noopener noreferrer"
                         className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition-colors"
