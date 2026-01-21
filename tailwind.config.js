@@ -101,10 +101,10 @@ module.exports = {
         },
         "pulse-glow": {
           "0%, 100%": {
-            boxShadow: "0 0 20px var(--hextech-blue), 0 0 40px rgba(0, 160, 255, 0.3)"
+            boxShadow: "0 0 8px rgba(0, 160, 255, 0.3)",
           },
           "50%": {
-            boxShadow: "0 0 30px var(--hextech-blue), 0 0 60px rgba(0, 160, 255, 0.5)"
+            boxShadow: "0 0 12px rgba(0, 160, 255, 0.4)",
           },
         },
         shimmer: {
@@ -170,7 +170,10 @@ module.exports = {
           "0%": { transform: "translateY(100vh) rotate(0deg)", opacity: 0 },
           "10%": { opacity: 1 },
           "90%": { opacity: 1 },
-          "100%": { transform: "translateY(-100vh) rotate(360deg)", opacity: 0 },
+          "100%": {
+            transform: "translateY(-100vh) rotate(360deg)",
+            opacity: 0,
+          },
         },
         "glow-pulse": {
           "0%, 100%": { filter: "brightness(1)" },
@@ -202,16 +205,22 @@ module.exports = {
       },
       backgroundImage: {
         "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-hextech": "linear-gradient(135deg, var(--hextech-blue) 0%, var(--hextech-gold) 100%)",
-        "gradient-beemo": "linear-gradient(135deg, var(--beemo-honey) 0%, var(--hextech-gold) 100%)",
-        "gradient-void": "linear-gradient(180deg, var(--bg-void) 0%, var(--bg-deep) 50%, var(--bg-surface) 100%)",
+        "gradient-hextech":
+          "linear-gradient(135deg, var(--hextech-blue) 0%, var(--hextech-gold) 100%)",
+        "gradient-beemo":
+          "linear-gradient(135deg, var(--beemo-honey) 0%, var(--hextech-gold) 100%)",
+        "gradient-void":
+          "linear-gradient(180deg, var(--bg-void) 0%, var(--bg-deep) 50%, var(--bg-surface) 100%)",
       },
       boxShadow: {
-        "hextech": "0 0 20px var(--hextech-blue), 0 0 40px rgba(0, 160, 255, 0.3)",
-        "hextech-lg": "0 0 30px var(--hextech-blue), 0 0 60px rgba(0, 160, 255, 0.4)",
-        "gold": "0 0 20px var(--hextech-gold), 0 0 40px rgba(255, 215, 0, 0.3)",
-        "gold-lg": "0 0 30px var(--hextech-gold), 0 0 60px rgba(255, 215, 0, 0.4)",
-        "honey": "0 0 20px var(--beemo-honey), 0 0 40px rgba(245, 166, 35, 0.3)",
+        hextech:
+          "0 0 20px var(--hextech-blue), 0 0 40px rgba(0, 160, 255, 0.3)",
+        "hextech-lg":
+          "0 0 30px var(--hextech-blue), 0 0 60px rgba(0, 160, 255, 0.4)",
+        gold: "0 0 20px var(--hextech-gold), 0 0 40px rgba(255, 215, 0, 0.3)",
+        "gold-lg":
+          "0 0 30px var(--hextech-gold), 0 0 60px rgba(255, 215, 0, 0.4)",
+        honey: "0 0 20px var(--beemo-honey), 0 0 40px rgba(245, 166, 35, 0.3)",
       },
     },
   },

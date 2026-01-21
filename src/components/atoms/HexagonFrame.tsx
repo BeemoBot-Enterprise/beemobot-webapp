@@ -32,9 +32,9 @@ export function HexagonFrame({
   };
 
   const glowStyles = {
-    blue: glow ? "shadow-hextech" : "",
-    gold: glow ? "shadow-gold" : "",
-    honey: glow ? "shadow-honey" : "",
+    blue: glow ? "shadow-md" : "",
+    gold: glow ? "shadow-md" : "",
+    honey: glow ? "shadow-md" : "",
   };
 
   return (
@@ -43,26 +43,29 @@ export function HexagonFrame({
       className={cn(
         "relative flex items-center justify-center",
         sizeStyles[size],
-        className
+        className,
       )}
     >
       <svg
         viewBox="0 0 100 100"
-        className={cn(
-          "absolute inset-0 w-full h-full",
-          glowStyles[variant]
-        )}
+        className={cn("absolute inset-0 w-full h-full", glowStyles[variant])}
       >
         <defs>
-          <linearGradient id={`hexGradient-${variant}`} x1="0%" y1="0%" x2="100%" y2="100%">
+          <linearGradient
+            id={`hexGradient-${variant}`}
+            x1="0%"
+            y1="0%"
+            x2="100%"
+            y2="100%"
+          >
             <stop
               offset="0%"
               stopColor={
                 variant === "blue"
                   ? "var(--hextech-blue)"
                   : variant === "gold"
-                  ? "var(--hextech-gold)"
-                  : "var(--beemo-honey)"
+                    ? "var(--hextech-gold)"
+                    : "var(--beemo-honey)"
               }
             />
             <stop
@@ -71,8 +74,8 @@ export function HexagonFrame({
                 variant === "blue"
                   ? "var(--hextech-blue-glow)"
                   : variant === "gold"
-                  ? "var(--hextech-gold-light)"
-                  : "var(--beemo-honey-light)"
+                    ? "var(--hextech-gold-light)"
+                    : "var(--beemo-honey-light)"
               }
             />
           </linearGradient>

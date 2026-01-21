@@ -36,21 +36,21 @@ export function DiamondBadge({
   };
 
   const glowStyles = {
-    blue: "shadow-hextech",
-    gold: "shadow-gold",
-    honey: "shadow-honey",
+    blue: "shadow-md",
+    gold: "shadow-md",
+    honey: "shadow-md",
   };
 
   return (
     <motion.div
-      whileHover={{ scale: 1.1, rotate: 5 }}
+      whileHover={{ scale: 1.05, rotate: 2 }}
       className={cn(
         "relative flex items-center justify-center clip-diamond",
         sizeStyles[size],
         bgColors[variant],
         textColors[variant],
         glowStyles[variant],
-        className
+        className,
       )}
     >
       <span className="rotate-0 font-bold text-center">{children}</span>

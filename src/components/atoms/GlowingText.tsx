@@ -20,9 +20,9 @@ export function GlowingText({
   animate = true,
 }: GlowingTextProps) {
   const glowStyles = {
-    blue: "text-[var(--hextech-blue)] text-glow-blue",
-    gold: "text-[var(--hextech-gold)] text-glow-gold",
-    honey: "text-[var(--beemo-honey)] text-glow-honey",
+    blue: "text-[var(--hextech-blue)]",
+    gold: "text-[var(--hextech-gold)]",
+    honey: "text-[var(--beemo-honey)]",
   };
 
   if (animate) {

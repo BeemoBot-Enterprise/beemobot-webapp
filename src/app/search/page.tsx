@@ -171,20 +171,20 @@ export default function SearchPage() {
   };
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a0e1a] via-[#1a1f2e] to-[#0a0e1a] py-20 px-4">
-      <div className="max-w-4xl mx-auto">
+    <main className="min-h-screen bg-[#0f1117] py-20 px-4">
+      <div className="max-w-5xl mx-auto">
         {/* Header */}
         <div className="text-center mb-12">
-          <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-[#00A0FF] via-[#FFD700] to-[#F5A623] bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-4 text-white">
             Recherche d'utilisateur
           </h1>
-          <p className="text-gray-400 text-lg">
+          <p className="text-gray-300 text-lg">
             Trouvez un joueur et consultez ses statistiques
           </p>
         </div>
 
         {/* Search Bar */}
-        <Card className="mb-8 bg-[#1d202b] border-gray-700">
+        <Card className="mb-8 bg-[#1a1d28] border-gray-700/30">
           <CardContent className="p-6">
             <div className="flex flex-col gap-4">
               <div className="flex flex-col md:flex-row gap-4">
@@ -194,12 +194,12 @@ export default function SearchPage() {
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   onKeyPress={handleKeyPress}
-                  className="flex-1 px-4 py-3 bg-[#2a2e3b] border border-gray-700 rounded-md text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#00A0FF] transition-all"
+                  className="flex-1 px-4 py-3 bg-[#0f1117] border border-gray-700/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-[#5865F2] transition-all"
                 />
                 <select
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
-                  className="px-4 py-3 bg-[#2a2e3b] border border-gray-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-[#00A0FF] transition-all"
+                  className="px-4 py-3 bg-[#0f1117] border border-gray-700/30 rounded-lg text-white focus:outline-none focus:border-[#5865F2] transition-all"
                 >
                   <option value="euw1">EUW</option>
                   <option value="na1">NA</option>
@@ -216,19 +216,23 @@ export default function SearchPage() {
                 <Button
                   onClick={searchPlayer}
                   disabled={loading}
-                  className="px-8 py-3 bg-gradient-to-r from-[#00A0FF] to-[#0080CC] hover:from-[#33B3FF] hover:to-[#00A0FF] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                  className="px-8 py-3 bg-[#5865F2] hover:bg-[#4752C4] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                 >
                   {loading ? "Recherche..." : "Rechercher"}
                 </Button>
               </div>
-              <p className="text-gray-400 text-xs">
+              <p className="text-gray-400 text-xs leading-relaxed">
                 💡 Format accepté:{" "}
-                <code className="px-2 py-1 bg-[#2a2e3b] rounded">nom#TAG</code>{" "}
+                <code className="px-2 py-1 bg-[#0f1117] rounded border border-gray-700/30">
+                  nom#TAG
+                </code>{" "}
                 ou{" "}
-                <code className="px-2 py-1 bg-[#2a2e3b] rounded">nom-TAG</code>
+                <code className="px-2 py-1 bg-[#0f1117] rounded border border-gray-700/30">
+                  nom-TAG
+                </code>
               </p>
               {error && (
-                <p className="text-red-400 text-sm flex items-center gap-2">
+                <p className="text-red-400 text-sm flex items-center gap-2 bg-red-900/20 p-3 rounded-lg border border-red-700/30">
                   <span>⚠️</span> {error}
                 </p>
               )}
@@ -240,8 +244,8 @@ export default function SearchPage() {
         {profile && (
           <div className="space-y-6">
             {/* Summoner Info */}
-            <Card className="bg-[#1d202b] border-gray-700 overflow-hidden">
-              <CardHeader className="bg-gradient-to-r from-[#00A0FF]/20 to-[#FFD700]/20 border-b border-gray-700">
+            <Card className="bg-[#1a1d28] border-gray-700/30 overflow-hidden">
+              <CardHeader className="bg-[#5865F2]/10 border-b border-gray-700/30">
                 <CardTitle className="text-3xl flex items-center gap-3">
                   <Image
                     src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/profileicon/${profile.summoner.profileIconId}.png`}
@@ -254,7 +258,7 @@ export default function SearchPage() {
                     <div className="text-white">
                       {profile.summoner.gameName}#{profile.summoner.tagLine}
                     </div>
-                    <div className="text-sm text-gray-400 font-normal">
+                    <div className="text-sm text-gray-300 font-normal">
                       Niveau {profile.summoner.summonerLevel}
                     </div>
                   </div>
@@ -266,8 +270,8 @@ export default function SearchPage() {
             {profile.ranks && profile.ranks.length > 0 && (
               <div className="grid md:grid-cols-2 gap-6">
                 {profile.ranks.map((rank, index) => (
-                  <Card key={index} className="bg-[#1d202b] border-gray-700">
-                    <CardHeader className="bg-[#232631] border-b border-gray-700">
+                  <Card key={index} className="bg-[#1a1d28] border-gray-700/30">
+                    <CardHeader className="bg-[#0f1117] border-b border-gray-700/30">
                       <CardTitle className="text-xl">
                         {getQueueName(rank.queueType)}
                       </CardTitle>
@@ -279,25 +283,25 @@ export default function SearchPage() {
                         >
                           {rank.tier} {rank.rank}
                         </div>
-                        <div className="text-2xl text-gray-400 mt-2">
+                        <div className="text-2xl text-gray-300 mt-2">
                           {rank.leaguePoints} LP
                         </div>
                       </div>
                       <div className="grid grid-cols-3 gap-4 text-center">
                         <div>
-                          <div className="text-green-400 font-bold">
+                          <div className="text-emerald-400 font-bold text-xl">
                             {rank.wins}
                           </div>
                           <div className="text-xs text-gray-400">Victoires</div>
                         </div>
                         <div>
-                          <div className="text-red-400 font-bold">
+                          <div className="text-red-400 font-bold text-xl">
                             {rank.losses}
                           </div>
                           <div className="text-xs text-gray-400">Défaites</div>
                         </div>
                         <div>
-                          <div className="text-[#FFD700] font-bold">
+                          <div className="text-[#FFD700] font-bold text-xl">
                             {rank.winRate}%
                           </div>
                           <div className="text-xs text-gray-400">Winrate</div>
@@ -311,8 +315,8 @@ export default function SearchPage() {
 
             {/* Top Champions */}
             {profile.topChampions && profile.topChampions.length > 0 && (
-              <Card className="bg-[#1d202b] border-gray-700">
-                <CardHeader className="bg-[#232631] border-b border-gray-700">
+              <Card className="bg-[#1a1d28] border-gray-700/30">
+                <CardHeader className="bg-[#0f1117] border-b border-gray-700/30">
                   <CardTitle className="text-2xl text-[#FFD700]">
                     🏆 Meilleurs Champions
                   </CardTitle>
@@ -326,7 +330,7 @@ export default function SearchPage() {
                           alt={champ.championName}
                           width={80}
                           height={80}
-                          className="rounded-full mx-auto border-2 border-[#00A0FF] mb-2"
+                          className="rounded-full mx-auto border-2 border-[#5865F2] mb-2"
                         />
                         <div className="text-white font-medium text-sm">
                           {champ.championName}
@@ -346,9 +350,9 @@ export default function SearchPage() {
 
             {/* Recent Matches */}
             {profile.recentMatches && profile.recentMatches.length > 0 && (
-              <Card className="bg-[#1d202b] border-gray-700">
-                <CardHeader className="bg-[#232631] border-b border-gray-700">
-                  <CardTitle className="text-2xl text-[#00A0FF]">
+              <Card className="bg-[#1a1d28] border-gray-700/30">
+                <CardHeader className="bg-[#0f1117] border-b border-gray-700/30">
+                  <CardTitle className="text-2xl text-[#5865F2]">
                     📜 Matchs Récents
                   </CardTitle>
                 </CardHeader>
@@ -358,14 +362,14 @@ export default function SearchPage() {
                       key={index}
                       className={`p-4 rounded-lg border ${
                         match.participant.win
-                          ? "bg-green-900/20 border-green-700"
-                          : "bg-red-900/20 border-red-700"
+                          ? "bg-emerald-900/10 border-emerald-700/30"
+                          : "bg-red-900/10 border-red-700/30"
                       }`}
                     >
                       <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                           <div className="text-center">
-                            <div className="text-sm text-gray-400">
+                            <div className="text-sm text-gray-300 mb-1">
                               {match.participant.championName}
                             </div>
                             <div className="text-xl font-bold text-white">
@@ -382,7 +386,7 @@ export default function SearchPage() {
                               ).toFixed(2)}
                             </div>
                           </div>
-                          <div className="text-sm text-gray-400">
+                          <div className="text-sm text-gray-300">
                             <div>
                               CS: {match.participant.totalMinionsKilled}
                             </div>
@@ -397,7 +401,7 @@ export default function SearchPage() {
                           <div
                             className={`text-lg font-bold ${
                               match.participant.win
-                                ? "text-green-400"
+                                ? "text-emerald-400"
                                 : "text-red-400"
                             }`}
                           >
@@ -419,14 +423,14 @@ export default function SearchPage() {
 
         {/* Empty State */}
         {!profile && !loading && !error && (
-          <div className="text-center py-20">
+          <div className="text-center py-20 bg-[#1a1d28] rounded-xl border border-gray-700/30">
             <div className="text-6xl mb-4">🔍</div>
-            <p className="text-gray-400 text-lg mb-3">
+            <p className="text-gray-300 text-lg mb-3">
               Recherchez un invocateur pour voir ses statistiques
             </p>
             <p className="text-gray-500 text-sm">
               Essayez par exemple:{" "}
-              <span className="text-[#00A0FF]">nunch#N7789</span>
+              <span className="text-[#5865F2]">nunch#N7789</span>
             </p>
           </div>
         )}
