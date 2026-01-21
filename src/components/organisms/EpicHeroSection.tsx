@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
+import { FaDiscord } from "react-icons/fa";
 import { HexButton } from "@/components/atoms/HexButton";
 import { TypewriterText } from "@/components/atoms/TypewriterText";
 import { ParticleCanvas } from "@/components/atoms/ParticleCanvas";
@@ -17,7 +18,7 @@ export function EpicHeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background layers */}
       <ParallaxBackground />
-      <ParticleCanvas particleCount={60} speed={0.3} color="#F5A623" />
+      <ParticleCanvas particleCount={60} speed={0.3} colors={["#F5A623"]} />
 
       {/* Content container */}
       <div className="relative z-10 container mx-auto px-4 py-20">
