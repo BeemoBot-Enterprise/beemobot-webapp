@@ -1,4 +1,8 @@
+"use client";
+
 import { useEffect, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { HexButton } from "@/components/atoms/HexButton";
 
 interface Cell {
   hasMine: boolean;
@@ -254,13 +258,13 @@ const TeemoMinesweeper = () => {
       } else {
         content = cell.adjacentMines || "";
         cellClass +=
-          " bg-gray-800/70 border border-gray-700/80 shadow-inner text-lg font-semibold";
+          " bg-[var(--bg-surface)] border border-[var(--bg-elevated)] shadow-inner text-lg font-semibold";
 
-        if (cell.adjacentMines === 1) cellClass += " text-blue-400";
-        else if (cell.adjacentMines === 2) cellClass += " text-green-400";
+        if (cell.adjacentMines === 1) cellClass += " text-[var(--hextech-blue)]";
+        else if (cell.adjacentMines === 2) cellClass += " text-[var(--rune-cyan)]";
         else if (cell.adjacentMines === 3) cellClass += " text-red-400";
-        else if (cell.adjacentMines === 4) cellClass += " text-purple-400";
-        else if (cell.adjacentMines >= 5) cellClass += " text-yellow-400";
+        else if (cell.adjacentMines === 4) cellClass += " text-[var(--rune-purple)]";
+        else if (cell.adjacentMines >= 5) cellClass += " text-[var(--hextech-gold)]";
       }
     } else {
       // Bush appearance for unrevealed cells
@@ -297,108 +301,115 @@ const TeemoMinesweeper = () => {
     }
 
     return (
-      <div
+      <motion.div
         className={cellClass}
         onClick={() => handleCellClick(row, col)}
         onContextMenu={(e) => handleRightClick(e, row, col)}
+        whileHover={{ scale: cell.isRevealed ? 1 : 1.05 }}
+        whileTap={{ scale: 0.95 }}
       >
         {content}
-      </div>
+      </motion.div>
     );
   };
 
   return (
     <div className="flex flex-col items-center p-6 rounded-xl max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-yellow-400">
-        Le champ de champignons de Teemo
+      <h1 className="text-3xl font-bold mb-4 text-center gradient-text-hextech">
+        Teemo's Mushroom Field
       </h1>
 
       <div className="mb-6 flex flex-col md:flex-row justify-between w-full items-center gap-4">
         <div className="flex gap-3">
           <button
-            className={`px-4 py-2 text-sm rounded-lg ${
+            className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
               difficulty === "easy"
-                ? "bg-gradient-to-r from-green-600 to-green-500 shadow-lg"
-                : "bg-green-800/50"
-            } transition-all duration-300 hover:scale-105`}
+                ? "bg-[var(--rune-cyan)] text-[var(--bg-void)] shadow-lg"
+                : "glass hover:bg-[var(--rune-cyan)]/20"
+            }`}
             onClick={() => setGameDifficulty("easy")}
           >
-            Facile
+            Easy
           </button>
           <button
-            className={`px-4 py-2 text-sm rounded-lg ${
+            className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
               difficulty === "medium"
-                ? "bg-gradient-to-r from-blue-600 to-blue-500 shadow-lg"
-                : "bg-blue-800/50"
-            } transition-all duration-300 hover:scale-105`}
+                ? "bg-[var(--hextech-blue)] text-white shadow-lg"
+                : "glass hover:bg-[var(--hextech-blue)]/20"
+            }`}
             onClick={() => setGameDifficulty("medium")}
           >
-            Moyen
+            Medium
           </button>
           <button
-            className={`px-4 py-2 text-sm rounded-lg ${
+            className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
               difficulty === "hard"
-                ? "bg-gradient-to-r from-red-600 to-red-500 shadow-lg"
-                : "bg-red-800/50"
-            } transition-all duration-300 hover:scale-105`}
+                ? "bg-[var(--beemo-honey)] text-[var(--bg-void)] shadow-lg"
+                : "glass hover:bg-[var(--beemo-honey)]/20"
+            }`}
             onClick={() => setGameDifficulty("hard")}
           >
-            Difficile
+            Hard
           </button>
         </div>
 
-        <div className="flex gap-6">
-          <div className="bg-gray-800/50 backdrop-blur-sm px-4 py-2 rounded-lg text-center shadow-lg">
-            <span className="text-red-400 text-lg font-medium">
+        <div className="flex gap-4">
+          <div className="glass px-4 py-2 rounded-lg text-center">
+            <span className="text-[var(--beemo-honey)] text-lg font-medium">
               🍄 {mineCount - flagsPlaced}
             </span>
           </div>
-          <div className="bg-gray-800/50 backdrop-blur-sm px-4 py-2 rounded-lg text-center shadow-lg">
-            <span className="text-blue-400 text-lg font-medium">
+          <div className="glass px-4 py-2 rounded-lg text-center">
+            <span className="text-[var(--hextech-blue)] text-lg font-medium">
               ⏱️ {timer}s
             </span>
           </div>
         </div>
       </div>
 
-      {gameState === "lost" && (
-        <div className="mb-6 bg-gradient-to-r from-red-900/70 to-red-800/70 backdrop-blur-md text-center py-4 px-6 rounded-xl w-full border border-red-500/20 shadow-lg">
-          <p className="text-2xl font-bold mb-2">
-            Vous avez marché sur un champignon de Teemo ! Partie terminée !
-          </p>
-          <p className="text-gray-300 mb-4">
-            Ne vous inquiétez pas, vous détecterez mieux les champignons la
-            prochaine fois.
-          </p>
-          <button
-            className="mt-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg"
-            onClick={initializeBoard}
+      <AnimatePresence mode="wait">
+        {gameState === "lost" && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-red-500/30"
           >
-            Réessayer
-          </button>
-        </div>
-      )}
+            <p className="text-2xl font-bold mb-2 text-red-400">
+              You stepped on a Teemo mushroom! Game Over!
+            </p>
+            <p className="text-muted-foreground mb-4">
+              Don't worry, you'll detect mushrooms better next time.
+            </p>
+            <HexButton variant="blue" onClick={initializeBoard}>
+              Try Again
+            </HexButton>
+          </motion.div>
+        )}
 
-      {gameState === "won" && (
-        <div className="mb-6 bg-gradient-to-r from-green-900/70 to-green-800/70 backdrop-blur-md text-center py-4 px-6 rounded-xl w-full border border-green-500/20 shadow-lg">
-          <p className="text-2xl font-bold mb-2">
-            Vous avez nettoyé le champ ! Victoire !
-          </p>
-          <p className="text-gray-300 mb-4">
-            Même le Capitaine Teemo n'a pas pu vous piéger !
-          </p>
-          <button
-            className="mt-2 bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-700 hover:to-blue-600 px-6 py-2 rounded-lg font-medium transition-all duration-300 hover:scale-105 shadow-lg"
-            onClick={initializeBoard}
+        {gameState === "won" && (
+          <motion.div
+            initial={{ opacity: 0, y: -20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-[var(--rune-cyan)]/30"
           >
-            Rejouer
-          </button>
-        </div>
-      )}
+            <p className="text-2xl font-bold mb-2 text-[var(--rune-cyan)]">
+              You cleared the field! Victory!
+            </p>
+            <p className="text-muted-foreground mb-4">
+              Even Captain Teemo couldn't trick you!
+            </p>
+            <HexButton variant="gold" onClick={initializeBoard}>
+              Play Again
+            </HexButton>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
-      <div className="bg-[#1a1c2a]/60 p-4 rounded-xl border border-blue-500/20 backdrop-blur-md shadow-2xl">
+      <div className="glass p-4 rounded-xl border border-[var(--hextech-blue)]/20">
         <div
-          className="grid gap-[1px] bg-gray-800/30 p-1 rounded-lg"
+          className="grid gap-[2px] p-1 rounded-lg"
           style={{
             gridTemplateRows: `repeat(${boardSize.rows}, minmax(0, 1fr))`,
             gridTemplateColumns: `repeat(${boardSize.cols}, minmax(0, 1fr))`,
@@ -418,12 +429,11 @@ const TeemoMinesweeper = () => {
       </div>
 
       <div className="mt-6 text-center">
-        <p className="text-gray-300 mb-2 italic">
-          Clic gauche pour révéler une case. Clic droit pour placer un drapeau
-          sur les champignons suspects.
+        <p className="text-muted-foreground mb-2 italic">
+          Left click to reveal a cell. Right click to place a flag on suspicious mushrooms.
         </p>
-        <p className="text-xs text-gray-400">
-          "La taille importe peu. Capitaine Teemo au service !" - Teemo
+        <p className="text-xs text-muted-foreground">
+          "Size doesn't mean everything. Captain Teemo on duty!" - Teemo
         </p>
       </div>
     </div>

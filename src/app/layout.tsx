@@ -7,8 +7,24 @@ import { Inter } from "next/font/google";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Teemo Bot Discord",
-  description: "Le meilleur bot discord Teemo tout-en-un",
+  title: "BeemoBot - The Ultimate Teemo Discord Bot",
+  description:
+    "The ultimate League of Legends Discord bot. Champion stats, build recommendations, player tracking, and fun minigames. Add BeemoBot to your server today!",
+  keywords: [
+    "Discord bot",
+    "League of Legends",
+    "LoL",
+    "Teemo",
+    "BeemoBot",
+    "champion stats",
+    "builds",
+  ],
+  openGraph: {
+    title: "BeemoBot - The Ultimate Teemo Discord Bot",
+    description:
+      "Champion stats, build recommendations, player tracking, and fun minigames for your Discord server.",
+    type: "website",
+  },
 };
 
 export default function RootLayout({
@@ -17,9 +33,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr">
+    <html lang="en">
       <body
-        className={`min-h-screen bg-[#252838] text-white flex flex-col ${inter.className}`}
+        className={`min-h-screen bg-[var(--bg-void)] text-white flex flex-col ${inter.className}`}
       >
         <MainLayout>{children}</MainLayout>
       </body>

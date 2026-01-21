@@ -4,6 +4,7 @@
 
 @layer base {
   :root {
+    /* Original color system */
     --background: 220 13% 18%;
     --foreground: 0 0% 100%;
 
@@ -33,6 +34,32 @@
     --ring: 219 85% 54%;
 
     --radius: 0.5rem;
+
+    /* Hextech Blue Magic - Primary CTAs */
+    --hextech-blue: #00A0FF;
+    --hextech-blue-glow: #33B3FF;
+    --hextech-blue-dark: #0080CC;
+
+    /* Hextech Gold - Secondary Actions */
+    --hextech-gold: #FFD700;
+    --hextech-gold-light: #FFE54C;
+    --hextech-gold-dark: #B8860B;
+
+    /* Beemo Honey Theme */
+    --beemo-honey: #F5A623;
+    --beemo-honey-light: #FFE066;
+    --beemo-honey-dark: #CC8800;
+
+    /* Dark Void Backgrounds */
+    --bg-void: #0A0A0F;
+    --bg-deep: #12141C;
+    --bg-surface: #1A1D28;
+    --bg-elevated: #252838;
+
+    /* Runeterra Accents */
+    --rune-cyan: #00E5CC;
+    --rune-purple: #9B59E6;
+    --rune-pink: #E91E8C;
   }
 }
 
@@ -47,10 +74,11 @@
 
 html {
   overflow-x: hidden;
+  scroll-behavior: smooth;
 }
 
 body {
-  background: #252838;
+  background: var(--bg-void);
   position: relative;
 }
 
@@ -63,11 +91,133 @@ body::after {
   height: 100%;
   background: radial-gradient(
     circle at bottom left,
-    rgba(243, 156, 18, 0.4) 0%,
-    rgba(231, 76, 60, 0.3) 30%,
-    rgba(155, 89, 182, 0.2) 60%,
+    rgba(0, 160, 255, 0.15) 0%,
+    rgba(155, 89, 230, 0.1) 30%,
+    rgba(245, 166, 35, 0.08) 60%,
     transparent 80%
   );
   z-index: -10;
   pointer-events: none;
+}
+
+/* Hextech Glow Effects */
+@layer utilities {
+  .glow-hextech-blue {
+    box-shadow: 0 0 20px var(--hextech-blue),
+                0 0 40px rgba(0, 160, 255, 0.3),
+                0 0 60px rgba(0, 160, 255, 0.1);
+  }
+
+  .glow-hextech-gold {
+    box-shadow: 0 0 20px var(--hextech-gold),
+                0 0 40px rgba(255, 215, 0, 0.3),
+                0 0 60px rgba(255, 215, 0, 0.1);
+  }
+
+  .glow-beemo-honey {
+    box-shadow: 0 0 20px var(--beemo-honey),
+                0 0 40px rgba(245, 166, 35, 0.3),
+                0 0 60px rgba(245, 166, 35, 0.1);
+  }
+
+  .text-glow-blue {
+    text-shadow: 0 0 10px var(--hextech-blue),
+                 0 0 20px rgba(0, 160, 255, 0.5),
+                 0 0 30px rgba(0, 160, 255, 0.3);
+  }
+
+  .text-glow-gold {
+    text-shadow: 0 0 10px var(--hextech-gold),
+                 0 0 20px rgba(255, 215, 0, 0.5),
+                 0 0 30px rgba(255, 215, 0, 0.3);
+  }
+
+  .text-glow-honey {
+    text-shadow: 0 0 10px var(--beemo-honey),
+                 0 0 20px rgba(245, 166, 35, 0.5),
+                 0 0 30px rgba(245, 166, 35, 0.3);
+  }
+
+  /* Hextech Border Effects */
+  .border-hextech {
+    border: 2px solid var(--hextech-blue);
+    position: relative;
+  }
+
+  .border-hextech::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    background: linear-gradient(135deg, var(--hextech-blue), transparent, var(--hextech-gold));
+    z-index: -1;
+    border-radius: inherit;
+    opacity: 0.5;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    background: rgba(26, 29, 40, 0.8);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .glass-hextech {
+    background: rgba(0, 160, 255, 0.1);
+    backdrop-filter: blur(12px);
+    border: 1px solid rgba(0, 160, 255, 0.2);
+  }
+
+  /* Honeycomb Pattern */
+  .honeycomb-bg {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23F5A623' fill-opacity='0.05'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+  }
+
+  /* Diamond Shape Clip */
+  .clip-diamond {
+    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
+  }
+
+  /* Hexagon Shape Clip */
+  .clip-hexagon {
+    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
+  }
+
+  /* Gradient Text */
+  .gradient-text-hextech {
+    background: linear-gradient(135deg, var(--hextech-blue) 0%, var(--hextech-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .gradient-text-beemo {
+    background: linear-gradient(135deg, var(--beemo-honey) 0%, var(--hextech-gold) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-deep);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--hextech-blue);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--hextech-blue-glow);
+}
+
+/* Selection Color */
+::selection {
+  background: rgba(0, 160, 255, 0.3);
+  color: white;
 }
