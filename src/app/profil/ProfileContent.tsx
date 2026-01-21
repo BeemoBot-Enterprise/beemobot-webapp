@@ -65,30 +65,49 @@ export default function ProfileContent() {
       const apiUrl =
         process.env.NEXT_PUBLIC_API_URL ||
         process.env.API_URL ||
-        "http://localhost:3333";
+        "https://fb8ff02b18f6.ngrok-free.app";
 
+      // Décoder le token pour extraire les informations utilisateur
       const tokenData = token.replace("beemo_", "");
+      const decodedToken = JSON.parse(atob(tokenData.split(".")[1]));
 
-      const statsResponse = await fetch(`${apiUrl}/game/stats/USER`, {
-        headers: {
-          "ngrok-skip-browser-warning": "true",
+      const discordUsername =
+        decodedToken.username || decodedToken.global_name || "User";
+      const discordId = decodedToken.id || decodedToken.user_id || "0";
+      const discordAvatar = decodedToken.avatar || null;
+      const discordDiscriminator = decodedToken.discriminator || "0";
+
+      // Récupérer les statistiques de l'utilisateur
+      const statsResponse = await fetch(
+        `${apiUrl}/game/stats/${encodeURIComponent(discordUsername)}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
+          },
         },
-      });
+      );
 
       if (statsResponse.ok) {
         const statsData = await statsResponse.json();
         setStats(statsData);
-
-        setUser({
-          id: "1",
-          username: statsData.username,
-          discriminator: "0",
-          avatar: null,
-        });
       } else {
-        throw new Error("Impossible de récupérer les statistiques");
+        // Si l'utilisateur n'a pas encore de stats, initialiser à 0
+        setStats({
+          username: discordUsername,
+          totalShrooms: 0,
+          totalRespects: 0,
+        });
       }
+
+      // Définir les informations utilisateur Discord
+      setUser({
+        id: discordId,
+        username: discordUsername,
+        discriminator: discordDiscriminator,
+        avatar: discordAvatar,
+      });
     } catch (err) {
+      console.error("Erreur lors du décodage du token:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement");
     } finally {
       setLoading(false);
