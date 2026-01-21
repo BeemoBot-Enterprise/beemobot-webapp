@@ -36,15 +36,53 @@ export default function ProfileContent() {
 
   useEffect(() => {
     const tokenFromUrl = searchParams.get("token");
+    const usernameFromUrl = searchParams.get("username");
+    const idFromUrl = searchParams.get("id");
+    const avatarFromUrl = searchParams.get("avatar");
+
+    console.log("🔍 URL actuelle:", window.location.href);
+    console.log("🔑 Token depuis URL:", tokenFromUrl);
+    console.log("👤 Username depuis URL:", usernameFromUrl);
 
     if (tokenFromUrl) {
+      console.log("✅ Token trouvé dans l'URL, sauvegarde...");
       setToken(tokenFromUrl);
       localStorage.setItem("beemobot_token", tokenFromUrl);
-      router.replace("/profile");
+      
+      // Sauvegarder aussi les infos utilisateur
+      if (usernameFromUrl) {
+        const userInfo = {
+          username: usernameFromUrl,
+          id: idFromUrl || "0",
+          avatar: avatarFromUrl || null,
+          discriminator: "0",
+        };
+  useEffect(() => {
+    if (token && user) {
+      fetchUserData();
+    } else if (token && !user) {
+      // Si on a un token mais pas d'user, on attend le prochain cycle
+      console.log("⏳ Token présent mais user manquant");
+      setLoading(false);
     } else {
+      setLoading(false);
+    }
+  }, [token, user]);
       const storedToken = localStorage.getItem("beemobot_token");
+      const storedUser = localStorage.getItem("beemobot_user");
+      
+      console.log("💾 Token depuis localStorage:", storedToken ? "Trouvé" : "Non trouvé");
+      console.log("💾 User depuis localStorage:", storedUser ? "Trouvé" : "Non trouvé");
+      
       if (storedToken) {
         setToken(storedToken);
+      }
+      if (storedUser) {
+        try {
+          setUser(JSON.parse(storedUser));
+        } catch (e) {
+          console.error("Erreur parsing user:", e);
+        }
       }
     }
   }, [searchParams, router]);
@@ -67,66 +105,61 @@ export default function ProfileContent() {
         process.env.API_URL ||
         "https://fb8ff02b18f6.ngrok-free.app";
 
-      // Décoder le token JWT pour extraire les informations utilisateur
-      try {
-        const tokenData = token.replace("beemo_", "");
-        const parts = tokenData.split(".");
+      console.log("🔄 Récupération des données utilisateur...");
 
-        if (parts.length !== 3) {
-          throw new Error("Token invalide: format incorrect");
-        }
+      // Appeler /auth/me pour récupérer les infos utilisateur avec le token
+      const userResponse = await fetch(`${apiUrl}/auth/me`, {
+        headers: {
+          "ngrok-skip-browser-warning": "true",
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-        const payload = parts[1];
-        const decodedToken = JSON.parse(atob(payload));
+      if (!userResponse.ok) {
+        throw new Error("Token invalide ou expiré. Veuillez vous reconnecter.");
+      }
 
-        console.log("Token décodé:", decodedToken);
+      const userData = await userResponse.json();
+      console.log("👤 Données utilisateur:", userData);
 
-        const discordUsername =
-          decodedToken.username ||
-          decodedToken.global_name ||
-          decodedToken.name ||
-          "User";
-        const discordId = decodedToken.id || decodedToken.sub || "0";
-        const discordAvatar = decodedToken.avatar || null;
-        const discordDiscriminator = decodedToken.discriminator || "0";
+      const discordUsername = userData.username || "User";
+      const discordId = userData.id || "0";
+      const discordAvatar = userData.avatar || null;
+      const discordDiscriminator = userData.discriminator || "0";
 
-        // Définir les informations utilisateur Discord
-        setUser({
-          id: discordId,
-          username: discordUsername,
-          discriminator: discordDiscriminator,
-          avatar: discordAvatar,
-        });
+      // Définir les informations utilisateur Discord
+      setUser({
+        id: discordId,
+        username: discordUsername,
+        discriminator: discordDiscriminator,
+        avatar: discordAvatar,
+      });
 
-        // Récupérer les statistiques de l'utilisateur
-        const statsResponse = await fetch(
-          `${apiUrl}/game/stats/${encodeURIComponent(discordUsername)}`,
-          {
-            headers: {
-              "ngrok-skip-browser-warning": "true",
-            },
+      // Récupérer les statistiques de l'utilisateur
+      const statsResponse = await fetch(
+        `${apiUrl}/game/stats/${encodeURIComponent(discordUsername)}`,
+        {
+          headers: {
+            "ngrok-skip-browser-warning": "true",
           },
-        );
-
-        if (statsResponse.ok) {
-          const statsData = await statsResponse.json();
-          setStats(statsData);
-        } else {
-          // Si l'utilisateur n'a pas encore de stats, initialiser à 0
-          setStats({
-            username: discordUsername,
-            totalShrooms: 0,
-            totalRespects: 0,
-          });
         }
-      } catch (decodeError) {
-        console.error("Erreur décodage token:", decodeError);
-        throw new Error(
-          "Impossible de décoder le token. Veuillez vous reconnecter.",
-        );
+      );
+
+      if (statsResponse.ok) {
+        const statsData = await statsResponse.json();
+        console.log("📊 Statistiques:", statsData);
+        setStats(statsData);
+      } else {
+        console.log("⚠️ Pas de stats, initialisation à 0");
+        // Si l'utilisateur n'a pas encore de stats, initialiser à 0
+        setStats({
+          username: discordUsername,
+          totalShrooms: 0,
+          totalRespects: 0,
+        });
       }
     } catch (err) {
-      console.error("Erreur lors de la récupération des données:", err);
+      console.error("❌ Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement");
       // En cas d'erreur, effacer le token invalide
       localStorage.removeItem("beemobot_token");
@@ -140,13 +173,14 @@ export default function ProfileContent() {
     const apiUrl =
       process.env.NEXT_PUBLIC_API_URL ||
       process.env.API_URL ||
-      "http://localhost:3333";
-    window.location.href = `${apiUrl}/auth/discord/redirect`;
-  };
-
   const handleLogout = () => {
     localStorage.removeItem("beemobot_token");
+    localStorage.removeItem("beemobot_user");
     setToken(null);
+    setUser(null);
+    setStats(null);
+    router.push("/");
+  };setToken(null);
     setUser(null);
     setStats(null);
     router.push("/");
