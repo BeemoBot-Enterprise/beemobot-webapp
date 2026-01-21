@@ -17,7 +17,7 @@ export function EpicHeroSection() {
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background layers */}
       <ParallaxBackground />
-      <ParticleCanvas particleCount={60} speed={0.3} color="#00A0FF" />
+      <ParticleCanvas particleCount={60} speed={0.3} color="#F5A623" />
 
       {/* Content container */}
       <div className="relative z-10 container mx-auto px-4 py-20">
@@ -34,13 +34,13 @@ export function EpicHeroSection() {
               initial={{ opacity: 0, y: -20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-blue-500/30 bg-blue-500/10 backdrop-blur-md mb-8 hover:bg-blue-500/20 transition-colors cursor-default"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-yellow-500/30 bg-yellow-500/10 backdrop-blur-md mb-8 hover:bg-yellow-500/20 transition-colors cursor-default"
             >
               <span className="relative flex h-3 w-3">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-3 w-3 bg-blue-500"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-yellow-400 opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
               </span>
-              <span className="text-sm font-medium text-blue-200 tracking-wide">
+              <span className="text-sm font-medium text-yellow-200 tracking-wide">
                 #1 League of Legends Discord Bot
               </span>
             </motion.div>
@@ -48,7 +48,7 @@ export function EpicHeroSection() {
             {/* Main headline */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight tracking-tight">
               <span className="block text-white mb-2">The Ultimate</span>
-              <span className="bg-gradient-to-r from-[#00A0FF] via-[#00E5CC] to-[#00A0FF] bg-clip-text text-transparent bg-[length:200%_auto] animate-shimmer">
+              <span className="bg-gradient-to-r from-[#F5A623] via-[#FFD700] to-[#F5A623] bg-clip-text text-transparent bg-[length:200%_auto] animate-shimmer">
                 Teemo Companion
               </span>
             </h1>
@@ -136,7 +136,7 @@ export function EpicHeroSection() {
             className="relative h-[500px] lg:h-[600px] flex items-center justify-center"
           >
             {/* Glow effect behind mascot */}
-            <div className="absolute inset-0 bg-blue-500/20 blur-[100px] rounded-full transform translate-y-10" />
+            <div className="absolute inset-0 bg-yellow-500/20 blur-[100px] rounded-full transform translate-y-10" />
             
             <motion.div
               animate={{ y: [-10, 10, -10] }}
@@ -147,7 +147,7 @@ export function EpicHeroSection() {
                 src={BEEMO.mascot}
                 alt="Beemo Bot Mascot"
                 fill
-                className="object-contain drop-shadow-[0_0_50px_rgba(0,160,255,0.2)]"
+                className="object-contain drop-shadow-[0_0_50px_rgba(245,166,35,0.2)]"
                 priority
               />
             </motion.div>

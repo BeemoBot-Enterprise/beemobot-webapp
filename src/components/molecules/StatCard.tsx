@@ -25,17 +25,28 @@ export function StatCard({
   className,
   index = 0,
 }: StatCardProps) {
-  const borderColors = {
-    blue: "border-blue-500",
-    gold: "border-yellow-400",
-    honey: "border-orange-400",
+  const colorStyles = {
+    blue: {
+      text: "text-blue-400",
+      glow: "shadow-blue-500/20",
+      border: "group-hover:border-blue-500/30",
+      bg: "group-hover:bg-blue-500/5",
+    },
+    gold: {
+      text: "text-yellow-400",
+      glow: "shadow-yellow-500/20",
+      border: "group-hover:border-yellow-500/30",
+      bg: "group-hover:bg-yellow-500/5",
+    },
+    honey: {
+      text: "text-orange-400",
+      glow: "shadow-orange-500/20",
+      border: "group-hover:border-orange-500/30",
+      bg: "group-hover:bg-orange-500/5",
+    },
   };
 
-  const textColors = {
-    blue: "text-blue-400",
-    gold: "text-yellow-400",
-    honey: "text-orange-400",
-  };
+  const styles = colorStyles[variant];
 
   return (
     <motion.div
@@ -44,23 +55,24 @@ export function StatCard({
       transition={{ duration: 0.5, delay: index * 0.1 }}
       viewport={{ once: true }}
       className={cn(
-        "relative flex flex-col items-center p-8 rounded-xl",
-        "bg-[#0a0a0f]/60 backdrop-blur-md border border-white/5",
-        `border-b-4 ${borderColors[variant]}`,
-        "hover:bg-[#0a0a0f]/80 hover:-translate-y-1 transition-all duration-300",
-        "shadow-lg",
+        "group relative flex flex-col items-center p-8 pt-12 rounded-2xl",
+        "bg-[#13151c]/80 backdrop-blur-xl border border-white/5",
+        "transition-all duration-500 ease-out hover:transform hover:-translate-y-2",
+        `hover:shadow-2xl hover:${styles.glow}`,
+        styles.border,
+        styles.bg,
         className
       )}
     >
-      {/* Diamond badge with icon */}
-      <div className="mb-6 -mt-14 drop-shadow-lg">
+      {/* Floating Badge */}
+      <div className="absolute -top-8 left-1/2 transform -translate-x-1/2 drop-shadow-lg z-10 transition-transform duration-300 group-hover:scale-110">
         <DiamondBadge variant={variant} size="lg">
-          <span className="text-2xl">{icon}</span>
+          <span className="text-2xl filter drop-shadow-md">{icon}</span>
         </DiamondBadge>
       </div>
 
-      {/* Value with counter animation */}
-      <div className={cn("text-4xl md:text-5xl font-bold mb-2 tracking-tight", textColors[variant])}>
+      {/* Value */}
+      <div className={cn("text-4xl md:text-5xl font-bold mb-3 tracking-tight mt-4", styles.text)}>
         <StatCounter
           end={value}
           suffix={suffix}
@@ -69,9 +81,15 @@ export function StatCard({
       </div>
 
       {/* Label */}
-      <p className="text-slate-400 text-sm font-semibold uppercase tracking-widest">
+      <p className="text-slate-400 text-sm font-medium uppercase tracking-widest group-hover:text-slate-200 transition-colors">
         {label}
       </p>
+
+      {/* Background Decor */}
+      <div className={cn(
+        "absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none",
+        "bg-gradient-to-b from-transparent to-white/5"
+      )} />
     </motion.div>
   );
 }

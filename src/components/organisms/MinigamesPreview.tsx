@@ -57,7 +57,7 @@ export function MinigamesPreview() {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <span className="inline-block px-4 py-1 rounded-full glass-hextech text-sm text-[var(--hextech-blue)] mb-4">
+          <span className="inline-block px-4 py-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-sm text-yellow-200 mb-4 backdrop-blur-md">
             Minigames
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
