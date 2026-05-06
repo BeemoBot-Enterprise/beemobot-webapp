@@ -5,17 +5,19 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getBalance, spendHoney } from "@/lib/honey";
 import Button from "@/components/atoms/Button";
+import Input from "@/components/atoms/Input";
+import Label from "@/components/atoms/Label";
 
-interface Props {
+export interface BetModalProps {
   gameId: string;
   onConfirm: (bet: number) => void;
   onCancel: () => void;
 }
 
-export function BetModal({ gameId, onConfirm, onCancel }: Props) {
+export function BetModal({ gameId, onConfirm, onCancel }: BetModalProps) {
   const [bet, setBet] = useState(10);
   const [balance, setBalance] = useState<number | null>(null);
   const [loading, setLoading] = useState(false);
@@ -25,56 +27,77 @@ export function BetModal({ gameId, onConfirm, onCancel }: Props) {
     getBalance().then(setBalance);
   }, []);
 
-  const submit = async () => {
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onCancel();
+    };
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [onCancel]);
+
+  const max = Math.min(100, balance ?? 100);
+  const clampedBet = Math.min(bet, max);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
     setLoading(true);
     setError(null);
-    const result = await spendHoney(bet, "minigame_bet", { game_id: gameId });
+    const result = await spendHoney(clampedBet, "minigame_bet", {
+      game_id: gameId,
+    });
     setLoading(false);
     if (!result.ok) {
-      if (result.error === "insufficient_honey") setError("Pas assez de honey 🍯");
-      else if (result.error === "not_authenticated") setError("Connecte-toi d'abord");
+      if (result.error === "insufficient_honey") setError("Pas assez de honey.");
+      else if (result.error === "not_authenticated")
+        setError("Connecte-toi d'abord.");
       else setError("Erreur, réessaye.");
       return;
     }
-    onConfirm(bet);
+    onConfirm(clampedBet);
   };
 
-  const max = Math.min(100, balance ?? 100);
-
   return (
-    <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
-      <div className="bg-[#1a1d28] p-8 rounded-xl border border-gray-700/30 max-w-sm w-full">
-        <h2 className="text-2xl font-bold text-white mb-2">🍯 Place ta mise</h2>
-        {balance !== null ? (
-          <p className="text-gray-400 mb-4">Solde : {balance} honey</p>
-        ) : (
-          <p className="text-gray-500 mb-4">Chargement du solde...</p>
-        )}
-        <input
-          type="range"
-          min="5"
-          max={max}
-          step="5"
-          value={Math.min(bet, max)}
-          onChange={(e) => setBet(Number(e.target.value))}
-          className="w-full"
-          disabled={balance !== null && balance < 5}
-        />
-        <p className="text-yellow-300 text-2xl text-center my-4">{Math.min(bet, max)} 🍯</p>
-        <p className="text-gray-400 text-sm text-center mb-4">
-          Gagne : {Math.min(bet, max) * 2} 🍯 — perds tout si tu rates
-        </p>
-        {error && <p className="text-red-400 text-sm mb-2">{error}</p>}
-        <div className="flex gap-2">
-          <Button onClick={onCancel} className="flex-1 bg-gray-700">Annuler</Button>
-          <Button
-            onClick={submit}
-            disabled={loading || balance === null || balance < 5}
-            className="flex-1 bg-blue-600"
-          >
-            {loading ? "..." : "Parier"}
-          </Button>
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+      <div className="w-full max-w-sm rounded-md border border-border bg-surface">
+        <div className="p-5 border-b border-border">
+          <h3 className="text-lg font-semibold text-text">Placer une mise</h3>
+          <p className="text-sm text-text-muted mt-1">
+            {balance !== null
+              ? `Solde : ${balance} honey`
+              : "Chargement du solde..."}
+          </p>
         </div>
+        <form onSubmit={submit} className="p-5 flex flex-col gap-3">
+          <Label htmlFor="amount">Montant (honey)</Label>
+          <Input
+            id="amount"
+            name="amount"
+            type="number"
+            min={5}
+            max={max}
+            step={5}
+            value={clampedBet}
+            onChange={(e) => setBet(Number(e.target.value))}
+            disabled={balance !== null && balance < 5}
+            required
+          />
+          <p className="text-sm text-text-muted">
+            Gain : {clampedBet * 2} honey si tu gagnes.
+          </p>
+          {error && <p className="text-sm text-danger">{error}</p>}
+          <div className="flex justify-end gap-2 mt-2">
+            <Button type="button" variant="secondary" onClick={onCancel}>
+              Annuler
+            </Button>
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={loading || balance === null || balance < 5}
+            >
+              {loading ? "..." : "Confirmer"}
+            </Button>
+          </div>
+        </form>
       </div>
     </div>
   );

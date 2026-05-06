@@ -8,6 +8,8 @@
 import { useEffect, useState } from "react";
 import { API_URL } from "@/lib/env";
 import Button from "@/components/atoms/Button";
+import { Card } from "@/components/atoms/Card";
+import Badge from "@/components/atoms/Badge";
 
 const TOKEN_KEY = "beemobot_token";
 
@@ -23,32 +25,60 @@ export default function ShopPage() {
   const [items, setItems] = useState<CosmeticItem[]>([]);
   const [owned, setOwned] = useState<Set<string>>(new Set());
   const [balance, setBalance] = useState<number>(0);
+  const [authed, setAuthed] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
     const token = localStorage.getItem(TOKEN_KEY);
+    setAuthed(Boolean(token));
 
-    fetch(`${API_URL}/shop`).then((r) => r.json()).then((d) => setItems(d.items ?? []));
+    fetch(`${API_URL}/shop`)
+      .then((r) => r.json())
+      .then((d) => setItems(d.items ?? []))
+      .catch(() => setItems([]));
 
     if (token) {
-      fetch(`${API_URL}/shop/owned`, { headers: { Authorization: `Bearer ${token}` } })
+      fetch(`${API_URL}/shop/owned`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((r) => (r.ok ? r.json() : { owned: [] }))
-        .then((d) => setOwned(new Set((d.owned ?? []).map((o: { cosmeticId: string }) => o.cosmeticId))));
-      fetch(`${API_URL}/economy/balance`, { headers: { Authorization: `Bearer ${token}` } })
+        .then((d) =>
+          setOwned(
+            new Set(
+              (d.owned ?? []).map(
+                (o: { cosmeticId: string }) => o.cosmeticId,
+              ),
+            ),
+          ),
+        )
+        .catch(() => setOwned(new Set()));
+
+      fetch(`${API_URL}/economy/balance`, {
+        headers: { Authorization: `Bearer ${token}` },
+      })
         .then((r) => (r.ok ? r.json() : { balance: 0 }))
-        .then((d) => setBalance(d.balance ?? 0));
+        .then((d) => setBalance(d.balance ?? 0))
+        .catch(() => setBalance(0));
     }
   }, []);
 
   const buy = async (cosmeticId: string) => {
-    const token = localStorage.getItem(TOKEN_KEY);
+    const token =
+      typeof window !== "undefined"
+        ? localStorage.getItem(TOKEN_KEY)
+        : null;
     if (!token) {
-      alert("Connecte-toi d'abord");
+      setError("Connecte-toi pour acheter un item.");
       return;
     }
+    setError(null);
     const r = await fetch(`${API_URL}/shop/purchase`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}` },
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
       body: JSON.stringify({ cosmeticId }),
     });
     if (r.ok) {
@@ -56,40 +86,81 @@ export default function ShopPage() {
       const item = items.find((i) => i.id === cosmeticId);
       if (item) setBalance((b) => b - item.priceHoney);
     } else if (r.status === 402) {
-      alert("Pas assez de honey 🍯");
+      setError("Solde insuffisant.");
     } else {
-      alert("Erreur lors de l'achat");
+      setError("Erreur lors de l’achat.");
     }
   };
 
   return (
-    <main className="min-h-screen bg-[#0f1117] py-20 px-4">
-      <div className="max-w-5xl mx-auto">
-        <header className="flex justify-between items-end mb-8">
-          <h1 className="text-4xl font-bold text-white">🛒 Shop</h1>
-          <p className="text-yellow-300 text-2xl">{balance} 🍯</p>
-        </header>
-        <div className="grid md:grid-cols-3 gap-4">
+    <main className="max-w-[1200px] mx-auto px-6 py-12">
+      <header className="flex items-end justify-between mb-8 flex-wrap gap-4">
+        <div>
+          <h1 className="text-3xl font-semibold text-text mb-1">Shop</h1>
+          <p className="text-text-muted">
+            Personnalise ton profil avec du honey gagné en jeu.
+          </p>
+        </div>
+        {authed && (
+          <Badge variant="gold" className="text-sm px-3 py-1">
+            Solde : {balance}
+          </Badge>
+        )}
+      </header>
+
+      {error && (
+        <Card className="p-4 mb-6 border-danger/40">
+          <p className="text-sm text-danger">{error}</p>
+        </Card>
+      )}
+
+      {items.length === 0 ? (
+        <Card className="p-10 text-center">
+          <h2 className="text-lg font-semibold text-text mb-1">
+            Aucun item disponible
+          </h2>
+          <p className="text-text-muted text-sm">
+            Le catalogue est vide ou indisponible pour le moment.
+          </p>
+        </Card>
+      ) : (
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
           {items.map((item) => {
             const isOwned = owned.has(item.id);
-            const cantAfford = balance < item.priceHoney;
+            const cantAfford = authed && balance < item.priceHoney;
             return (
-              <div key={item.id} className="bg-[#1a1d28] p-6 rounded-xl border border-gray-700/30 text-center">
-                <div className="text-xs uppercase text-gray-500 mb-1">{item.type}</div>
-                <h3 className="text-white font-bold mb-2">{item.name}</h3>
-                <p className="text-yellow-300 text-xl mb-4">{item.priceHoney} 🍯</p>
-                <Button
-                  onClick={() => buy(item.id)}
-                  disabled={isOwned || cantAfford}
-                  className={isOwned ? "bg-gray-600" : "bg-blue-600 hover:bg-blue-700 disabled:opacity-50"}
-                >
-                  {isOwned ? "Possédé" : cantAfford ? "Trop cher" : "Acheter"}
-                </Button>
-              </div>
+              <Card key={item.id} className="p-6 flex flex-col gap-3">
+                <p className="text-xs uppercase tracking-wide text-text-muted">
+                  {item.type}
+                </p>
+                <h3 className="text-lg font-semibold text-text">
+                  {item.name}
+                </h3>
+                <p className="text-text-muted font-mono text-sm">
+                  {item.priceHoney} honey
+                </p>
+                <div className="mt-auto pt-2">
+                  <Button
+                    onClick={() => buy(item.id)}
+                    disabled={isOwned || cantAfford || !authed}
+                    variant={isOwned ? "secondary" : "primary"}
+                    size="sm"
+                    className="w-full"
+                  >
+                    {!authed
+                      ? "Connexion requise"
+                      : isOwned
+                        ? "Possédé"
+                        : cantAfford
+                          ? "Solde insuffisant"
+                          : "Acheter"}
+                  </Button>
+                </div>
+              </Card>
             );
           })}
         </div>
-      </div>
+      )}
     </main>
   );
 }

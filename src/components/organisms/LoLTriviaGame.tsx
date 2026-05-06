@@ -1,9 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
-import { ProgressRing } from "@/components/atoms/ProgressRing";
+import Button from "@/components/atoms/Button";
+import { Card } from "@/components/atoms/Card";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
@@ -49,7 +48,12 @@ const questions: Question[] = [
   },
   {
     question: "Which item provides the 'Spellblade' passive?",
-    options: ["Rabadon's Deathcap", "Trinity Force", "Infinity Edge", "Warmog's Armor"],
+    options: [
+      "Rabadon's Deathcap",
+      "Trinity Force",
+      "Infinity Edge",
+      "Warmog's Armor",
+    ],
     correct: 1,
     category: "Items",
   },
@@ -121,31 +125,27 @@ interface GameData {
 const QUESTION_TIME = 15;
 
 export function LoLTriviaGame() {
-  const {
-    state,
-    startGame,
-    endGame,
-    updateScore,
-    updateData,
-    resetGame,
-  } = useGameState<GameData>(
-    {
-      currentQuestionIndex: 0,
-      selectedAnswer: null,
-      timeLeft: QUESTION_TIME,
-      answeredQuestions: [],
-      correctAnswers: 0,
-      showResult: false,
-    },
-    "lol-trivia"
-  );
+  const { state, startGame, endGame, updateScore, updateData, resetGame } =
+    useGameState<GameData>(
+      {
+        currentQuestionIndex: 0,
+        selectedAnswer: null,
+        timeLeft: QUESTION_TIME,
+        answeredQuestions: [],
+        correctAnswers: 0,
+        showResult: false,
+      },
+      "lol-trivia",
+    );
 
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
   const [bet, setBet] = useState<number | null>(null);
   const [showBetModal, setShowBetModal] = useState(false);
 
   const shuffleQuestions = useCallback(() => {
-    const shuffled = [...questions].sort(() => Math.random() - 0.5).slice(0, 10);
+    const shuffled = [...questions]
+      .sort(() => Math.random() - 0.5)
+      .slice(0, 10);
     setShuffledQuestions(shuffled);
   }, []);
 
@@ -175,7 +175,12 @@ export function LoLTriviaGame() {
         await fetch("/api/minigame-win", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "lol-trivia", score: correctAnswers }),
+          body: JSON.stringify({
+            puuid,
+            amount: bet * 2,
+            gameId: "lol-trivia",
+            score: correctAnswers,
+          }),
         });
       }
     }
@@ -214,234 +219,172 @@ export function LoLTriviaGame() {
     }
   };
 
-  // Timer effect
   useEffect(() => {
-    if (state.status !== "playing" || state.data.selectedAnswer !== null) return;
+    if (state.status !== "playing" || state.data.selectedAnswer !== null)
+      return;
 
     const timer = setInterval(() => {
       updateData({ timeLeft: Math.max(0, state.data.timeLeft - 1) });
     }, 1000);
 
     return () => clearInterval(timer);
-  }, [state.status, state.data.selectedAnswer, state.data.timeLeft, updateData]);
+  }, [
+    state.status,
+    state.data.selectedAnswer,
+    state.data.timeLeft,
+    updateData,
+  ]);
 
-  // Auto-advance when time runs out
   useEffect(() => {
     if (state.data.timeLeft === 0 && state.data.selectedAnswer === null) {
-      updateData({ selectedAnswer: -1 }); // Mark as timeout
+      updateData({ selectedAnswer: -1 });
     }
   }, [state.data.timeLeft, state.data.selectedAnswer, updateData]);
 
   if (state.status === "idle") {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="lol-trivia"
-            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(); }}
+            onConfirm={(b) => {
+              setBet(b);
+              setShowBetModal(false);
+              doStart();
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-8"
-        >
-          <span className="text-6xl">🧠</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          LoL Trivia
-        </h2>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          Test your League of Legends knowledge! Answer 10 questions about
-          champions, items, lore, and esports. You have 15 seconds per question!
+        <h2 className="text-xl font-semibold text-text mb-2">LoL Trivia</h2>
+        <p className="text-sm text-text-muted mb-6">
+          10 questions sur LoL : champions, items, lore, esports.
+          15 secondes par question.
         </p>
-        <div className="flex gap-8 mb-6">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--hextech-gold)]">
-              {state.highScore}
-            </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
-          </div>
+        <div className="mb-6">
+          <p className="text-base text-text">{state.highScore}</p>
+          <p className="text-sm text-text-muted">Meilleur score</p>
         </div>
-        <HexButton variant="blue" size="lg" onClick={handleStart}>
-          Start Quiz
-        </HexButton>
-      </div>
+        <Button variant="primary" onClick={handleStart}>
+          Commencer
+        </Button>
+      </Card>
     );
   }
 
   if (state.data.showResult) {
-    const percentage = (state.data.correctAnswers / 10) * 100;
-    const passed = percentage >= 70;
+    const passed = state.data.correctAnswers >= 7;
 
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="lol-trivia"
-            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(); }}
+            onConfirm={(b) => {
+              setBet(b);
+              setShowBetModal(false);
+              doStart();
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-6"
-        >
-          <ProgressRing
-            progress={percentage}
-            size={120}
-            variant={passed ? "gold" : "blue"}
-          >
-            <span className="text-2xl font-bold">
-              {state.data.correctAnswers}/10
-            </span>
-          </ProgressRing>
-        </motion.div>
-
-        <h2
-          className={cn(
-            "text-3xl font-bold mb-2",
-            passed ? "text-[var(--hextech-gold)]" : "text-[var(--hextech-blue)]"
-          )}
-        >
-          {passed ? "Challenger Level!" : "Keep Practicing!"}
+        <h2 className="text-xl font-semibold text-text mb-2">
+          {passed ? "Bien joué" : "Continue à pratiquer"}
         </h2>
-        <p className="text-muted-foreground mb-4">
-          You scored {state.score} points with {state.data.correctAnswers}{" "}
-          correct answers!
+        <p className="text-sm text-text-muted mb-6">
+          {state.data.correctAnswers} / 10 bonnes réponses — {state.score} points.
         </p>
-
         {state.score > state.highScore && (
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-[var(--rune-cyan)] font-bold mb-4"
-          >
-            🎉 New High Score!
-          </motion.p>
+          <p className="text-sm text-text mb-4">Nouveau meilleur score.</p>
         )}
-
-        <div className="flex gap-4">
-          <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
-            Play Again
-          </HexButton>
-          <HexButton variant="gold" onClick={resetGame}>
-            Main Menu
-          </HexButton>
+        <div className="flex justify-center gap-2">
+          <Button variant="primary" onClick={() => setShowBetModal(true)}>
+            Rejouer
+          </Button>
+          <Button variant="secondary" onClick={resetGame}>
+            Menu
+          </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
-      {/* Header */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex items-center gap-4">
-          <span
-            className={cn(
-              "px-3 py-1 rounded-full text-sm font-medium",
-              currentQuestion.category === "Champions" && "bg-blue-500/20 text-blue-400",
-              currentQuestion.category === "Items" && "bg-yellow-500/20 text-yellow-400",
-              currentQuestion.category === "Lore" && "bg-purple-500/20 text-purple-400",
-              currentQuestion.category === "Esports" && "bg-green-500/20 text-green-400"
-            )}
-          >
+    <div className="rounded-md border border-border bg-surface p-6 max-w-2xl mx-auto">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center gap-3">
+          <span className="px-2 py-0.5 rounded border border-border bg-bg text-sm text-text-muted">
             {currentQuestion.category}
           </span>
-          <span className="text-muted-foreground">
+          <span className="text-sm text-text-muted">
             Question {state.data.currentQuestionIndex + 1}/10
           </span>
         </div>
-
         <div className="flex items-center gap-4">
-          <div className="glass px-4 py-2 rounded-lg">
-            <span className="text-[var(--hextech-gold)] font-bold">
-              {state.score} pts
-            </span>
+          <div>
+            <p className="text-sm text-text-muted">Score</p>
+            <p className="text-base text-text">{state.score}</p>
           </div>
-          <ProgressRing
-            progress={(state.data.timeLeft / QUESTION_TIME) * 100}
-            size={50}
-            strokeWidth={4}
-            variant={state.data.timeLeft <= 5 ? "honey" : "blue"}
-          >
-            <span className="text-sm font-bold">{state.data.timeLeft}</span>
-          </ProgressRing>
+          <div>
+            <p className="text-sm text-text-muted">Temps</p>
+            <p className="text-base text-text">{state.data.timeLeft}s</p>
+          </div>
         </div>
       </div>
 
-      {/* Question */}
-      <AnimatePresence mode="wait">
-        <motion.div
-          key={state.data.currentQuestionIndex}
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          exit={{ opacity: 0, x: -20 }}
-        >
-          <div className="glass rounded-xl p-6 mb-6">
-            <h3 className="text-xl font-semibold text-center">
-              {currentQuestion.question}
-            </h3>
-          </div>
+      <div className="rounded-md border border-border bg-bg p-6 mb-6">
+        <h3 className="text-base text-text text-center">
+          {currentQuestion.question}
+        </h3>
+      </div>
 
-          {/* Options */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {currentQuestion.options.map((option, index) => {
-              const isSelected = state.data.selectedAnswer === index;
-              const isCorrect = index === currentQuestion.correct;
-              const showResult = state.data.selectedAnswer !== null;
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+        {currentQuestion.options.map((option, index) => {
+          const isSelected = state.data.selectedAnswer === index;
+          const isCorrect = index === currentQuestion.correct;
+          const showResult = state.data.selectedAnswer !== null;
 
-              return (
-                <motion.button
-                  key={index}
-                  onClick={() => handleAnswer(index)}
-                  disabled={showResult}
-                  whileHover={!showResult ? { scale: 1.02 } : {}}
-                  whileTap={!showResult ? { scale: 0.98 } : {}}
-                  className={cn(
-                    "p-4 rounded-xl glass text-left transition-all",
-                    "border-2",
-                    !showResult && "hover:border-[var(--hextech-blue)] cursor-pointer",
-                    showResult && isCorrect && "border-green-500 bg-green-500/20",
-                    showResult && isSelected && !isCorrect && "border-red-500 bg-red-500/20",
-                    !showResult && "border-transparent"
-                  )}
-                >
-                  <span className="flex items-center gap-3">
-                    <span
-                      className={cn(
-                        "w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold",
-                        showResult && isCorrect && "bg-green-500",
-                        showResult && isSelected && !isCorrect && "bg-red-500",
-                        !showResult && "bg-[var(--bg-surface)]"
-                      )}
-                    >
-                      {String.fromCharCode(65 + index)}
-                    </span>
-                    {option}
-                  </span>
-                </motion.button>
-              );
-            })}
-          </div>
-
-          {/* Next button */}
-          {state.data.selectedAnswer !== null && (
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="flex justify-center mt-6"
+          return (
+            <button
+              key={index}
+              onClick={() => handleAnswer(index)}
+              disabled={showResult}
+              className={cn(
+                "p-3 rounded-md border text-left text-sm text-text transition-colors",
+                !showResult &&
+                  "border-border bg-bg hover:bg-surface-hover cursor-pointer",
+                showResult &&
+                  isCorrect &&
+                  "border-accent bg-accent/10 text-text",
+                showResult &&
+                  isSelected &&
+                  !isCorrect &&
+                  "border-danger bg-danger/10 text-text",
+                showResult &&
+                  !isCorrect &&
+                  !isSelected &&
+                  "border-border bg-bg opacity-60",
+              )}
             >
-              <HexButton variant="blue" onClick={nextQuestion}>
-                {state.data.currentQuestionIndex < 9 ? "Next Question" : "See Results"}
-              </HexButton>
-            </motion.div>
-          )}
-        </motion.div>
-      </AnimatePresence>
+              <span className="flex items-center gap-3">
+                <span className="w-6 h-6 rounded-full border border-border flex items-center justify-center text-xs text-text-muted">
+                  {String.fromCharCode(65 + index)}
+                </span>
+                {option}
+              </span>
+            </button>
+          );
+        })}
+      </div>
+
+      {state.data.selectedAnswer !== null && (
+        <div className="flex justify-center mt-6">
+          <Button variant="primary" onClick={nextQuestion}>
+            {state.data.currentQuestionIndex < 9
+              ? "Question suivante"
+              : "Voir les résultats"}
+          </Button>
+        </div>
+      )}
     </div>
   );
 }

@@ -1,57 +1,44 @@
 import { LOGO } from "@/assets/images";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/atoms/Card";
+import { Card } from "@/components/atoms/Card";
+import Badge from "@/components/atoms/Badge";
 import Image from "next/image";
 
 const ProfileSection = () => {
   return (
-    <Card className="bg-[#2a2e3b] border-0 shadow-lg overflow-hidden">
-      <CardHeader className="bg-[#232631] text-gray-400 px-6 py-4">
-        <CardTitle className="text-xl">
-          Données personnelles{" "}
-          <span className="text-xs bg-purple-700 px-2 py-1 rounded-full ml-2">
-            Beta
-          </span>
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="p-6">
-        <div className="space-y-4">
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-gray-400">ID</div>
-            <div className="col-span-2 font-medium">@lolpip</div>
-          </div>
+    <Card className="overflow-hidden">
+      <div className="px-6 py-4 border-b border-border flex items-center gap-2">
+        <h2 className="text-base font-semibold text-text">
+          Données personnelles
+        </h2>
+        <Badge variant="accent">Beta</Badge>
+      </div>
 
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-gray-400">Email</div>
-            <div className="col-span-2 font-medium">lol@teamotroll.com</div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-4">
-            <div className="text-gray-400">Mot de passe</div>
-            <div className="col-span-2 font-medium">••••••••••</div>
-          </div>
+      <div className="p-6 space-y-3">
+        <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="text-text-muted">ID</div>
+          <div className="col-span-2 text-text">@lolpip</div>
         </div>
-      </CardContent>
+        <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="text-text-muted">Email</div>
+          <div className="col-span-2 text-text">lol@teamotroll.com</div>
+        </div>
+        <div className="grid grid-cols-3 gap-4 text-sm">
+          <div className="text-text-muted">Mot de passe</div>
+          <div className="col-span-2 text-text">••••••••••</div>
+        </div>
+      </div>
 
-      <div className="p-6 border-t border-[#3a3f4b]">
-        <div className="flex items-center">
-          <div className="mr-4">
-            <Image
-              height={400}
-              width={400}
-              src={LOGO.discord}
-              alt="Discord Logo"
-              className="w-10 h-10"
-            />
-          </div>
-          <div>
-            <h3 className="text-purple-400 text-lg font-medium">Discord</h3>
-            <p className="text-sm text-gray-400">Version 9.29.0</p>
-          </div>
+      <div className="p-6 border-t border-border flex items-center gap-3">
+        <Image
+          height={40}
+          width={40}
+          src={LOGO.discord}
+          alt="Discord"
+          className="h-10 w-10"
+        />
+        <div>
+          <div className="text-sm font-medium text-text">Discord</div>
+          <p className="text-xs text-text-muted">Version 9.29.0</p>
         </div>
       </div>
     </Card>

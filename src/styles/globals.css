@@ -2,235 +2,54 @@
 @tailwind components;
 @tailwind utilities;
 
-@layer base {
-  :root {
-    /* Original color system */
-    --background: 220 13% 18%;
-    --foreground: 0 0% 100%;
-
-    --card: 222 15% 14%;
-    --card-foreground: 0 0% 100%;
-
-    --popover: 222 15% 14%;
-    --popover-foreground: 0 0% 100%;
-
-    --primary: 219 85% 54%;
-    --primary-foreground: 0 0% 100%;
-
-    --secondary: 223 14% 17%;
-    --secondary-foreground: 0 0% 100%;
-
-    --muted: 223 14% 27%;
-    --muted-foreground: 215 8% 70%;
-
-    --accent: 223 14% 27%;
-    --accent-foreground: 0 0% 100%;
-
-    --destructive: 0 84% 60%;
-    --destructive-foreground: 0 0% 100%;
-
-    --border: 223 14% 27%;
-    --input: 223 14% 27%;
-    --ring: 219 85% 54%;
-
-    --radius: 0.5rem;
-
-    /* Hextech Blue Magic - Primary CTAs */
-    --hextech-blue: #00a0ff;
-    --hextech-blue-glow: #33b3ff;
-    --hextech-blue-dark: #0080cc;
-
-    /* Hextech Gold - Secondary Actions */
-    --hextech-gold: #ffd700;
-    --hextech-gold-light: #ffe54c;
-    --hextech-gold-dark: #b8860b;
-
-    /* Beemo Honey Theme */
-    --beemo-honey: #f5a623;
-    --beemo-honey-light: #ffe066;
-    --beemo-honey-dark: #cc8800;
-
-    /* Dark Void Backgrounds */
-    --bg-void: #0a0a0f;
-    --bg-deep: #12141c;
-    --bg-surface: #1a1d28;
-    --bg-elevated: #252838;
-
-    /* Runeterra Accents */
-    --rune-cyan: #00e5cc;
-    --rune-purple: #9b59e6;
-    --rune-pink: #e91e8c;
-  }
+:root {
+  --bg: #0b0d12;
+  --surface: #151821;
+  --surface-hover: #1b1f2b;
+  --border: #262a36;
+  --text: #e8eaf0;
+  --text-muted: #9aa0b0;
+  --accent: #3b82f6;
+  --accent-hover: #2563eb;
+  --accent-gold: #f5b528;
+  --danger: #ef4444;
+  --radius: 8px;
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: var(--border);
+  }
+  html {
+    scroll-behavior: smooth;
   }
   body {
-    @apply bg-background text-foreground;
+    background: var(--bg);
+    color: var(--text);
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 {
+    color: var(--text);
+    font-weight: 600;
+    letter-spacing: -0.01em;
   }
 }
 
-html {
-  overflow-x: hidden;
-  scroll-behavior: smooth;
-}
-
-body {
-  background: var(--bg-void);
-  position: relative;
-}
-
-body::after {
-  content: "";
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: radial-gradient(
-    circle at bottom left,
-    rgba(0, 160, 255, 0.05) 0%,
-    rgba(155, 89, 230, 0.03) 30%,
-    rgba(245, 166, 35, 0.02) 60%,
-    transparent 80%
-  );
-  z-index: -10;
-  pointer-events: none;
-}
-
-/* Hextech Glow Effects */
-@layer utilities {
-  .glow-hextech-blue {
-    box-shadow:
-      0 0 8px rgba(0, 160, 255, 0.3),
-      0 0 15px rgba(0, 160, 255, 0.15);
-  }
-
-  .glow-hextech-gold {
-    box-shadow:
-      0 0 8px rgba(255, 215, 0, 0.3),
-      0 0 15px rgba(255, 215, 0, 0.15);
-  }
-
-  .glow-beemo-honey {
-    box-shadow:
-      0 0 8px rgba(245, 166, 35, 0.3),
-      0 0 15px rgba(245, 166, 35, 0.15);
-  }
-
-  .text-glow-blue {
-    text-shadow:
-      0 0 5px rgba(0, 160, 255, 0.4),
-      0 0 10px rgba(0, 160, 255, 0.2);
-  }
-
-  .text-glow-gold {
-    text-shadow:
-      0 0 5px rgba(255, 215, 0, 0.4),
-      0 0 10px rgba(255, 215, 0, 0.2);
-  }
-
-  .text-glow-honey {
-    text-shadow:
-      0 0 5px rgba(245, 166, 35, 0.4),
-      0 0 10px rgba(245, 166, 35, 0.2);
-  }
-
-  /* Hextech Border Effects */
-  .border-hextech {
-    border: 2px solid var(--hextech-blue);
-    position: relative;
-  }
-
-  .border-hextech::before {
-    content: "";
-    position: absolute;
-    inset: -2px;
-    background: linear-gradient(
-      135deg,
-      var(--hextech-blue),
-      transparent,
-      var(--hextech-gold)
-    );
-    z-index: -1;
-    border-radius: inherit;
-    opacity: 0.5;
-  }
-
-  /* Glassmorphism */
-  .glass {
-    background: rgba(26, 29, 40, 0.7);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.08);
-  }
-
-  .glass-hextech {
-    background: rgba(0, 160, 255, 0.08);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(0, 160, 255, 0.15);
-  }
-
-  /* Honeycomb Pattern */
-  .honeycomb-bg {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='28' height='49' viewBox='0 0 28 49'%3E%3Cg fill-rule='evenodd'%3E%3Cg fill='%23F5A623' fill-opacity='0.05'%3E%3Cpath d='M13.99 9.25l13 7.5v15l-13 7.5L1 31.75v-15l12.99-7.5zM3 17.9v12.7l10.99 6.34 11-6.35V17.9l-11-6.34L3 17.9zM0 15l12.98-7.5V0h-2v6.35L0 12.69v2.3zm0 18.5L12.98 41v8h-2v-6.85L0 35.81v-2.3zM15 0v7.5L27.99 15H28v-2.31h-.01L17 6.35V0h-2zm0 49v-8l12.99-7.5H28v2.31h-.01L17 42.15V49h-2z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-  }
-
-  /* Diamond Shape Clip */
-  .clip-diamond {
-    clip-path: polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%);
-  }
-
-  /* Hexagon Shape Clip */
-  .clip-hexagon {
-    clip-path: polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0% 50%);
-  }
-
-  /* Gradient Text */
-  .gradient-text-hextech {
-    background: linear-gradient(
-      135deg,
-      var(--hextech-blue) 0%,
-      var(--hextech-gold) 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-
-  .gradient-text-beemo {
-    background: linear-gradient(
-      135deg,
-      var(--beemo-honey) 0%,
-      var(--hextech-gold) 100%
-    );
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
-}
-
-/* Custom Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
 }
-
 ::-webkit-scrollbar-track {
-  background: var(--bg-deep);
+  background: var(--bg);
 }
-
 ::-webkit-scrollbar-thumb {
-  background: var(--hextech-blue);
+  background: var(--border);
   border-radius: 4px;
 }
-
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--hextech-blue-glow);
+  background: var(--text-muted);
 }
 
-/* Selection Color */
 ::selection {
-  background: rgba(0, 160, 255, 0.3);
-  color: white;
+  background: rgba(59, 130, 246, 0.3);
+  color: var(--text);
 }

@@ -1,335 +1,290 @@
-"use client";
-import { useState } from "react";
+/**
+ * Copyright (c) 2024-2026 BeemoBot Enterprise
+ * All rights reserved.
+ */
 
-export default function Documentation() {
-  const [activeSection, setActiveSection] = useState("quickstart");
+import { Card } from "@/components/atoms/Card";
 
-  const sections = [
-    { id: "quickstart", title: "🚀 Quick start" },
-    { id: "reputation", title: "🍄⭐ Le système de réputation" },
-    { id: "honey", title: "🍯 Honey & shop" },
-    { id: "faq", title: "❓ FAQ" },
-  ];
+const sections = [
+  { id: "intro", label: "Introduction" },
+  { id: "quickstart", label: "Quick start" },
+  { id: "reputation", label: "Réputation" },
+  { id: "honey", label: "Honey & shop" },
+  { id: "faq", label: "FAQ" },
+];
 
-  const handleSetActiveSection = (id: string) => {
-    setActiveSection(id);
-    document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
-  };
+const quickstart = [
+  {
+    step: "1",
+    title: "Connecte-toi avec Discord",
+    desc: "Clique sur « Login » en haut à droite. Tu seras redirigé vers Discord pour autoriser BeemoBot à accéder à ton profil.",
+  },
+  {
+    step: "2",
+    title: "Lie ton compte Riot",
+    desc: "Rends-toi sur /auth/link et renseigne ton gameName, tagLine et ta région (ex : Pseudo + EUW1 + EUW). Le bot vérifie ton identité via l’API Riot.",
+  },
+  {
+    step: "3",
+    title: "Joue une game LoL",
+    desc: "Joue une partie avec d’autres utilisateurs de BeemoBot. Le worker détecte automatiquement les parties communes dans tes 20 dernières games.",
+  },
+  {
+    step: "4",
+    title: "Donne une réputation",
+    desc: "Tape /judge Riot-Tag sur Discord pour juger un joueur présent dans une de tes parties récentes. Choisis shroom ou respect via les boutons interactifs.",
+  },
+  {
+    step: "5",
+    title: "Ou attends le DM automatique",
+    desc: "Le worker proactif t’envoie un DM après chaque game pour proposer de juger tes coéquipiers et adversaires. Pas besoin de taper une commande.",
+  },
+];
 
+const reputationRules = [
+  {
+    title: "Preuve par match obligatoire",
+    desc: "Tu ne peux juger que les joueurs présents dans tes vraies parties Riot (allié ou adverse). Le système vérifie via l’API Riot.",
+  },
+  {
+    title: "Maximum 1 shroom + 1 respect par paire et par match",
+    desc: "Pour chaque match commun, tu peux donner au plus 1 shroom et 1 respect à chaque joueur. Le système trace tout pour éviter le spam.",
+  },
+  {
+    title: "Score immuable",
+    desc: "Ton score ne baisse jamais. Ce que les gens pensent de toi reste gravé — c’est leur jugement, pas une note fluctuante.",
+  },
+  {
+    title: "Poids de la réputation",
+    desc: "Le vote d’un joueur respecté pèse davantage. Ton influence dépend de ton propre score.",
+  },
+];
+
+const honeyEarnings = [
+  { action: "Recevoir un Respect", honey: "+10" },
+  { action: "Recevoir un Shroom", honey: "+5 (rage compensation)" },
+  { action: "Daily login", honey: "+20" },
+  { action: "Mini-jeu : victoire", honey: "×2 mise" },
+  { action: "Mini-jeu : défaite", honey: "Mise perdue" },
+];
+
+const shopItems = [
+  { name: "Badges", price: "100–500", desc: "Icônes de profil exclusives" },
+  { name: "Borders", price: "500–1000", desc: "Cadres animés sur ton avatar" },
+  { name: "Glow effects", price: "1000–2000", desc: "Effets lumineux sur ton profil" },
+];
+
+const faq = [
+  {
+    q: "Je n’ai pas reçu de DM du bot",
+    a: "Vérifie que les DMs serveur sont activés dans les paramètres Discord du serveur BeemoBot. Le worker tourne toutes les 5 minutes — laisse-lui un peu de temps après ta game.",
+  },
+  {
+    q: "Je ne peux pas juger ce joueur",
+    a: "Vous devez avoir un match commun dans tes 20 dernières games. Si la partie est plus ancienne, elle n’est plus dans la fenêtre de vérification.",
+  },
+  {
+    q: "Mon score n’a pas bougé",
+    a: "La réputation est immuable — elle ne baisse jamais. Le honey aussi est append-only. Si tu viens de jouer, attends le poll worker (environ 5 minutes).",
+  },
+  {
+    q: "Comment changer de Riot ID",
+    a: "Contacte un admin du serveur. Le multi-link est désactivé pour la Phase 1. Un seul compte Riot par Discord.",
+  },
+  {
+    q: "Ma clé Riot n’est pas reconnue",
+    a: "Vérifie que ton gameName et tagLine sont exacts (respecte la casse). La région doit correspondre à celle de ton compte (EUW1, NA1, KR, etc.).",
+  },
+  {
+    q: "Conflit de match — le bot dit que je n’étais pas dans la partie",
+    a: "L’API Riot peut avoir un délai. Réessaie 10 minutes après la fin de la game. Si le problème persiste, contacte un admin avec l’ID du match.",
+  },
+];
+
+export default function DocumentationPage() {
   return (
-    <div className="flex min-h-screen bg-[#0f1117]">
-      {/* Sidebar */}
-      <div className="w-72 bg-[#1a1d28] border-r border-gray-700/50 p-6 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
-        <h2 className="text-2xl font-bold mb-8 text-white border-b border-gray-700 pb-4">
-          Documentation
-        </h2>
+    <main className="max-w-[1200px] mx-auto px-6 py-12 grid md:grid-cols-[220px_1fr] gap-12">
+      <aside className="md:sticky md:top-20 md:self-start">
         <nav>
-          <ul className="space-y-1">
+          <p className="text-xs uppercase tracking-wide text-text-muted mb-3 px-3">
+            Documentation
+          </p>
+          <ul className="flex flex-col gap-1">
             {sections.map((s) => (
               <li key={s.id}>
-                <button
-                  onClick={() => handleSetActiveSection(s.id)}
-                  className={`w-full text-left px-4 py-3 rounded-md transition-colors text-sm font-medium ${
-                    activeSection === s.id
-                      ? "bg-[#5865F2] text-white"
-                      : "text-gray-300 hover:bg-[#2a2e3b] hover:text-white"
-                  }`}
+                <a
+                  href={`#${s.id}`}
+                  className="block px-3 py-2 text-sm text-text-muted hover:text-text hover:bg-surface rounded-md transition-colors"
                 >
-                  {s.title}
-                </button>
+                  {s.label}
+                </a>
               </li>
             ))}
           </ul>
         </nav>
-      </div>
+      </aside>
 
-      {/* Main content */}
-      <div className="flex-1 p-10 max-w-5xl">
-        <h1 className="text-5xl font-bold mb-12 text-white">
-          Documentation BeemoBot
-        </h1>
+      <article className="max-w-3xl">
+        <section id="intro" className="mb-14">
+          <h1 className="text-3xl font-semibold text-text mb-3">
+            Documentation BeemoBot
+          </h1>
+          <p className="text-text-muted leading-relaxed">
+            BeemoBot est un bot Discord communautaire pour League of Legends. Il
+            propose un système de réputation entre joueurs, une économie virtuelle
+            (honey), et des mini-jeux. Cette page couvre les bases pour
+            commencer.
+          </p>
+        </section>
 
-        {/* Quick start */}
-        <section
-          id="quickstart"
-          className={`mb-16 bg-[#1a1d28] p-8 rounded-xl border transition-all ${
-            activeSection === "quickstart"
-              ? "border-[#5865F2] shadow-lg"
-              : "border-gray-700/30"
-          }`}
-        >
-          <h2 className="text-3xl font-bold mb-6 text-white">🚀 Quick start</h2>
-          <p className="text-gray-300 mb-6 text-base leading-relaxed">
+        <section id="quickstart" className="mb-14">
+          <h2 className="text-2xl font-semibold text-text mb-4">Quick start</h2>
+          <p className="text-text-muted mb-6 leading-relaxed">
             Prends en main BeemoBot en 5 étapes.
           </p>
-          <ol className="space-y-4">
-            {[
-              {
-                step: "1",
-                title: "Connecte-toi avec Discord",
-                desc: 'Clique sur le bouton "Login" en haut à droite. Tu seras redirigé vers Discord pour autoriser BeemoBot à accéder à ton profil.',
-              },
-              {
-                step: "2",
-                title: "Lie ton compte Riot",
-                desc: 'Rends-toi sur /auth/link et renseigne ton gameName, tagLine et ta région (ex : Pseudo + EUW1 + EUW). Le bot va vérifier ton identité via l\'API Riot.',
-              },
-              {
-                step: "3",
-                title: "Joue une game LoL",
-                desc: "Joue une partie avec des gens qui utilisent aussi BeemoBot. Le worker détecte automatiquement les parties communes dans tes 20 dernières games.",
-              },
-              {
-                step: "4",
-                title: "Donne une réputation",
-                desc: "Tape /judge Riot-Tag sur Discord pour juger un joueur présent dans une de tes parties récentes. Choisis 🍄 (shroom) ou ⭐ (respect) via les boutons interactifs.",
-              },
-              {
-                step: "5",
-                title: "Ou attends le DM automatique",
-                desc: "Le worker proactif t'envoie un DM après chaque game pour te proposer de juger tes coéquipiers et adversaires. Pas besoin de taper une commande.",
-              },
-            ].map((item) => (
-              <li
-                key={item.step}
-                className="flex gap-4 bg-[#0f1117] p-5 rounded-lg border border-gray-700/30"
-              >
-                <span className="flex-shrink-0 w-8 h-8 bg-[#5865F2] rounded-full flex items-center justify-center text-white font-bold text-sm">
-                  {item.step}
-                </span>
-                <div>
-                  <p className="text-white font-semibold mb-1">{item.title}</p>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
+          <ol className="flex flex-col gap-3">
+            {quickstart.map((item) => (
+              <li key={item.step}>
+                <Card className="p-5 flex gap-4">
+                  <span className="flex-shrink-0 h-7 w-7 rounded-full border border-border bg-bg flex items-center justify-center text-xs font-semibold text-text">
+                    {item.step}
+                  </span>
+                  <div>
+                    <p className="text-text font-medium mb-1">{item.title}</p>
+                    <p className="text-sm text-text-muted leading-relaxed">
+                      {item.desc}
+                    </p>
+                  </div>
+                </Card>
               </li>
             ))}
           </ol>
         </section>
 
-        {/* Reputation system */}
-        <section
-          id="reputation"
-          className={`mb-16 bg-[#1a1d28] p-8 rounded-xl border transition-all ${
-            activeSection === "reputation"
-              ? "border-[#5865F2] shadow-lg"
-              : "border-gray-700/30"
-          }`}
-        >
-          <h2 className="text-3xl font-bold mb-6 text-white">
-            🍄⭐ Le système de réputation
+        <section id="reputation" className="mb-14">
+          <h2 className="text-2xl font-semibold text-text mb-4">
+            Le système de réputation
           </h2>
-          <p className="text-gray-300 mb-8 text-base leading-relaxed">
-            La réputation BeemoBot est un reflet communautaire de ton comportement en jeu. Elle repose sur une preuve par match : tu ne peux juger que des gens avec qui tu as vraiment joué.
+          <p className="text-text-muted mb-6 leading-relaxed">
+            La réputation BeemoBot est un reflet communautaire de ton
+            comportement en jeu. Elle repose sur une preuve par match : tu ne
+            peux juger que des gens avec qui tu as vraiment joué.
           </p>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-            <div className="bg-[#0f1117] p-6 rounded-lg border border-gray-700/30">
-              <h3 className="text-xl font-bold text-amber-400 mb-3">
-                🍄 Shroom
-              </h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                "Tu as joué comme une chèvre" ou "tu as été toxique". Un shroom
-                signale un comportement problématique : troll, AFK, insultes,
-                int intentionnel.
+          <div className="grid md:grid-cols-2 gap-4 mb-6">
+            <Card className="p-5">
+              <h3 className="text-base font-semibold text-text mb-1">Shroom</h3>
+              <p className="text-sm text-text-muted leading-relaxed">
+                « Tu as joué comme une chèvre » ou « tu as été toxique ». Un
+                shroom signale un comportement problématique : troll, AFK,
+                insultes, int intentionnel.
               </p>
-            </div>
-            <div className="bg-[#0f1117] p-6 rounded-lg border border-gray-700/30">
-              <h3 className="text-xl font-bold text-emerald-400 mb-3">
-                ⭐ Respect
-              </h3>
-              <p className="text-gray-300 text-sm leading-relaxed">
-                "GG bien joué". Un respect salue un bon comportement, de
-                l'entraide, du fair-play ou simplement un bon game.
+            </Card>
+            <Card className="p-5">
+              <h3 className="text-base font-semibold text-text mb-1">Respect</h3>
+              <p className="text-sm text-text-muted leading-relaxed">
+                « GG bien joué ». Un respect salue un bon comportement, de
+                l’entraide, du fair-play, ou simplement un bon game.
               </p>
-            </div>
+            </Card>
           </div>
 
-          <div className="space-y-4">
-            {[
-              {
-                icon: "🔒",
-                title: "Preuve par match obligatoire",
-                desc: "Tu ne peux juger que les joueurs présents dans tes vraies parties Riot (allié OU adverse). Le système vérifie via l'API Riot.",
-              },
-              {
-                icon: "1️⃣",
-                title: "Maximum 1 shroom + 1 respect par paire par match",
-                desc: "Pour chaque match commun, tu peux donner au plus 1 shroom et 1 respect à chaque joueur. Le système trace tout pour éviter le spam.",
-              },
-              {
-                icon: "📈",
-                title: "Score immuable",
-                desc: "Ton score ne baisse jamais. Ce que les gens pensent de toi reste gravé — c'est leur jugement, pas une note fluctuante.",
-              },
-              {
-                icon: "⚖️",
-                title: "Poids de la réputation",
-                desc: "Le vote d'un joueur respecté pèse davantage. Ton influence dépend de ton propre score de réputation.",
-              },
-            ].map((item) => (
-              <div
-                key={item.title}
-                className="flex gap-4 bg-[#0f1117] p-5 rounded-lg border border-gray-700/30"
-              >
-                <span className="text-2xl flex-shrink-0">{item.icon}</span>
-                <div>
-                  <p className="text-white font-semibold mb-1">{item.title}</p>
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    {item.desc}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Honey & shop */}
-        <section
-          id="honey"
-          className={`mb-16 bg-[#1a1d28] p-8 rounded-xl border transition-all ${
-            activeSection === "honey"
-              ? "border-[#5865F2] shadow-lg"
-              : "border-gray-700/30"
-          }`}
-        >
-          <h2 className="text-3xl font-bold mb-6 text-white">
-            🍯 Honey & shop
-          </h2>
-          <p className="text-gray-300 mb-8 text-base leading-relaxed">
-            Le honey est la monnaie de BeemoBot. Il s'accumule avec ta réputation et ton activité. Dépense-le dans le shop pour personnaliser ton profil.
-          </p>
-
-          <div className="mb-8">
-            <h3 className="text-base font-semibold mb-4 text-gray-200 uppercase tracking-wide">
-              Gagner du honey
-            </h3>
-            <div className="bg-[#0f1117] rounded-lg overflow-hidden border border-gray-700/30">
-              <table className="w-full">
-                <thead>
-                  <tr className="bg-[#0a0a0f] border-b border-gray-700">
-                    <th className="py-4 px-5 text-left text-gray-200 font-semibold text-sm">
-                      Action
-                    </th>
-                    <th className="py-4 px-5 text-left text-gray-200 font-semibold text-sm">
-                      Honey gagné
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    { action: "Recevoir un ⭐ Respect", honey: "+10 🍯" },
-                    {
-                      action: "Recevoir un 🍄 Shroom",
-                      honey: '+5 🍯 ("rage compensation")',
-                    },
-                    { action: "Daily login", honey: "+20 🍯" },
-                    { action: "Mini-jeu : victoire", honey: "×2 mise" },
-                    { action: "Mini-jeu : défaite", honey: "Mise perdue" },
-                  ].map((row, idx) => (
-                    <tr
-                      key={idx}
-                      className={`border-b border-gray-800/50 last:border-b-0 ${
-                        idx % 2 === 0 ? "bg-[#12141c]/50" : "bg-transparent"
-                      }`}
-                    >
-                      <td className="py-4 px-5 text-gray-200 text-sm">
-                        {row.action}
-                      </td>
-                      <td className="py-4 px-5 text-amber-400 font-mono text-sm font-semibold">
-                        {row.honey}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div>
-            <h3 className="text-base font-semibold mb-4 text-gray-200 uppercase tracking-wide">
-              Shop — ce qu'on peut acheter
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              {[
-                { name: "Badges", price: "100–500 🍯", desc: "Icônes de profil exclusives" },
-                { name: "Borders", price: "500–1000 🍯", desc: "Cadres animés sur ton avatar" },
-                { name: "Glow effects", price: "1000–2000 🍯", desc: "Effets lumineux sur ton profil" },
-              ].map((item) => (
-                <div
-                  key={item.name}
-                  className="bg-[#0f1117] p-5 rounded-lg border border-gray-700/30"
-                >
-                  <p className="text-white font-semibold mb-1">{item.name}</p>
-                  <p className="text-amber-400 font-mono text-sm mb-2">
-                    {item.price}
-                  </p>
-                  <p className="text-gray-400 text-sm">{item.desc}</p>
-                </div>
-              ))}
-            </div>
-            <p className="mt-4 text-gray-400 text-sm">
-              Le honey est dépensable — ta réputation, elle, ne l'est pas. Les deux évoluent indépendamment.
-            </p>
-          </div>
-        </section>
-
-        {/* FAQ */}
-        <section
-          id="faq"
-          className={`mb-16 bg-[#1a1d28] p-8 rounded-xl border transition-all ${
-            activeSection === "faq"
-              ? "border-[#5865F2] shadow-lg"
-              : "border-gray-700/30"
-          }`}
-        >
-          <h2 className="text-3xl font-bold mb-6 text-white">❓ FAQ</h2>
-          <div className="space-y-4">
-            {[
-              {
-                q: "Je n'ai pas reçu de DM du bot",
-                a: "Vérifie que les DMs serveur sont activés dans les paramètres Discord du serveur BeemoBot. Le worker tourne toutes les 5 minutes — attends un peu après ta game.",
-              },
-              {
-                q: "Je ne peux pas juger ce joueur",
-                a: "Vous devez avoir une match commune dans tes 20 dernières games. Si la partie est plus ancienne, elle n'est plus dans la fenêtre de vérification.",
-              },
-              {
-                q: "Mon score n'a pas bougé",
-                a: "La réputation est immuable — elle ne baisse jamais. Le honey aussi est append-only. Si tu viens de jouer, il faut attendre le poll worker (environ 5 minutes).",
-              },
-              {
-                q: "Comment changer de Riot ID",
-                a: "Contacte un admin du serveur. Le multi-link est désactivé pour la Phase 1. Un seul compte Riot par Discord.",
-              },
-              {
-                q: "Ma clé Riot n'est pas reconnue",
-                a: "Assure-toi que ton gameName et tagLine sont exacts (respecte la casse). La région doit correspondre à celle de ton compte (EUW1, NA1, KR, etc.).",
-              },
-              {
-                q: "Conflit de match — le bot dit que je n'étais pas dans la partie",
-                a: "L'API Riot peut avoir un délai. Réessaie 10 minutes après la fin de la game. Si le problème persiste, contacte un admin avec l'ID du match.",
-              },
-            ].map((item, idx) => (
-              <details
-                key={idx}
-                className="bg-[#0f1117] rounded-lg border border-gray-700/30 group"
-              >
-                <summary className="flex items-center justify-between p-5 cursor-pointer text-white font-semibold text-sm list-none">
-                  <span>{item.q}</span>
-                  <span className="text-gray-400 group-open:rotate-180 transition-transform">
-                    ▼
-                  </span>
-                </summary>
-                <p className="px-5 pb-5 text-gray-300 text-sm leading-relaxed">
-                  {item.a}
+          <div className="flex flex-col gap-3">
+            {reputationRules.map((rule) => (
+              <Card key={rule.title} className="p-5">
+                <p className="text-text font-medium mb-1">{rule.title}</p>
+                <p className="text-sm text-text-muted leading-relaxed">
+                  {rule.desc}
                 </p>
-              </details>
+              </Card>
             ))}
           </div>
         </section>
-      </div>
-    </div>
+
+        <section id="honey" className="mb-14">
+          <h2 className="text-2xl font-semibold text-text mb-4">Honey &amp; shop</h2>
+          <p className="text-text-muted mb-6 leading-relaxed">
+            Le honey est la monnaie de BeemoBot. Il s’accumule avec ta
+            réputation et ton activité. Dépense-le dans le shop pour
+            personnaliser ton profil.
+          </p>
+
+          <h3 className="text-sm font-semibold text-text uppercase tracking-wide mb-3">
+            Gagner du honey
+          </h3>
+          <Card className="overflow-hidden mb-8 p-0">
+            <table className="w-full text-sm">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="py-3 px-5 text-left font-medium text-text-muted">
+                    Action
+                  </th>
+                  <th className="py-3 px-5 text-left font-medium text-text-muted">
+                    Honey gagné
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {honeyEarnings.map((row) => (
+                  <tr
+                    key={row.action}
+                    className="border-b border-border last:border-b-0"
+                  >
+                    <td className="py-3 px-5 text-text">{row.action}</td>
+                    <td className="py-3 px-5 text-text-muted font-mono">
+                      {row.honey}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Card>
+
+          <h3 className="text-sm font-semibold text-text uppercase tracking-wide mb-3">
+            Shop
+          </h3>
+          <div className="grid md:grid-cols-3 gap-3">
+            {shopItems.map((item) => (
+              <Card key={item.name} className="p-5">
+                <p className="text-text font-medium mb-1">{item.name}</p>
+                <p className="text-text-muted font-mono text-sm mb-2">
+                  {item.price}
+                </p>
+                <p className="text-sm text-text-muted leading-relaxed">
+                  {item.desc}
+                </p>
+              </Card>
+            ))}
+          </div>
+          <p className="mt-4 text-sm text-text-muted">
+            Le honey est dépensable — ta réputation, elle, ne l’est pas. Les
+            deux évoluent indépendamment.
+          </p>
+        </section>
+
+        <section id="faq" className="mb-14">
+          <h2 className="text-2xl font-semibold text-text mb-4">FAQ</h2>
+          <div className="flex flex-col gap-3">
+            {faq.map((item) => (
+              <Card key={item.q} className="p-0">
+                <details className="group">
+                  <summary className="flex items-center justify-between p-5 cursor-pointer list-none">
+                    <span className="text-text font-medium text-sm">
+                      {item.q}
+                    </span>
+                    <span className="text-text-muted text-xs group-open:rotate-180 transition-transform">
+                      ▼
+                    </span>
+                  </summary>
+                  <p className="px-5 pb-5 text-sm text-text-muted leading-relaxed">
+                    {item.a}
+                  </p>
+                </details>
+              </Card>
+            ))}
+          </div>
+        </section>
+      </article>
+    </main>
   );
 }

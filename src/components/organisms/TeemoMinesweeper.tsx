@@ -1,8 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
+import Button from "@/components/atoms/Button";
+import { Card } from "@/components/atoms/Card";
+import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
 import { getMyPuuid } from "@/lib/honey";
 
@@ -25,7 +26,50 @@ interface CellProps {
   cell: Cell;
   row: number;
   col: number;
+  onClick: (row: number, col: number) => void;
+  onRightClick: (e: React.MouseEvent, row: number, col: number) => void;
 }
+
+const adjacentColor = (n: number): string => {
+  if (n === 1) return "text-accent";
+  if (n === 2) return "text-text";
+  if (n === 3) return "text-danger";
+  if (n === 4) return "text-text";
+  if (n >= 5) return "text-accent-gold";
+  return "text-text";
+};
+
+const CellView = ({ cell, row, col, onClick, onRightClick }: CellProps) => {
+  let content: React.ReactNode = "";
+  let cellClass =
+    "w-10 h-10 flex items-center justify-center text-base font-medium rounded-sm border transition-colors";
+
+  if (cell.isRevealed) {
+    if (cell.hasMine) {
+      content = <span>🍄</span>;
+      cellClass += " border-danger bg-danger/10";
+    } else {
+      content = cell.adjacentMines || "";
+      cellClass += " border-border bg-bg " + adjacentColor(cell.adjacentMines);
+    }
+  } else {
+    cellClass +=
+      " cursor-pointer border-border bg-surface hover:bg-surface-hover";
+    if (cell.isFlagged) {
+      content = <span className="text-text">!</span>;
+    }
+  }
+
+  return (
+    <div
+      className={cellClass}
+      onClick={() => onClick(row, col)}
+      onContextMenu={(e) => onRightClick(e, row, col)}
+    >
+      {content}
+    </div>
+  );
+};
 
 const TeemoMinesweeper = () => {
   const [boardSize, setBoardSize] = useState<BoardSize>({ rows: 10, cols: 10 });
@@ -42,9 +86,7 @@ const TeemoMinesweeper = () => {
   const [showBetModal, setShowBetModal] = useState(false);
   const [gameStarted, setGameStarted] = useState(false);
 
-  // Initialize the game board
   const initializeBoard = (): void => {
-    // Create empty board
     const newBoard: Cell[][] = Array(boardSize.rows)
       .fill(null)
       .map(() =>
@@ -55,10 +97,9 @@ const TeemoMinesweeper = () => {
             isRevealed: false,
             isFlagged: false,
             adjacentMines: 0,
-          }))
+          })),
       );
 
-    // Place mines randomly
     let minesPlaced = 0;
     while (minesPlaced < mineCount) {
       const row = Math.floor(Math.random() * boardSize.rows);
@@ -70,13 +111,11 @@ const TeemoMinesweeper = () => {
       }
     }
 
-    // Calculate adjacent mines
     for (let row = 0; row < boardSize.rows; row++) {
       for (let col = 0; col < boardSize.cols; col++) {
         if (!newBoard[row][col].hasMine) {
           let count = 0;
 
-          // Check all 8 surrounding cells
           for (let i = -1; i <= 1; i++) {
             for (let j = -1; j <= 1; j++) {
               if (i === 0 && j === 0) continue;
@@ -106,7 +145,6 @@ const TeemoMinesweeper = () => {
     setFlagsPlaced(0);
     setTimer(0);
 
-    // Start timer
     if (timerInterval) clearInterval(timerInterval as NodeJS.Timeout);
     const interval = setInterval(() => {
       setTimer((prev) => prev + 1);
@@ -114,7 +152,6 @@ const TeemoMinesweeper = () => {
     setTimerInterval(interval);
   };
 
-  // Handle cell click
   const handleCellClick = (row: number, col: number): void => {
     if (
       gameState !== "playing" ||
@@ -125,9 +162,7 @@ const TeemoMinesweeper = () => {
 
     const newBoard = [...board];
 
-    // If clicked on a mine, game over
     if (newBoard[row][col].hasMine) {
-      // Reveal all mines
       for (let i = 0; i < boardSize.rows; i++) {
         for (let j = 0; j < boardSize.cols; j++) {
           if (newBoard[i][j].hasMine) {
@@ -141,7 +176,6 @@ const TeemoMinesweeper = () => {
       return;
     }
 
-    // Recursively reveal empty cells
     const revealCell = (r: number, c: number): void => {
       if (
         r < 0 ||
@@ -155,7 +189,6 @@ const TeemoMinesweeper = () => {
 
       newBoard[r][c].isRevealed = true;
 
-      // If the revealed cell has no adjacent mines, reveal all adjacent cells
       if (newBoard[r][c].adjacentMines === 0) {
         for (let i = -1; i <= 1; i++) {
           for (let j = -1; j <= 1; j++) {
@@ -169,9 +202,8 @@ const TeemoMinesweeper = () => {
     revealCell(row, col);
     setBoard(newBoard);
 
-    // Check if player has won
-    const hasWon = newBoard.every((row) =>
-      row.every((cell) => cell.isRevealed || cell.hasMine)
+    const hasWon = newBoard.every((r) =>
+      r.every((cell) => cell.isRevealed || cell.hasMine),
     );
 
     if (hasWon) {
@@ -181,11 +213,10 @@ const TeemoMinesweeper = () => {
     }
   };
 
-  // Handle right click (flag placement)
   const handleRightClick = (
     e: React.MouseEvent,
     row: number,
-    col: number
+    col: number,
   ): void => {
     e.preventDefault();
 
@@ -193,7 +224,6 @@ const TeemoMinesweeper = () => {
 
     const newBoard = [...board];
 
-    // Toggle flag
     if (newBoard[row][col].isFlagged) {
       newBoard[row][col].isFlagged = false;
       setFlagsPlaced(flagsPlaced - 1);
@@ -207,7 +237,6 @@ const TeemoMinesweeper = () => {
     setBoard(newBoard);
   };
 
-  // Set difficulty
   const setGameDifficulty = (level: Difficulty): void => {
     let size: BoardSize, mines: number;
 
@@ -241,13 +270,17 @@ const TeemoMinesweeper = () => {
         await fetch("/api/minigame-win", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "teemo-minesweeper", score: timer }),
+          body: JSON.stringify({
+            puuid,
+            amount: bet * 2,
+            gameId: "teemo-minesweeper",
+            score: timer,
+          }),
         });
       }
     }
   };
 
-  // Reset game when difficulty changes (only if game already started)
   useEffect(() => {
     if (gameStarted) {
       initializeBoard();
@@ -255,248 +288,138 @@ const TeemoMinesweeper = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardSize, mineCount]);
 
-  // Clean up timer on unmount
   useEffect(() => {
     return () => {
       if (timerInterval) clearInterval(timerInterval);
     };
   }, [timerInterval]);
 
-  // Cell component
-  const Cell: React.FC<CellProps> = ({ cell, row, col }) => {
-    let content: React.ReactNode = "";
-    let cellClass =
-      "w-10 h-10 flex items-center justify-center font-bold transition-all duration-200 relative rounded-md overflow-hidden";
-
-    if (cell.isRevealed) {
-      if (cell.hasMine) {
-        content = (
-          <div className="absolute inset-0 flex items-center justify-center">
-            <span className="text-2xl">🍄</span>
-          </div>
-        );
-        cellClass += " bg-red-600/40 border border-red-500/60 shadow-inner";
-      } else {
-        content = cell.adjacentMines || "";
-        cellClass +=
-          " bg-[var(--bg-surface)] border border-[var(--bg-elevated)] shadow-inner text-lg font-semibold";
-
-        if (cell.adjacentMines === 1) cellClass += " text-[var(--hextech-blue)]";
-        else if (cell.adjacentMines === 2) cellClass += " text-[var(--rune-cyan)]";
-        else if (cell.adjacentMines === 3) cellClass += " text-red-400";
-        else if (cell.adjacentMines === 4) cellClass += " text-[var(--rune-purple)]";
-        else if (cell.adjacentMines >= 5) cellClass += " text-[var(--hextech-gold)]";
-      }
-    } else {
-      // Bush appearance for unrevealed cells
-      cellClass +=
-        " cursor-pointer bg-green-900/50 border border-green-800/80 hover:bg-green-800/50 transform transition-transform hover:scale-105 shadow-md";
-      content = (
-        <div className="absolute inset-0 flex items-center justify-center">
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 100 100"
-            className="w-full h-full"
-          >
-            <path
-              d="M20,80 Q30,60 50,70 Q70,80 80,60 Q90,50 80,40 Q70,30 60,40 Q40,30 30,20 Q20,30 30,50 Q20,70 20,80 Z"
-              fill="#075E22"
-            />
-            <path
-              d="M30,70 Q40,50 60,60 Q70,70 60,50 Q50,40 40,50 Q30,60 30,70 Z"
-              fill="#0A8C33"
-            />
-          </svg>
-        </div>
-      );
-
-      if (cell.isFlagged) {
-        content = (
-          <div className="absolute inset-0 flex items-center justify-center z-10 bg-red-500/20">
-            <div className="w-6 h-6 bg-gradient-to-br from-red-500 to-red-600 rounded-full flex items-center justify-center shadow-lg">
-              <span className="text-white font-bold">!</span>
-            </div>
-          </div>
-        );
-      }
-    }
-
-    return (
-      <motion.div
-        className={cellClass}
-        onClick={() => handleCellClick(row, col)}
-        onContextMenu={(e) => handleRightClick(e, row, col)}
-        whileHover={{ scale: cell.isRevealed ? 1 : 1.05 }}
-        whileTap={{ scale: 0.95 }}
-      >
-        {content}
-      </motion.div>
-    );
-  };
-
   if (!gameStarted) {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="teemo-minesweeper"
-            onConfirm={(b) => { setBet(b); setShowBetModal(false); setGameStarted(true); initializeBoard(); }}
+            onConfirm={(b) => {
+              setBet(b);
+              setShowBetModal(false);
+              setGameStarted(true);
+              initializeBoard();
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-8"
-        >
-          <span className="text-6xl">🍄</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          Teemo&apos;s Mushroom Field
+        <h2 className="text-xl font-semibold text-text mb-2">
+          Teemo Minesweeper
         </h2>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          Navigate the field without stepping on Teemo&apos;s mushrooms. Flag suspicious cells with right-click!
+        <p className="text-sm text-text-muted mb-6">
+          Évite les shrooms de Teemo. Clic droit pour poser un drapeau.
         </p>
         <div className="mb-6">
-          <p className="text-sm text-muted-foreground mb-3">Select Difficulty</p>
-          <div className="flex gap-3 justify-center">
+          <p className="text-sm text-text-muted mb-3">Difficulté</p>
+          <div className="flex gap-2 justify-center">
             {(["easy", "medium", "hard"] as const).map((diff) => (
               <button
                 key={diff}
                 onClick={() => setGameDifficulty(diff)}
-                className={`px-4 py-2 rounded-lg capitalize transition-all ${
+                className={cn(
+                  "px-3 py-2 rounded-md border text-sm capitalize transition-colors",
                   difficulty === diff
-                    ? "glass border border-[var(--hextech-blue)] bg-[var(--hextech-blue)]/20"
-                    : "glass hover:bg-[var(--bg-surface)]"
-                }`}
+                    ? "border-accent bg-accent/10 text-text"
+                    : "border-border bg-bg text-text-muted hover:bg-surface-hover",
+                )}
               >
                 {diff}
               </button>
             ))}
           </div>
         </div>
-        <HexButton variant="blue" size="lg" onClick={() => setShowBetModal(true)}>
-          Start Game
-        </HexButton>
-      </div>
+        <Button variant="primary" onClick={() => setShowBetModal(true)}>
+          Commencer
+        </Button>
+      </Card>
     );
   }
 
   return (
-    <div className="flex flex-col items-center p-6 rounded-xl max-w-3xl mx-auto">
-      <h1 className="text-3xl font-bold mb-4 text-center gradient-text-hextech">
-        Teemo's Mushroom Field
-      </h1>
+    <div className="rounded-md border border-border bg-surface p-6 max-w-3xl mx-auto">
+      {showBetModal && (
+        <BetModal
+          gameId="teemo-minesweeper"
+          onConfirm={(b) => {
+            setBet(b);
+            setShowBetModal(false);
+            initializeBoard();
+          }}
+          onCancel={() => setShowBetModal(false)}
+        />
+      )}
 
-      <div className="mb-6 flex flex-col md:flex-row justify-between w-full items-center gap-4">
-        <div className="flex gap-3">
-          <button
-            className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
-              difficulty === "easy"
-                ? "bg-[var(--rune-cyan)] text-[var(--bg-void)] shadow-lg"
-                : "glass hover:bg-[var(--rune-cyan)]/20"
-            }`}
-            onClick={() => setGameDifficulty("easy")}
-          >
-            Easy
-          </button>
-          <button
-            className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
-              difficulty === "medium"
-                ? "bg-[var(--hextech-blue)] text-white shadow-lg"
-                : "glass hover:bg-[var(--hextech-blue)]/20"
-            }`}
-            onClick={() => setGameDifficulty("medium")}
-          >
-            Medium
-          </button>
-          <button
-            className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
-              difficulty === "hard"
-                ? "bg-[var(--beemo-honey)] text-[var(--bg-void)] shadow-lg"
-                : "glass hover:bg-[var(--beemo-honey)]/20"
-            }`}
-            onClick={() => setGameDifficulty("hard")}
-          >
-            Hard
-          </button>
+      <div className="mb-6 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="flex gap-2">
+          {(["easy", "medium", "hard"] as const).map((diff) => (
+            <button
+              key={diff}
+              onClick={() => setGameDifficulty(diff)}
+              className={cn(
+                "px-3 py-2 rounded-md border text-sm capitalize transition-colors",
+                difficulty === diff
+                  ? "border-accent bg-accent/10 text-text"
+                  : "border-border bg-bg text-text-muted hover:bg-surface-hover",
+              )}
+            >
+              {diff}
+            </button>
+          ))}
         </div>
 
-        <div className="flex gap-4">
-          <div className="glass px-4 py-2 rounded-lg text-center">
-            <span className="text-[var(--beemo-honey)] text-lg font-medium">
-              🍄 {mineCount - flagsPlaced}
-            </span>
+        <div className="flex gap-6">
+          <div>
+            <p className="text-sm text-text-muted">Shrooms</p>
+            <p className="text-base text-text">{mineCount - flagsPlaced}</p>
           </div>
-          <div className="glass px-4 py-2 rounded-lg text-center">
-            <span className="text-[var(--hextech-blue)] text-lg font-medium">
-              ⏱️ {timer}s
-            </span>
+          <div>
+            <p className="text-sm text-text-muted">Temps</p>
+            <p className="text-base text-text">{timer}s</p>
           </div>
         </div>
       </div>
 
-      <AnimatePresence mode="wait">
-        {showBetModal && (
-          <BetModal
-            gameId="teemo-minesweeper"
-            onConfirm={(b) => { setBet(b); setShowBetModal(false); initializeBoard(); }}
-            onCancel={() => setShowBetModal(false)}
-          />
-        )}
+      {gameState === "lost" && (
+        <div className="mb-6 rounded-md border border-danger bg-danger/10 p-4 text-center">
+          <p className="text-base text-text mb-3">
+            Tu as marché sur un shroom. Game Over.
+          </p>
+          <div className="flex gap-2 justify-center">
+            <Button variant="primary" onClick={() => setShowBetModal(true)}>
+              Rejouer
+            </Button>
+            <Button variant="secondary" onClick={() => setGameStarted(false)}>
+              Menu
+            </Button>
+          </div>
+        </div>
+      )}
 
-        {gameState === "lost" && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-red-500/30"
-          >
-            <p className="text-2xl font-bold mb-2 text-red-400">
-              You stepped on a Teemo mushroom! Game Over!
-            </p>
-            <p className="text-muted-foreground mb-4">
-              Don&apos;t worry, you&apos;ll detect mushrooms better next time.
-            </p>
-            <div className="flex gap-3 justify-center">
-              <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
-                Try Again
-              </HexButton>
-              <HexButton variant="gold" onClick={() => setGameStarted(false)}>
-                Main Menu
-              </HexButton>
-            </div>
-          </motion.div>
-        )}
+      {gameState === "won" && (
+        <div className="mb-6 rounded-md border border-accent bg-accent/10 p-4 text-center">
+          <p className="text-base text-text mb-3">
+            Tu as nettoyé le terrain. Bien joué.
+          </p>
+          <div className="flex gap-2 justify-center">
+            <Button variant="primary" onClick={() => setShowBetModal(true)}>
+              Rejouer
+            </Button>
+            <Button variant="secondary" onClick={() => setGameStarted(false)}>
+              Menu
+            </Button>
+          </div>
+        </div>
+      )}
 
-        {gameState === "won" && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-[var(--rune-cyan)]/30"
-          >
-            <p className="text-2xl font-bold mb-2 text-[var(--rune-cyan)]">
-              You cleared the field! Victory!
-            </p>
-            <p className="text-muted-foreground mb-4">
-              Even Captain Teemo couldn&apos;t trick you!
-            </p>
-            <div className="flex gap-3 justify-center">
-              <HexButton variant="gold" onClick={() => setShowBetModal(true)}>
-                Play Again
-              </HexButton>
-              <HexButton variant="blue" onClick={() => setGameStarted(false)}>
-                Main Menu
-              </HexButton>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      <div className="glass p-4 rounded-xl border border-[var(--hextech-blue)]/20">
+      <div className="rounded-md border border-border bg-bg p-3">
         <div
-          className="grid gap-[2px] p-1 rounded-lg"
+          className="grid gap-1"
           style={{
             gridTemplateRows: `repeat(${boardSize.rows}, minmax(0, 1fr))`,
             gridTemplateColumns: `repeat(${boardSize.cols}, minmax(0, 1fr))`,
@@ -504,25 +427,22 @@ const TeemoMinesweeper = () => {
         >
           {board.map((row, rowIndex) =>
             row.map((cell, colIndex) => (
-              <Cell
+              <CellView
                 key={`${rowIndex}-${colIndex}`}
                 cell={cell}
                 row={rowIndex}
                 col={colIndex}
+                onClick={handleCellClick}
+                onRightClick={handleRightClick}
               />
-            ))
+            )),
           )}
         </div>
       </div>
 
-      <div className="mt-6 text-center">
-        <p className="text-muted-foreground mb-2 italic">
-          Left click to reveal a cell. Right click to place a flag on suspicious mushrooms.
-        </p>
-        <p className="text-xs text-muted-foreground">
-          "Size doesn't mean everything. Captain Teemo on duty!" - Teemo
-        </p>
-      </div>
+      <p className="text-center text-sm text-text-muted mt-4">
+        Clic gauche pour révéler. Clic droit pour drapeau.
+      </p>
     </div>
   );
 };

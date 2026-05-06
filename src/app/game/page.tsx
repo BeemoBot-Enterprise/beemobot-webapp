@@ -1,47 +1,54 @@
-"use client";
+/**
+ * Copyright (c) 2024-2026 BeemoBot Enterprise
+ * All rights reserved.
+ */
 
-import { Suspense } from "react";
-import GameTabs from "@/components/organisms/GameTabs";
-import { GlowOrb } from "@/components/atoms/GlowOrb";
+import GamePreviewCard from "@/components/molecules/GamePreviewCard";
+import { BEEMO } from "@/assets/images";
 
-function GameTabsLoading() {
+const games = [
+  {
+    slug: "trivia",
+    title: "LoL Trivia",
+    description: "Tes connaissances sur LoL au défi.",
+    image: BEEMO.mascot,
+  },
+  {
+    slug: "memory",
+    title: "Memory Match",
+    description: "Retrouve les paires de champions.",
+    image: BEEMO.mascot,
+  },
+  {
+    slug: "minesweeper",
+    title: "Teemo Minesweeper",
+    description: "Évite les shrooms, dégage les cases.",
+    image: BEEMO.mascot,
+  },
+  {
+    slug: "skillshot",
+    title: "Dodge Skillshot",
+    description: "Esquive les sorts qui arrivent.",
+    image: BEEMO.mascot,
+  },
+  {
+    slug: "guess",
+    title: "Guess Champion",
+    description: "Devine le champion à partir d'indices.",
+    image: BEEMO.mascot,
+  },
+];
+
+export default function GameHubPage() {
   return (
-    <div className="flex items-center justify-center p-12">
-      <div className="animate-pulse text-center">
-        <span className="text-4xl">🎮</span>
-        <p className="text-muted-foreground mt-4">Chargement des jeux...</p>
+    <main className="max-w-[1200px] mx-auto px-6 py-12">
+      <h1 className="text-3xl font-semibold text-text mb-2">Mini-jeux</h1>
+      <p className="text-text-muted mb-8">Choisis un jeu et c&apos;est parti.</p>
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {games.map((g) => (
+          <GamePreviewCard key={g.slug} {...g} />
+        ))}
       </div>
-    </div>
-  );
-}
-
-export default function Game() {
-  return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Background orbs */}
-      <GlowOrb variant="honey" size="lg" className="-top-20 -right-20" />
-      <GlowOrb variant="blue" size="xl" className="top-1/3 -left-32" />
-      <GlowOrb variant="purple" size="lg" className="bottom-20 right-10" />
-
-      {/* Honeycomb pattern */}
-      <div className="absolute inset-0 honeycomb-bg opacity-20" />
-
-      <div className="container mx-auto px-4 py-12 relative z-10">
-        <div className="text-center mb-8">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text-hextech">
-            Beemo Minigames
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Relevez le défi avec nos mini-jeux sur le thème de League of Legends et prouvez vos compétences !
-          </p>
-        </div>
-
-        <div className="glass rounded-2xl overflow-hidden shadow-xl mb-12">
-          <Suspense fallback={<GameTabsLoading />}>
-            <GameTabs />
-          </Suspense>
-        </div>
-      </div>
-    </div>
+    </main>
   );
 }

@@ -6,24 +6,30 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
 import { API_URL } from "@/lib/env";
-import { LeaderboardTable } from "@/components/organisms/LeaderboardTable";
+import {
+  LeaderboardTable,
+  type LeaderboardRow,
+  type LeaderboardType,
+} from "@/components/organisms/LeaderboardTable";
 
-const PERIODS = [
-  { v: "week", l: "Cette semaine" },
-  { v: "month", l: "Ce mois" },
-  { v: "all", l: "All-time" },
+const TYPES: { value: LeaderboardType; label: string }[] = [
+  { value: "respects", label: "Respects" },
+  { value: "shrooms", label: "Shrooms" },
+  { value: "honey", label: "Honey" },
 ];
-const TYPES = [
-  { v: "respects", l: "⭐ Respects" },
-  { v: "shrooms", l: "🍄 Shrooms" },
-  { v: "honey", l: "🍯 Honey" },
+
+const PERIODS: { value: "week" | "month" | "all"; label: string }[] = [
+  { value: "week", label: "Cette semaine" },
+  { value: "month", label: "Ce mois" },
+  { value: "all", label: "All-time" },
 ];
 
 export default function LeaderboardPage() {
-  const [period, setPeriod] = useState("week");
-  const [type, setType] = useState<"respects" | "shrooms" | "honey">("respects");
-  const [rows, setRows] = useState<any[]>([]);
+  const [type, setType] = useState<LeaderboardType>("respects");
+  const [period, setPeriod] = useState<"week" | "month" | "all">("week");
+  const [rows, setRows] = useState<LeaderboardRow[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -31,39 +37,56 @@ export default function LeaderboardPage() {
     fetch(`${API_URL}/leaderboard?period=${period}&type=${type}&scope=global`)
       .then((r) => r.json())
       .then((d) => setRows(d.rows ?? []))
+      .catch(() => setRows([]))
       .finally(() => setLoading(false));
   }, [period, type]);
 
   return (
-    <main className="min-h-screen bg-[#0f1117] py-20 px-4">
-      <div className="max-w-3xl mx-auto">
-        <h1 className="text-4xl font-bold text-white mb-8">🏆 Hall of Fame mondial</h1>
-        <div className="flex gap-2 mb-2">
-          {PERIODS.map((p) => (
-            <button
-              key={p.v}
-              onClick={() => setPeriod(p.v)}
-              className={`px-3 py-1 rounded ${period === p.v ? "bg-blue-600 text-white" : "bg-[#1a1d28] text-gray-400"}`}
-            >
-              {p.l}
-            </button>
-          ))}
-        </div>
-        <div className="flex gap-2 mb-6">
-          {TYPES.map((t) => (
-            <button
-              key={t.v}
-              onClick={() => setType(t.v as any)}
-              className={`px-3 py-1 rounded ${type === t.v ? "bg-blue-600 text-white" : "bg-[#1a1d28] text-gray-400"}`}
-            >
-              {t.l}
-            </button>
-          ))}
-        </div>
-        <div className="bg-[#1a1d28] p-6 rounded-xl border border-gray-700/30">
-          {loading ? <p className="text-gray-400">Chargement...</p> : <LeaderboardTable rows={rows} type={type} />}
-        </div>
+    <main className="max-w-[1200px] mx-auto px-6 py-12">
+      <h1 className="text-3xl font-semibold text-text mb-2">Leaderboard</h1>
+      <p className="text-text-muted mb-8">
+        Top des joueurs de la communauté.
+      </p>
+
+      <div className="border-b border-border mb-6 flex gap-1">
+        {TYPES.map((t) => (
+          <button
+            key={t.value}
+            onClick={() => setType(t.value)}
+            className={twMerge(
+              "px-4 py-2 text-sm transition-colors",
+              type === t.value
+                ? "text-text border-b-2 border-accent -mb-px"
+                : "text-text-muted hover:text-text",
+            )}
+          >
+            {t.label}
+          </button>
+        ))}
       </div>
+
+      <div className="flex gap-2 mb-6">
+        {PERIODS.map((p) => (
+          <button
+            key={p.value}
+            onClick={() => setPeriod(p.value)}
+            className={twMerge(
+              "px-3 py-1.5 rounded-md text-xs font-medium transition-colors border",
+              period === p.value
+                ? "bg-surface text-text border-border"
+                : "bg-transparent text-text-muted border-transparent hover:text-text hover:bg-surface",
+            )}
+          >
+            {p.label}
+          </button>
+        ))}
+      </div>
+
+      {loading ? (
+        <p className="text-text-muted">Chargement…</p>
+      ) : (
+        <LeaderboardTable rows={rows} type={type} />
+      )}
     </main>
   );
 }
