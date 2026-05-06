@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HexButton } from "@/components/atoms/HexButton";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
+import { BetModal } from "@/components/organisms/BetModal";
+import { getMyPuuid } from "@/lib/honey";
 
 const championEmojis = [
   { name: "Ahri", emoji: "🦊" },
@@ -68,6 +70,9 @@ export function MemoryMatchGame() {
   );
 
   const [selectedDifficulty, setSelectedDifficulty] = useState<"easy" | "medium" | "hard">("easy");
+  const [bet, setBet] = useState<number | null>(null);
+  const [showBetModal, setShowBetModal] = useState(false);
+  const [pendingDifficulty, setPendingDifficulty] = useState<"easy" | "medium" | "hard">("easy");
 
   const initializeCards = useCallback((difficulty: "easy" | "medium" | "hard") => {
     const { pairs } = difficultySettings[difficulty];
@@ -100,7 +105,7 @@ export function MemoryMatchGame() {
 
   const [champions, setChampions] = useState(championEmojis.slice(0, 4));
 
-  const handleStart = (difficulty: "easy" | "medium" | "hard") => {
+  const doStart = (difficulty: "easy" | "medium" | "hard") => {
     const { shuffledCards, selectedChampions } = initializeCards(difficulty);
     setChampions(selectedChampions);
 
@@ -115,6 +120,24 @@ export function MemoryMatchGame() {
       startTime: Date.now(),
       elapsedTime: 0,
     });
+  };
+
+  const handleStart = (difficulty: "easy" | "medium" | "hard") => {
+    setPendingDifficulty(difficulty);
+    setShowBetModal(true);
+  };
+
+  const handleWin = async (score: number) => {
+    if (bet) {
+      const puuid = await getMyPuuid();
+      if (puuid) {
+        await fetch("/api/minigame-win", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "memory-match", score }),
+        });
+      }
+    }
   };
 
   const handleCardClick = (cardId: number) => {
@@ -173,6 +196,7 @@ export function MemoryMatchGame() {
             updateScore(timeBonus);
             updateData({ elapsedTime: timeTaken });
             endGame(true);
+            handleWin(state.score + timeBonus);
           }
         }, 500);
       } else {
@@ -215,6 +239,13 @@ export function MemoryMatchGame() {
   if (state.status === "idle") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="memory-match"
+            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(pendingDifficulty); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -277,6 +308,13 @@ export function MemoryMatchGame() {
   if (state.status === "won") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="memory-match"
+            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(pendingDifficulty); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -325,7 +363,7 @@ export function MemoryMatchGame() {
         <div className="flex gap-4">
           <HexButton
             variant="blue"
-            onClick={() => handleStart(state.data.difficulty)}
+            onClick={() => { setPendingDifficulty(state.data.difficulty); setShowBetModal(true); }}
           >
             Play Again
           </HexButton>
