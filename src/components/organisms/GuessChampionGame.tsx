@@ -1,14 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useState, useCallback } from "react";
 import Button from "@/components/atoms/Button";
+import { Card } from "@/components/atoms/Card";
+import Input from "@/components/atoms/Input";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
 import { getMyPuuid } from "@/lib/honey";
 
-// Champion data with ability descriptions
 const champions = [
   {
     name: "Ahri",
@@ -123,7 +123,7 @@ const champions = [
 ];
 
 interface GameData {
-  currentChampion: typeof champions[0] | null;
+  currentChampion: (typeof champions)[0] | null;
   revealedAbilities: string[];
   hintsUsed: number;
   guess: string;
@@ -133,25 +133,19 @@ interface GameData {
 }
 
 export function GuessChampionGame() {
-  const {
-    state,
-    startGame,
-    endGame,
-    updateScore,
-    updateData,
-    resetGame,
-  } = useGameState<GameData>(
-    {
-      currentChampion: null,
-      revealedAbilities: [],
-      hintsUsed: 0,
-      guess: "",
-      streak: 0,
-      showResult: false,
-      isCorrect: false,
-    },
-    "guess-champion"
-  );
+  const { state, startGame, updateScore, updateData, resetGame } =
+    useGameState<GameData>(
+      {
+        currentChampion: null,
+        revealedAbilities: [],
+        hintsUsed: 0,
+        guess: "",
+        streak: 0,
+        showResult: false,
+        isCorrect: false,
+      },
+      "guess-champion",
+    );
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
   const [bet, setBet] = useState<number | null>(null);
@@ -161,7 +155,7 @@ export function GuessChampionGame() {
     const randomChamp = champions[Math.floor(Math.random() * champions.length)];
     updateData({
       currentChampion: randomChamp,
-      revealedAbilities: ["R"], // Start by showing ultimate
+      revealedAbilities: ["R"],
       hintsUsed: 0,
       guess: "",
       showResult: false,
@@ -185,7 +179,12 @@ export function GuessChampionGame() {
         await fetch("/api/minigame-win", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "guess-champion", score }),
+          body: JSON.stringify({
+            puuid,
+            amount: bet * 2,
+            gameId: "guess-champion",
+            score,
+          }),
         });
       }
     }
@@ -194,7 +193,7 @@ export function GuessChampionGame() {
   const revealAbility = () => {
     const abilities = ["passive", "Q", "W", "E"];
     const available = abilities.filter(
-      (a) => !state.data.revealedAbilities.includes(a)
+      (a) => !state.data.revealedAbilities.includes(a),
     );
     if (available.length > 0) {
       const next = available[Math.floor(Math.random() * available.length)];
@@ -218,12 +217,14 @@ export function GuessChampionGame() {
       state.data.currentChampion.name.toLowerCase();
 
     if (isCorrect) {
-      // Calculate points based on hints used and abilities revealed
       const basePoints = 100;
       const hintPenalty = state.data.hintsUsed * 15;
       const abilityBonus = (5 - state.data.revealedAbilities.length) * 10;
       const streakBonus = state.data.streak * 10;
-      const points = Math.max(10, basePoints - hintPenalty + abilityBonus + streakBonus);
+      const points = Math.max(
+        10,
+        basePoints - hintPenalty + abilityBonus + streakBonus,
+      );
 
       updateScore(points);
       updateData({
@@ -248,7 +249,6 @@ export function GuessChampionGame() {
   const handleInputChange = (value: string) => {
     updateData({ guess: value });
 
-    // Generate suggestions
     if (value.length > 0) {
       const filtered = champions
         .filter((c) => c.name.toLowerCase().startsWith(value.toLowerCase()))
@@ -267,214 +267,174 @@ export function GuessChampionGame() {
 
   if (state.status === "idle") {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="guess-champion"
-            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(); }}
+            onConfirm={(b) => {
+              setBet(b);
+              setShowBetModal(false);
+              doStart();
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-8"
-        >
-          <span className="text-6xl">🎯</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          Devinez le Champion
+        <h2 className="text-xl font-semibold text-text mb-2">
+          Devine le Champion
         </h2>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          Identifiez le champion grâce au nom de ses compétences. Moins vous
-          utilisez d&apos;indices, plus vous gagnez de points !
+        <p className="text-sm text-text-muted mb-6">
+          Identifie le champion grâce à ses compétences. Moins tu utilises
+          d&apos;indices, plus tu gagnes de points.
         </p>
-        <div className="flex gap-4 mb-6">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--hextech-gold)]">
-              {state.highScore}
-            </p>
-            <p className="text-sm text-muted-foreground">Meilleur Score</p>
-          </div>
+        <div className="mb-6">
+          <p className="text-base text-text">{state.highScore}</p>
+          <p className="text-sm text-text-muted">Meilleur score</p>
         </div>
-        <Button variant="primary" size="lg" onClick={handleStart}>
+        <Button variant="primary" onClick={handleStart}>
           Commencer
         </Button>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="p-6">
-      {/* Score bar */}
-      <div className="flex justify-between items-center mb-6">
-        <div className="flex gap-4">
-          <div className="glass px-4 py-2 rounded-lg">
-            <span className="text-sm text-muted-foreground">Score : </span>
-            <span className="font-bold text-[var(--hextech-gold)]">
-              {state.score}
-            </span>
+    <div className="rounded-md border border-border bg-surface p-6">
+      <div className="flex items-center justify-between mb-6">
+        <div className="flex gap-6">
+          <div>
+            <p className="text-sm text-text-muted">Score</p>
+            <p className="text-base text-text">{state.score}</p>
           </div>
-          <div className="glass px-4 py-2 rounded-lg">
-            <span className="text-sm text-muted-foreground">Série : </span>
-            <span className="font-bold text-[var(--rune-cyan)]">
-              {state.data.streak}🔥
-            </span>
+          <div>
+            <p className="text-sm text-text-muted">Série</p>
+            <p className="text-base text-text">{state.data.streak}</p>
           </div>
         </div>
-        <Button variant="secondary" size="sm" onClick={resetGame}>
+        <Button variant="ghost" size="sm" onClick={resetGame}>
           Terminer
         </Button>
       </div>
 
-      {/* Game content */}
-      <AnimatePresence mode="wait">
-        {!state.data.showResult ? (
-          <motion.div
-            key="game"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-          >
-            {/* Ability display */}
-            <div className="glass rounded-xl p-6 mb-6">
-              <h3 className="text-lg font-semibold mb-4 text-center">
-                Identifiez ce champion par ses compétences :
-              </h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-                {["passive", "Q", "W", "E", "R"].map((key) => (
+      {!state.data.showResult ? (
+        <div>
+          <div className="rounded-md border border-border bg-bg p-4 mb-6">
+            <p className="text-sm text-text-muted text-center mb-4">
+              Identifie le champion grâce à ses compétences :
+            </p>
+            <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+              {["passive", "Q", "W", "E", "R"].map((key) => {
+                const revealed = state.data.revealedAbilities.includes(key);
+                return (
                   <div
                     key={key}
                     className={cn(
-                      "p-4 rounded-lg text-center transition-all",
-                      state.data.revealedAbilities.includes(key)
-                        ? "glass-hextech"
-                        : "glass opacity-50"
+                      "rounded-md border border-border p-3 text-center",
+                      revealed ? "bg-surface" : "bg-bg opacity-50",
                     )}
                   >
-                    <span className="text-xs text-muted-foreground block mb-1">
+                    <p className="text-sm text-text-muted mb-1">
                       {key === "passive" ? "Passive" : key}
-                    </span>
-                    <span className="text-sm font-medium">
-                      {state.data.revealedAbilities.includes(key)
+                    </p>
+                    <p className="text-sm text-text">
+                      {revealed
                         ? state.data.currentChampion?.abilities[
                             key as keyof typeof state.data.currentChampion.abilities
                           ]
                         : "???"}
-                    </span>
+                    </p>
                   </div>
-                ))}
+                );
+              })}
+            </div>
+          </div>
+
+          {state.data.hintsUsed > 0 && (
+            <div className="rounded-md border border-border bg-bg p-4 mb-6">
+              <p className="text-sm text-text-muted mb-2">Indices :</p>
+              <div className="flex flex-wrap gap-2">
+                {state.data.currentChampion?.hints
+                  .slice(0, state.data.hintsUsed)
+                  .map((hint, i) => (
+                    <span
+                      key={i}
+                      className="px-3 py-1 rounded-full border border-border bg-surface text-sm text-text"
+                    >
+                      {hint}
+                    </span>
+                  ))}
               </div>
             </div>
+          )}
 
-            {/* Hints */}
-            {state.data.hintsUsed > 0 && (
-              <div className="glass rounded-lg p-4 mb-6">
-                <p className="text-sm text-muted-foreground mb-2">Indices :</p>
-                <div className="flex flex-wrap gap-2">
-                  {state.data.currentChampion?.hints
-                    .slice(0, state.data.hintsUsed)
-                    .map((hint, i) => (
-                      <span
-                        key={i}
-                        className="px-3 py-1 rounded-full glass-hextech text-sm"
-                      >
-                        {hint}
-                      </span>
-                    ))}
-                </div>
-              </div>
-            )}
+          <div className="flex flex-wrap gap-2 mb-6 justify-center">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={revealAbility}
+              disabled={state.data.revealedAbilities.length >= 5}
+            >
+              Révéler une compétence (-10)
+            </Button>
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={useHint}
+              disabled={state.data.hintsUsed >= 3}
+            >
+              Indice (-15)
+            </Button>
+          </div>
 
-            {/* Actions */}
-            <div className="flex flex-wrap gap-4 mb-6 justify-center">
-              <Button
-                variant="primary"
-                size="sm"
-                onClick={revealAbility}
-                disabled={state.data.revealedAbilities.length >= 5}
-              >
-                Révéler une compétence (-10 pts)
-              </Button>
-              <Button
-                variant="secondary"
-                size="sm"
-                onClick={useHint}
-                disabled={state.data.hintsUsed >= 3}
-              >
-                Obtenir un indice (-15 pts)
-              </Button>
-            </div>
-
-            {/* Input */}
-            <div className="relative max-w-md mx-auto">
-              <input
+          <div className="relative max-w-md mx-auto">
+            <div className="flex gap-2">
+              <Input
                 type="text"
                 value={state.data.guess}
                 onChange={(e) => handleInputChange(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleGuess()}
-                placeholder="Entrez le nom du champion..."
-                className="w-full px-4 py-3 rounded-lg glass border border-[var(--hextech-blue)]/30 focus:border-[var(--hextech-blue)] focus:outline-none bg-transparent"
+                onKeyDown={(e) => e.key === "Enter" && handleGuess()}
+                placeholder="Nom du champion..."
+                className="flex-1"
               />
-
-              {/* Suggestions */}
-              {suggestions.length > 0 && (
-                <div className="absolute top-full left-0 right-0 mt-1 glass rounded-lg overflow-hidden z-10">
-                  {suggestions.map((name) => (
-                    <button
-                      key={name}
-                      onClick={() => selectSuggestion(name)}
-                      className="w-full px-4 py-2 text-left hover:bg-[var(--hextech-blue)]/20 transition-colors"
-                    >
-                      {name}
-                    </button>
-                  ))}
-                </div>
-              )}
-
               <Button
                 variant="primary"
-                className="absolute right-2 top-1/2 -translate-y-1/2"
                 onClick={handleGuess}
                 disabled={!state.data.guess.trim()}
               >
-                Deviner !
+                Deviner
               </Button>
             </div>
-          </motion.div>
-        ) : (
-          <motion.div
-            key="result"
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0, scale: 0.9 }}
-            className="text-center py-8"
-          >
-            <div className="text-6xl mb-4">
-              {state.data.isCorrect ? "🎉" : "😢"}
-            </div>
-            <h3
-              className={cn(
-                "text-2xl font-bold mb-2",
-                state.data.isCorrect
-                  ? "text-[var(--rune-cyan)]"
-                  : "text-[var(--destructive)]"
-              )}
-            >
-              {state.data.isCorrect ? "Correct !" : "Raté !"}
-            </h3>
-            <p className="text-muted-foreground mb-6">
-              Le champion était{" "}
-              <span className="text-[var(--hextech-gold)] font-bold">
-                {state.data.currentChampion?.name}
-              </span>
-            </p>
-            <Button variant="primary" onClick={nextRound}>
-              Champion Suivant
-            </Button>
-          </motion.div>
-        )}
-      </AnimatePresence>
+
+            {suggestions.length > 0 && (
+              <div className="absolute top-full left-0 right-0 mt-1 rounded-md border border-border bg-surface overflow-hidden z-10">
+                {suggestions.map((name) => (
+                  <button
+                    key={name}
+                    onClick={() => selectSuggestion(name)}
+                    className="w-full px-4 py-2 text-left text-sm text-text hover:bg-surface-hover transition-colors"
+                  >
+                    {name}
+                  </button>
+                ))}
+              </div>
+            )}
+          </div>
+        </div>
+      ) : (
+        <div className="text-center py-8">
+          <h3 className="text-xl font-semibold text-text mb-2">
+            {state.data.isCorrect ? "Correct" : "Raté"}
+          </h3>
+          <p className="text-sm text-text-muted mb-6">
+            Le champion était{" "}
+            <span className="text-text font-medium">
+              {state.data.currentChampion?.name}
+            </span>
+          </p>
+          <Button variant="primary" onClick={nextRound}>
+            Champion suivant
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
