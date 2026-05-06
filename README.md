@@ -1,48 +1,58 @@
-# Astro Starter Kit: Basics
+# BeemoBot — webapp
 
-```sh
-npm create astro@latest -- --template basics
+Next.js 15 (App Router) frontend for the BeemoBot ecosystem. Pairs with the [`beemobot-api`](../beemobot-api) backend and the [`bot`](../bot) Discord bot.
+
+## Stack
+
+- Next.js 15, React 19, TypeScript
+- Tailwind CSS, Framer Motion, Three.js (`@react-three/fiber`)
+- Atomic Design under `src/components/{atoms,molecules,organisms,templates}`
+
+## Setup
+
+```bash
+pnpm install
+cp .env.example .env.local      # then edit values
+pnpm dev                        # http://localhost:3000
 ```
 
-[![Open in StackBlitz](https://developer.stackblitz.com/img/open_in_stackblitz.svg)](https://stackblitz.com/github/withastro/astro/tree/latest/examples/basics)
-[![Open with CodeSandbox](https://assets.codesandbox.io/github/button-edit-lime.svg)](https://codesandbox.io/p/sandbox/github/withastro/astro/tree/latest/examples/basics)
-[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/withastro/astro?devcontainer_path=.devcontainer/basics/devcontainer.json)
+## Environment
 
-> 🧑‍🚀 **Seasoned astronaut?** Delete this file. Have fun!
+All env values are accessed through `src/lib/env.ts` — never read `process.env.*` directly in components.
 
-![just-the-basics](https://github.com/withastro/astro/assets/2244813/a0a5533c-a856-4198-8470-2d67b1d7c554)
+| Var | Purpose |
+|---|---|
+| `NEXT_PUBLIC_API_URL` | BeemoBot API base URL (default `http://localhost:3333`) |
+| `NEXT_PUBLIC_BOT_INVITE_URL` | Discord invite URL for the bot |
 
-## 🚀 Project Structure
+## Scripts
 
-Inside of your Astro project, you'll see the following folders and files:
+| Command | Action |
+|---|---|
+| `pnpm dev` | Local dev server with HMR |
+| `pnpm build` | Production build |
+| `pnpm start` | Run the production build |
+| `pnpm lint` | ESLint |
 
-```text
-/
-├── public/
-│   └── favicon.svg
-├── src/
-│   ├── layouts/
-│   │   └── Layout.astro
-│   └── pages/
-│       └── index.astro
-└── package.json
-```
+## Routing
 
-To learn more about the folder structure of an Astro project, refer to [our guide on project structure](https://docs.astro.build/en/basics/project-structure/).
+| Path | Purpose |
+|---|---|
+| `/` | Landing (hero, features, mini-games, testimonials, CTA) |
+| `/auth/callback` | OAuth callback target — the API redirects here with `?token=...` |
+| `/profile` | User profile + reputation stats (Discord login required) |
+| `/search` | Summoner lookup (Riot ID) |
+| `/game` | Mini-games hub |
+| `/documentation` | Doc viewer |
+| `/resources` | Resources |
 
-## 🧞 Commands
+## Auth flow
 
-All commands are run from the root of the project, from a terminal:
+1. User clicks "Login" → `useAuth.login()` redirects to `${API_URL}/auth/discord/redirect`
+2. Discord OAuth → API receives the callback → API generates a token → redirects to `${WEBAPP_URL}/profile?token=...`
+3. `ProfileContent.tsx` reads the token, persists it in `localStorage`, fetches `/auth/me` and `/game/stats/:username`
 
-| Command                   | Action                                           |
-| :------------------------ | :----------------------------------------------- |
-| `npm install`             | Installs dependencies                            |
-| `npm run dev`             | Starts local dev server at `localhost:4321`      |
-| `npm run build`           | Build your production site to `./dist/`          |
-| `npm run preview`         | Preview your build locally, before deploying     |
-| `npm run astro ...`       | Run CLI commands like `astro add`, `astro check` |
-| `npm run astro -- --help` | Get help using the Astro CLI                     |
+## See also
 
-## 👀 Want to learn more?
-
-Feel free to check [our documentation](https://docs.astro.build) or jump into our [Discord server](https://astro.build/chat).
+- [`../CLAUDE.md`](../CLAUDE.md) — full ecosystem map (bot · api · webapp)
+- [`../beemobot-api/API.md`](../beemobot-api/API.md) — API endpoints reference
