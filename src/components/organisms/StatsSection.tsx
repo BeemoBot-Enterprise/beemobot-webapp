@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { StatCard } from "@/components/molecules/StatCard";
+import StatCard from "@/components/molecules/StatCard";
 
 const stats = [
   {
@@ -64,15 +64,11 @@ export function StatsSection() {
 
         {/* Stats grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 pt-8">
-          {stats.map((stat, index) => (
+          {stats.map((stat) => (
             <StatCard
               key={stat.label}
-              value={stat.value}
-              suffix={stat.suffix}
+              value={`${stat.value}${stat.suffix}`}
               label={stat.label}
-              icon={stat.icon}
-              variant={stat.variant}
-              index={index}
             />
           ))}
         </div>

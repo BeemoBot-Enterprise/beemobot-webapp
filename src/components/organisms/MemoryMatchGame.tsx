@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
+import Button from "@/components/atoms/Button";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
@@ -293,13 +293,13 @@ export function MemoryMatchGame() {
           </div>
         </div>
 
-        <HexButton
-          variant="blue"
+        <Button
+          variant="primary"
           size="lg"
           onClick={() => handleStart(selectedDifficulty)}
         >
           Commencer
-        </HexButton>
+        </Button>
       </div>
     );
   }
@@ -360,15 +360,15 @@ export function MemoryMatchGame() {
         )}
 
         <div className="flex gap-4">
-          <HexButton
-            variant="blue"
+          <Button
+            variant="primary"
             onClick={() => { setPendingDifficulty(state.data.difficulty); setShowBetModal(true); }}
           >
             Rejouer
-          </HexButton>
-          <HexButton variant="gold" onClick={resetGame}>
+          </Button>
+          <Button variant="secondary" onClick={resetGame}>
             Menu Principal
-          </HexButton>
+          </Button>
         </div>
       </div>
     );
@@ -444,9 +444,9 @@ export function MemoryMatchGame() {
 
       {/* Quit button */}
       <div className="flex justify-center mt-6">
-        <HexButton variant="honey" size="sm" onClick={resetGame}>
+        <Button variant="secondary" size="sm" onClick={resetGame}>
           Quitter
-        </HexButton>
+        </Button>
       </div>
     </div>
   );

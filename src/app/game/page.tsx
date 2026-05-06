@@ -2,7 +2,6 @@
 
 import { Suspense } from "react";
 import GameTabs from "@/components/organisms/GameTabs";
-import { GlowOrb } from "@/components/atoms/GlowOrb";
 
 function GameTabsLoading() {
   return (
@@ -18,11 +17,6 @@ function GameTabsLoading() {
 export default function Game() {
   return (
     <div className="relative min-h-screen overflow-hidden">
-      {/* Background orbs */}
-      <GlowOrb variant="honey" size="lg" className="-top-20 -right-20" />
-      <GlowOrb variant="blue" size="xl" className="top-1/3 -left-32" />
-      <GlowOrb variant="purple" size="lg" className="bottom-20 right-10" />
-
       {/* Honeycomb pattern */}
       <div className="absolute inset-0 honeycomb-bg opacity-20" />
 

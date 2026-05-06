@@ -1,25 +1,20 @@
 "use client";
 
-import React, { useState } from "react";
+import React from "react";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { FaDiscord } from "react-icons/fa";
-import { HexButton } from "@/components/atoms/HexButton";
-import { TypewriterText } from "@/components/atoms/TypewriterText";
-import { ParticleCanvas } from "@/components/atoms/ParticleCanvas";
+import Button from "@/components/atoms/Button";
 import { ParallaxBackground } from "./ParallaxBackground";
 import { BOT_INVITE_URL } from "@/lib/env";
 import { ScrollIndicator } from "@/components/molecules/ScrollIndicator";
 import { BEEMO } from "@/assets/images";
 
 export function EpicHeroSection() {
-  const [typingComplete, setTypingComplete] = useState(false);
-
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
       {/* Background layers */}
       <ParallaxBackground />
-      <ParticleCanvas particleCount={60} speed={0.3} colors={["#F5A623"]} />
 
       {/* Content container */}
       <div className="relative z-10 container mx-auto px-4 py-20">
@@ -72,41 +67,35 @@ export function EpicHeroSection() {
               transition={{ delay: 0.6 }}
               className="flex flex-col sm:flex-row gap-5 justify-center lg:justify-start"
             >
-              <HexButton
-                variant="blue"
+              <Button
+                variant="primary"
                 size="lg"
                 onClick={() => window.open(BOT_INVITE_URL, "_blank")}
-                className="shadow-[0_0_30px_-5px_rgba(0,160,255,0.4)] hover:shadow-[0_0_40px_-5px_rgba(0,160,255,0.6)]"
               >
-                <div className="flex items-center gap-3">
-                  <FaDiscord className="w-6 h-6" />
-                  <span className="font-bold">Ajouter à Discord</span>
-                </div>
-              </HexButton>
+                <FaDiscord className="w-6 h-6" />
+                <span className="font-bold">Ajouter à Discord</span>
+              </Button>
 
-              <HexButton
-                variant="gold"
+              <Button
+                variant="secondary"
                 size="lg"
                 onClick={() => (window.location.href = "/documentation")}
-                className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
               >
-                <div className="flex items-center gap-3">
-                  <svg
-                    className="w-5 h-5"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-                    />
-                  </svg>
-                  <span>Documentation</span>
-                </div>
-              </HexButton>
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                  />
+                </svg>
+                <span>Documentation</span>
+              </Button>
             </motion.div>
 
             {/* Social proof */}

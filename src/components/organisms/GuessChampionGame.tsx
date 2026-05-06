@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
+import Button from "@/components/atoms/Button";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
@@ -297,9 +297,9 @@ export function GuessChampionGame() {
             <p className="text-sm text-muted-foreground">Meilleur Score</p>
           </div>
         </div>
-        <HexButton variant="blue" size="lg" onClick={handleStart}>
+        <Button variant="primary" size="lg" onClick={handleStart}>
           Commencer
-        </HexButton>
+        </Button>
       </div>
     );
   }
@@ -322,9 +322,9 @@ export function GuessChampionGame() {
             </span>
           </div>
         </div>
-        <HexButton variant="honey" size="sm" onClick={resetGame}>
+        <Button variant="secondary" size="sm" onClick={resetGame}>
           Terminer
-        </HexButton>
+        </Button>
       </div>
 
       {/* Game content */}
@@ -388,22 +388,22 @@ export function GuessChampionGame() {
 
             {/* Actions */}
             <div className="flex flex-wrap gap-4 mb-6 justify-center">
-              <HexButton
-                variant="blue"
+              <Button
+                variant="primary"
                 size="sm"
                 onClick={revealAbility}
                 disabled={state.data.revealedAbilities.length >= 5}
               >
                 Révéler une compétence (-10 pts)
-              </HexButton>
-              <HexButton
-                variant="gold"
+              </Button>
+              <Button
+                variant="secondary"
                 size="sm"
                 onClick={useHint}
                 disabled={state.data.hintsUsed >= 3}
               >
                 Obtenir un indice (-15 pts)
-              </HexButton>
+              </Button>
             </div>
 
             {/* Input */}
@@ -432,14 +432,14 @@ export function GuessChampionGame() {
                 </div>
               )}
 
-              <HexButton
-                variant="blue"
+              <Button
+                variant="primary"
                 className="absolute right-2 top-1/2 -translate-y-1/2"
                 onClick={handleGuess}
                 disabled={!state.data.guess.trim()}
               >
                 Deviner !
-              </HexButton>
+              </Button>
             </div>
           </motion.div>
         ) : (
@@ -469,9 +469,9 @@ export function GuessChampionGame() {
                 {state.data.currentChampion?.name}
               </span>
             </p>
-            <HexButton variant="blue" onClick={nextRound}>
+            <Button variant="primary" onClick={nextRound}>
               Champion Suivant
-            </HexButton>
+            </Button>
           </motion.div>
         )}
       </AnimatePresence>

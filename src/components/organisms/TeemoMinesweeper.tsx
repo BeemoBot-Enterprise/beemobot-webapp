@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
+import Button from "@/components/atoms/Button";
 import { BetModal } from "@/components/organisms/BetModal";
 import { getMyPuuid } from "@/lib/honey";
 
@@ -375,9 +375,9 @@ const TeemoMinesweeper = () => {
             ))}
           </div>
         </div>
-        <HexButton variant="blue" size="lg" onClick={() => setShowBetModal(true)}>
+        <Button variant="primary" size="lg" onClick={() => setShowBetModal(true)}>
           Start Game
-        </HexButton>
+        </Button>
       </div>
     );
   }
@@ -459,12 +459,12 @@ const TeemoMinesweeper = () => {
               Don&apos;t worry, you&apos;ll detect mushrooms better next time.
             </p>
             <div className="flex gap-3 justify-center">
-              <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
+              <Button variant="primary" onClick={() => setShowBetModal(true)}>
                 Try Again
-              </HexButton>
-              <HexButton variant="gold" onClick={() => setGameStarted(false)}>
+              </Button>
+              <Button variant="secondary" onClick={() => setGameStarted(false)}>
                 Main Menu
-              </HexButton>
+              </Button>
             </div>
           </motion.div>
         )}
@@ -483,12 +483,12 @@ const TeemoMinesweeper = () => {
               Even Captain Teemo couldn&apos;t trick you!
             </p>
             <div className="flex gap-3 justify-center">
-              <HexButton variant="gold" onClick={() => setShowBetModal(true)}>
+              <Button variant="secondary" onClick={() => setShowBetModal(true)}>
                 Play Again
-              </HexButton>
-              <HexButton variant="blue" onClick={() => setGameStarted(false)}>
+              </Button>
+              <Button variant="primary" onClick={() => setGameStarted(false)}>
                 Main Menu
-              </HexButton>
+              </Button>
             </div>
           </motion.div>
         )}

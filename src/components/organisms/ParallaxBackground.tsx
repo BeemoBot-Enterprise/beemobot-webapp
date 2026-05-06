@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { cn } from "@/lib/utils";
-import { GlowOrb } from "@/components/atoms/GlowOrb";
 import Image from "next/image";
 import { BACKGROUNDS } from "@/assets/images";
 
@@ -16,8 +15,6 @@ export function ParallaxBackground({ className }: ParallaxBackgroundProps) {
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
 
   // Parallax transforms based on scroll
-  const y1 = useTransform(scrollY, [0, 1000], [0, -200]);
-  const y2 = useTransform(scrollY, [0, 1000], [0, -100]);
   const y3 = useTransform(scrollY, [0, 1000], [0, -50]);
   const bgScale = useTransform(scrollY, [0, 1000], [1, 1.1]);
   const opacity = useTransform(scrollY, [0, 500], [1, 0.3]);
@@ -68,27 +65,6 @@ export function ParallaxBackground({ className }: ParallaxBackgroundProps) {
         style={{ y: y3, opacity }}
         className="absolute inset-0 honeycomb-bg animate-honeycomb-pulse opacity-10"
       />
-
-      {/* Glowing orbs - Reduced opacity */}
-      <motion.div
-        style={{
-          y: y1,
-          x: mousePosition.x * 2,
-        }}
-        className="absolute -top-20 -left-20 opacity-20"
-      >
-        <GlowOrb variant="blue" size="xl" />
-      </motion.div>
-
-      <motion.div
-        style={{
-          y: y2,
-          x: mousePosition.x * -1.5,
-        }}
-        className="absolute top-1/4 -right-32 opacity-20"
-      >
-        <GlowOrb variant="honey" size="lg" />
-      </motion.div>
 
       {/* Radial vignette for focus */}
       <div className="absolute inset-0 bg-gradient-radial from-transparent via-transparent to-black/80" />

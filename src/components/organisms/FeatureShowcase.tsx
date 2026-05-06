@@ -2,8 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { FeatureCard } from "@/components/molecules/FeatureCard";
-import { GlowingText } from "@/components/atoms/GlowingText";
+import FeatureCard from "@/components/molecules/FeatureCard";
 
 const features = [
   {
@@ -69,10 +68,7 @@ export function FeatureShowcase() {
             Fonctionnalités
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Tout ce qu'il Vous Faut pour{" "}
-            <GlowingText variant="gold" as="span" animate={false}>
-              Dominer
-            </GlowingText>
+            Tout ce qu'il Vous Faut pour <span>Dominer</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
             Des fonctionnalités puissantes pour améliorer votre expérience League of Legends sur Discord
@@ -81,14 +77,12 @@ export function FeatureShowcase() {
 
         {/* Features grid */}
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {features.map((feature, index) => (
+          {features.map((feature) => (
             <FeatureCard
               key={feature.title}
               icon={feature.icon}
               title={feature.title}
               description={feature.description}
-              variant={feature.variant}
-              index={index}
             />
           ))}
         </div>

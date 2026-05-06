@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
+import Button from "@/components/atoms/Button";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
@@ -350,9 +350,9 @@ export function DodgeSkillshotGame() {
             <p className="text-sm text-muted-foreground">High Score</p>
           </div>
         </div>
-        <HexButton variant="blue" size="lg" onClick={handleStart}>
+        <Button variant="primary" size="lg" onClick={handleStart}>
           Start Game
-        </HexButton>
+        </Button>
       </div>
     );
   }
@@ -393,12 +393,12 @@ export function DodgeSkillshotGame() {
           </div>
         </div>
         <div className="flex gap-4">
-          <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
+          <Button variant="primary" onClick={() => setShowBetModal(true)}>
             Play Again
-          </HexButton>
-          <HexButton variant="gold" onClick={resetGame}>
+          </Button>
+          <Button variant="secondary" onClick={resetGame}>
             Main Menu
-          </HexButton>
+          </Button>
         </div>
       </div>
     );

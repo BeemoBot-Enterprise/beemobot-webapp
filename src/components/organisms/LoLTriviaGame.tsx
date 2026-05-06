@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
+import Button from "@/components/atoms/Button";
 import { ProgressRing } from "@/components/atoms/ProgressRing";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
@@ -264,9 +264,9 @@ export function LoLTriviaGame() {
             <p className="text-sm text-muted-foreground">High Score</p>
           </div>
         </div>
-        <HexButton variant="blue" size="lg" onClick={handleStart}>
+        <Button variant="primary" size="lg" onClick={handleStart}>
           Start Quiz
-        </HexButton>
+        </Button>
       </div>
     );
   }
@@ -292,7 +292,6 @@ export function LoLTriviaGame() {
           <ProgressRing
             progress={percentage}
             size={120}
-            variant={passed ? "gold" : "blue"}
           >
             <span className="text-2xl font-bold">
               {state.data.correctAnswers}/10
@@ -324,12 +323,12 @@ export function LoLTriviaGame() {
         )}
 
         <div className="flex gap-4">
-          <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
+          <Button variant="primary" onClick={() => setShowBetModal(true)}>
             Play Again
-          </HexButton>
-          <HexButton variant="gold" onClick={resetGame}>
+          </Button>
+          <Button variant="secondary" onClick={resetGame}>
             Main Menu
-          </HexButton>
+          </Button>
         </div>
       </div>
     );
@@ -366,7 +365,6 @@ export function LoLTriviaGame() {
             progress={(state.data.timeLeft / QUESTION_TIME) * 100}
             size={50}
             strokeWidth={4}
-            variant={state.data.timeLeft <= 5 ? "honey" : "blue"}
           >
             <span className="text-sm font-bold">{state.data.timeLeft}</span>
           </ProgressRing>
@@ -435,9 +433,9 @@ export function LoLTriviaGame() {
               animate={{ opacity: 1, y: 0 }}
               className="flex justify-center mt-6"
             >
-              <HexButton variant="blue" onClick={nextQuestion}>
+              <Button variant="primary" onClick={nextQuestion}>
                 {state.data.currentQuestionIndex < 9 ? "Next Question" : "See Results"}
-              </HexButton>
+              </Button>
             </motion.div>
           )}
         </motion.div>

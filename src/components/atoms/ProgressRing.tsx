@@ -1,14 +1,12 @@
 "use client";
 
 import React from "react";
-import { motion } from "framer-motion";
-import { cn } from "@/lib/utils";
+import { twMerge } from "tailwind-merge";
 
 interface ProgressRingProps {
   progress: number;
   size?: number;
   strokeWidth?: number;
-  variant?: "blue" | "gold" | "honey";
   className?: string;
   children?: React.ReactNode;
 }
@@ -17,7 +15,6 @@ export function ProgressRing({
   progress,
   size = 100,
   strokeWidth = 8,
-  variant = "blue",
   className,
   children,
 }: ProgressRingProps) {
@@ -25,38 +22,36 @@ export function ProgressRing({
   const circumference = radius * 2 * Math.PI;
   const offset = circumference - (progress / 100) * circumference;
 
-  const colorStyles = {
-    blue: "stroke-[var(--hextech-blue)]",
-    gold: "stroke-[var(--hextech-gold)]",
-    honey: "stroke-[var(--beemo-honey)]",
-  };
-
   return (
-    <div className={cn("relative inline-flex items-center justify-center", className)}>
+    <div
+      className={twMerge(
+        "relative inline-flex items-center justify-center",
+        className,
+      )}
+    >
       <svg width={size} height={size} className="-rotate-90">
         {/* Background circle */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="var(--bg-surface)"
+          stroke="var(--border)"
           strokeWidth={strokeWidth}
           fill="none"
         />
         {/* Progress circle */}
-        <motion.circle
+        <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
           strokeWidth={strokeWidth}
           fill="none"
           strokeLinecap="round"
-          className={colorStyles[variant]}
-          initial={{ strokeDashoffset: circumference }}
-          animate={{ strokeDashoffset: offset }}
-          transition={{ duration: 1, ease: "easeOut" }}
+          stroke="var(--accent)"
+          strokeDasharray={circumference}
+          strokeDashoffset={offset}
           style={{
-            strokeDasharray: circumference,
+            transition: "stroke-dashoffset 0.5s ease-out",
           }}
         />
       </svg>

@@ -7,7 +7,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
+import Button from "@/components/atoms/Button";
 import { useRouter } from "next/navigation";
 import { FaDiscord } from "react-icons/fa";
 import { API_URL } from "@/lib/env";
@@ -79,31 +79,27 @@ const Header = () => {
           {isAuthenticated ? (
             <div className="flex items-center gap-3">
               <Link href="/profil">
-                <HexButton variant="blue" size="sm" className="!py-2 !px-4">
+                <Button variant="primary" size="sm">
                   Profil
-                </HexButton>
+                </Button>
               </Link>
-              <HexButton
-                variant="gold"
+              <Button
+                variant="secondary"
                 size="sm"
                 onClick={handleLogout}
-                className="!py-2 !px-4"
               >
                 Déconnexion
-              </HexButton>
+              </Button>
             </div>
           ) : (
-            <HexButton
-              variant="blue"
+            <Button
+              variant="primary"
               size="sm"
               onClick={redirectToDiscord}
-              className="!py-2 !px-4"
             >
-              <div className="flex items-center gap-2">
-                <FaDiscord className="w-5 h-5" />
-                <span>Connexion</span>
-              </div>
-            </HexButton>
+              <FaDiscord className="w-5 h-5" />
+              <span>Connexion</span>
+            </Button>
           )}
         </div>
       </div>

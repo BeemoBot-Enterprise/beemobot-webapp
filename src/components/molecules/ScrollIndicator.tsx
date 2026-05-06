@@ -33,7 +33,7 @@ export function ScrollIndicator({ className }: ScrollIndicatorProps) {
         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
         className="flex flex-col items-center"
       >
-        <BeeIcon size={32} animate />
+        <BeeIcon size={32} />
 
         <motion.div
           className="w-6 h-10 rounded-full border-2 border-[var(--hextech-blue)] flex justify-center mt-2"

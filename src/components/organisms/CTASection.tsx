@@ -2,8 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { HexButton } from "@/components/atoms/HexButton";
-import { GlowOrb } from "@/components/atoms/GlowOrb";
+import Button from "@/components/atoms/Button";
 import { FaDiscord } from "react-icons/fa";
 import { BOT_INVITE_URL } from "@/lib/env";
 
@@ -12,23 +11,6 @@ export function CTASection() {
     <section className="relative py-24 overflow-hidden">
       {/* Background with radial glow */}
       <div className="absolute inset-0 bg-[var(--bg-void)]" />
-
-      {/* Glow orbs */}
-      <GlowOrb
-        variant="blue"
-        size="xl"
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"
-      />
-      <GlowOrb
-        variant="gold"
-        size="lg"
-        className="absolute top-1/4 right-1/4"
-      />
-      <GlowOrb
-        variant="honey"
-        size="md"
-        className="absolute bottom-1/4 left-1/4"
-      />
 
       {/* Honeycomb pattern */}
       <div className="absolute inset-0 honeycomb-bg opacity-10" />
@@ -66,17 +48,17 @@ export function CTASection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-12">
-            <HexButton
-              variant="blue"
+            <Button
+              variant="primary"
               size="lg"
               onClick={() => window.open(BOT_INVITE_URL, "_blank")}
             >
               <FaDiscord className="w-5 h-5" />
               Ajouter à Discord
-            </HexButton>
+            </Button>
 
-            <HexButton
-              variant="gold"
+            <Button
+              variant="secondary"
               size="lg"
               onClick={() => (window.location.href = "/game")}
             >
@@ -100,7 +82,7 @@ export function CTASection() {
                 />
               </svg>
               Essayer les Mini-jeux
-            </HexButton>
+            </Button>
           </div>
 
           {/* Discord embed preview */}

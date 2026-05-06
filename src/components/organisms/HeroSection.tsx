@@ -33,7 +33,7 @@ const HeroSection = () => {
                 Ajouter le bot
               </Button>
               <Button
-                variant="outline"
+                variant="secondary"
                 className="border-gray-500/20 bg-[#2d313e]/40 backdrop-filter backdrop-blur-sm hover:bg-[#353a4a]/50 px-8 py-4 rounded-md text-lg shadow-md transition-all duration-200 hover:scale-[1.02]"
               >
                 Documentation
