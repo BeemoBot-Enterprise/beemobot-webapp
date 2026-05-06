@@ -1,5 +1,9 @@
+"use client";
+
 import Link from "next/link";
-import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { useEffect, useState } from "react";
+import { twMerge } from "tailwind-merge";
 
 export interface NavItem {
   label: string;
@@ -8,76 +12,36 @@ export interface NavItem {
 
 export interface NavbarProps {
   items: NavItem[];
+  onMobileNavigate?: () => void;
 }
 
-const Navbar = ({ items }: NavbarProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const Navbar = ({ items, onMobileNavigate }: NavbarProps) => {
+  const pathname = usePathname();
   return (
-    <nav className="relative">
-      {/* Desktop Menu */}
-      <div className="hidden md:flex space-x-12">
-        {items.map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            className="hover:text-yellow-400 transition-colors"
-          >
-            {item.label}
-          </Link>
-        ))}
-      </div>
-
-      {/* Mobile Menu Button */}
-      <button
-        className="md:hidden flex items-center"
-        onClick={() => setIsOpen(!isOpen)}
-        aria-label="Toggle Menu"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          width="24"
-          height="24"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-        >
-          {isOpen ? (
-            // X icon for close
-            <>
-              <line x1="18" y1="6" x2="6" y2="18" />
-              <line x1="6" y1="6" x2="18" y2="18" />
-            </>
-          ) : (
-            // Hamburger icon
-            <>
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </>
-          )}
-        </svg>
-      </button>
-
-      {/* Mobile Menu */}
-      {isOpen && (
-        <div className="md:hidden absolute top-full right-0 mt-2 w-48 bg-[#1d202b] border border-gray-700 rounded-md shadow-lg py-2 z-10">
-          {items.map((item) => (
+    <ul className="flex flex-col md:flex-row md:items-center gap-1 md:gap-2">
+      {items.map((item) => {
+        const active = pathname === item.href;
+        return (
+          <li key={item.href}>
             <Link
-              key={item.href}
               href={item.href}
-              className="block px-4 py-2 hover:bg-[#2a2e3b] transition-colors"
-              onClick={() => setIsOpen(false)}
+              onClick={onMobileNavigate}
+              className={twMerge(
+                "block px-3 py-2 text-sm rounded-md transition-colors",
+                active
+                  ? "text-text"
+                  : "text-text-muted hover:text-text hover:bg-surface",
+              )}
             >
               {item.label}
+              {active && (
+                <span className="hidden md:block h-0.5 bg-accent mt-1.5 -mx-3" />
+              )}
             </Link>
-          ))}
-        </div>
-      )}
-    </nav>
+          </li>
+        );
+      })}
+    </ul>
   );
 };
 

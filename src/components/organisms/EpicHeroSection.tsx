@@ -7,7 +7,6 @@ import { FaDiscord } from "react-icons/fa";
 import Button from "@/components/atoms/Button";
 import { ParallaxBackground } from "./ParallaxBackground";
 import { BOT_INVITE_URL } from "@/lib/env";
-import { ScrollIndicator } from "@/components/molecules/ScrollIndicator";
 import { BEEMO } from "@/assets/images";
 
 export function EpicHeroSection() {
@@ -215,8 +214,6 @@ export function EpicHeroSection() {
         </div>
       </div>
 
-      {/* Scroll indicator */}
-      <ScrollIndicator />
     </section>
   );
 }
