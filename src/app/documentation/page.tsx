@@ -276,7 +276,7 @@ export default function Documentation() {
     },
   ];
 
-  const handleSetActiveSection = (id: any) => {
+  const handleSetActiveSection = (id: string) => {
     setActiveSection(id);
     document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
   };

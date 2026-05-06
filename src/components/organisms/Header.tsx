@@ -10,6 +10,7 @@ import { motion } from "framer-motion";
 import { HexButton } from "@/components/atoms/HexButton";
 import { useRouter } from "next/navigation";
 import { FaDiscord } from "react-icons/fa";
+import { API_URL } from "@/lib/env";
 
 const Header = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,11 +30,7 @@ const Header = () => {
 
   const redirectToDiscord = () => {
     if (typeof window !== "undefined") {
-      const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL ||
-        process.env.API_URL ||
-        "http://localhost:65397";
-      window.location.href = `${apiUrl}/auth/discord/redirect`;
+      window.location.href = `${API_URL}/auth/discord/redirect`;
     }
   };
 

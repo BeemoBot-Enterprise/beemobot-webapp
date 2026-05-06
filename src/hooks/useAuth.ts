@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2024-2026 BeemoBot Enterprise
+ * All rights reserved.
+ */
+
 import { useEffect, useState } from "react";
-import { getUser, setUser, removeUser, type User } from "@/lib/store/user";
-import { getToken, setToken, removeToken } from "@/lib/store/token";
+import { getUser, removeUser, type User } from "@/lib/store/user";
+import { setToken, removeToken } from "@/lib/store/token";
+import { API_URL } from "@/lib/env";
 import { useRouter } from "next/navigation";
 
 export const useAuth = () => {
@@ -24,11 +30,7 @@ export const useAuth = () => {
   }, []);
 
   const login = () => {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL ||
-      process.env.API_URL ||
-      "http://localhost:65397";
-    window.location.href = `${apiUrl}/auth/discord/redirect`;
+    window.location.href = `${API_URL}/auth/discord/redirect`;
   };
 
   const logout = () => {
@@ -40,7 +42,6 @@ export const useAuth = () => {
 
   const handleCallback = (token: string) => {
     setToken(token);
-    // Le getUser sera appelé automatiquement pour récupérer les infos
   };
 
   return {
