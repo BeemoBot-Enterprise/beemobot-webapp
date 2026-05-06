@@ -1,5 +1,6 @@
 import { LOGO } from "@/assets/images";
 import Image from "next/image";
+import { BOT_INVITE_URL } from "@/lib/env";
 
 const SponsorsSection = () => {
   return (
@@ -57,10 +58,7 @@ const SponsorsSection = () => {
                   </p>
                   <div className="mt-4">
                     <a
-                      href={
-                        process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
-                        process.env.BOT_INVITE_URL
-                      }
+                      href={BOT_INVITE_URL}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-block bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-3 px-6 rounded-lg transition-all duration-200 hover:scale-[1.02] shadow-md"

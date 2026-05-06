@@ -1,6 +1,12 @@
+/**
+ * Copyright (c) 2024-2026 BeemoBot Enterprise
+ * All rights reserved.
+ */
+
 "use client";
 
 import { useEffect, useState } from "react";
+import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
 import {
   Card,
@@ -9,7 +15,7 @@ import {
   CardTitle,
 } from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
-import Image from "next/image";
+import { API_URL } from "@/lib/env";
 
 interface UserStats {
   username: string;
@@ -22,8 +28,10 @@ interface DiscordUser {
   username: string;
   discriminator: string;
   avatar: string | null;
-  email?: string;
 }
+
+const TOKEN_KEY = "beemobot_token";
+const USER_KEY = "beemobot_user";
 
 export default function ProfileContent() {
   const searchParams = useSearchParams();
@@ -35,156 +43,103 @@ export default function ProfileContent() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
+    if (typeof window === "undefined") return;
+
     const tokenFromUrl = searchParams.get("token");
-    const usernameFromUrl = searchParams.get("username");
-    const idFromUrl = searchParams.get("id");
-    const avatarFromUrl = searchParams.get("avatar");
-
-    console.log("🔍 URL actuelle:", window.location.href);
-    console.log("🔑 Token depuis URL:", tokenFromUrl);
-    console.log("👤 Username depuis URL:", usernameFromUrl);
-
     if (tokenFromUrl) {
-      console.log("✅ Token trouvé dans l'URL, sauvegarde...");
+      localStorage.setItem(TOKEN_KEY, tokenFromUrl);
       setToken(tokenFromUrl);
-      localStorage.setItem("beemobot_token", tokenFromUrl);
+      return;
+    }
 
-      if (usernameFromUrl) {
-        const userInfo = {
-          username: usernameFromUrl,
-          id: idFromUrl || "0",
-          avatar: avatarFromUrl || null,
-          discriminator: "0",
-        };
-        setUser(userInfo as DiscordUser);
-        localStorage.setItem("beemobot_user", JSON.stringify(userInfo));
-      }
-
-      router.replace("/profile");
-    } else {
-      const storedToken = localStorage.getItem("beemobot_token");
-      const storedUser = localStorage.getItem("beemobot_user");
-
-      console.log("💾 Token depuis localStorage:", storedToken ? "Trouvé" : "Non trouvé");
-      console.log("💾 User depuis localStorage:", storedUser ? "Trouvé" : "Non trouvé");
-
-      if (storedToken) {
-        setToken(storedToken);
-      }
-      if (storedUser) {
-        try {
-          setUser(JSON.parse(storedUser));
-        } catch (e) {
-          console.error("Erreur parsing user:", e);
-        }
+    const storedToken = localStorage.getItem(TOKEN_KEY);
+    const storedUser = localStorage.getItem(USER_KEY);
+    if (storedToken) setToken(storedToken);
+    if (storedUser) {
+      try {
+        setUser(JSON.parse(storedUser));
+      } catch {
+        localStorage.removeItem(USER_KEY);
       }
     }
-  }, [searchParams, router]);
+  }, [searchParams]);
 
   useEffect(() => {
-    if (token) {
-      fetchUserData();
-    } else {
+    if (!token) {
       setLoading(false);
+      return;
     }
+
+    const fetchUserData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        const userResponse = await fetch(`${API_URL}/auth/me`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!userResponse.ok) {
+          throw new Error("Token invalide ou expiré.");
+        }
+        const userData = await userResponse.json();
+        const nextUser: DiscordUser = {
+          id: userData.id ?? "0",
+          username: userData.username ?? "User",
+          discriminator: userData.discriminator ?? "0",
+          avatar: userData.avatar ?? null,
+        };
+        setUser(nextUser);
+        localStorage.setItem(USER_KEY, JSON.stringify(nextUser));
+
+        const statsResponse = await fetch(
+          `${API_URL}/game/stats/${encodeURIComponent(nextUser.username)}`
+        );
+        if (statsResponse.ok) {
+          setStats(await statsResponse.json());
+        } else {
+          setStats({
+            username: nextUser.username,
+            totalShrooms: 0,
+            totalRespects: 0,
+          });
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Erreur de chargement");
+        localStorage.removeItem(TOKEN_KEY);
+        setToken(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchUserData();
   }, [token]);
 
-  const fetchUserData = async () => {
-    if (!token) return;
-
-    try {
-      setLoading(true);
-      const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL ||
-        process.env.API_URL ||
-        "https://fb8ff02b18f6.ngrok-free.app";
-
-      console.log("🔄 Récupération des données utilisateur...");
-
-      const userResponse = await fetch(`${apiUrl}/auth/me`, {
-        headers: {
-          "ngrok-skip-browser-warning": "true",
-          Authorization: `Bearer ${token}`,
-        },
-      });
-
-      if (!userResponse.ok) {
-        throw new Error("Token invalide ou expiré. Veuillez vous reconnecter.");
-      }
-
-      const userData = await userResponse.json();
-      console.log("👤 Données utilisateur:", userData);
-
-      const discordUsername = userData.username || "User";
-      const discordId = userData.id || "0";
-      const discordAvatar = userData.avatar || null;
-      const discordDiscriminator = userData.discriminator || "0";
-
-      setUser({
-        id: discordId,
-        username: discordUsername,
-        discriminator: discordDiscriminator,
-        avatar: discordAvatar,
-      });
-
-      const statsResponse = await fetch(
-        `${apiUrl}/game/stats/${encodeURIComponent(discordUsername)}`,
-        {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          },
-        }
-      );
-
-      if (statsResponse.ok) {
-        const statsData = await statsResponse.json();
-        console.log("📊 Statistiques:", statsData);
-        setStats(statsData);
-      } else {
-        console.log("⚠️ Pas de stats, initialisation à 0");
-        setStats({
-          username: discordUsername,
-          totalShrooms: 0,
-          totalRespects: 0,
-        });
-      }
-    } catch (err) {
-      console.error("❌ Erreur:", err);
-      setError(err instanceof Error ? err.message : "Erreur de chargement");
-      localStorage.removeItem("beemobot_token");
-      setToken(null);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const handleLogin = () => {
-    const apiUrl =
-      process.env.NEXT_PUBLIC_API_URL ||
-      process.env.API_URL ||
-      "https://fb8ff02b18f6.ngrok-free.app";
-    window.location.href = `${apiUrl}/auth/discord/redirect`;
+    window.location.href = `${API_URL}/auth/discord/redirect`;
   };
 
   const handleLogout = () => {
-    localStorage.removeItem("beemobot_token");
-    localStorage.removeItem("beemobot_user");
+    localStorage.removeItem(TOKEN_KEY);
+    localStorage.removeItem(USER_KEY);
     setToken(null);
     setUser(null);
     setStats(null);
     router.push("/");
   };
 
-  const getAvatarUrl = (user: DiscordUser) => {
-    if (user.avatar) {
-      return `https://cdn.discordapp.com/avatars/${user.id}/${user.avatar}.png`;
+  const getAvatarUrl = (u: DiscordUser) => {
+    if (u.avatar) {
+      return `https://cdn.discordapp.com/avatars/${u.id}/${u.avatar}.png`;
     }
-    return `https://cdn.discordapp.com/embed/avatars/${parseInt(user.discriminator || "0") % 5}.png`;
+    return `https://cdn.discordapp.com/embed/avatars/${
+      parseInt(u.discriminator || "0") % 5
+    }.png`;
   };
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0f1117] pb-20 px-4">
+      <main className="min-h-screen bg-[#0f1117] py-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="text-white text-2xl">Chargement...</div>
         </div>
@@ -194,7 +149,7 @@ export default function ProfileContent() {
 
   if (!token || !user) {
     return (
-      <main className="min-h-screen bg-[#0f1117] pb-20 px-4">
+      <main className="min-h-screen bg-[#0f1117] py-20 px-4">
         <div className="max-w-5xl mx-auto">
           <Card className="bg-[#1a1d28] border-gray-700/30 text-center p-12">
             <CardContent>
@@ -219,7 +174,7 @@ export default function ProfileContent() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0f1117] pb-20 px-4">
+    <main className="min-h-screen bg-[#0f1117] py-20 px-4">
       <div className="max-w-5xl mx-auto">
         <Card className="bg-[#1a1d28] border-gray-700/30 overflow-hidden mb-8">
           <CardHeader className="bg-[#5865F2]/10 border-b border-gray-700/30">
@@ -334,18 +289,13 @@ export default function ProfileContent() {
                 <div className="mt-6 p-4 bg-[#0f1117] rounded-lg border border-gray-700/30">
                   <p className="text-gray-300 text-sm leading-relaxed">
                     {stats.totalRespects - stats.totalShrooms >= 10 ? (
-                      <>
-                        🏆 Excellent joueur ! Tu es respecté par la communauté.
-                      </>
+                      <>🏆 Excellent joueur ! Tu es respecté par la communauté.</>
                     ) : stats.totalRespects - stats.totalShrooms >= 0 ? (
                       <>👍 Bon joueur, continue comme ça !</>
                     ) : stats.totalRespects - stats.totalShrooms >= -10 ? (
                       <>⚠️ Attention, ta réputation est négative.</>
                     ) : (
-                      <>
-                        🚫 Ta réputation est très mauvaise. Améliore ton
-                        comportement !
-                      </>
+                      <>🚫 Ta réputation est très mauvaise. Améliore ton comportement !</>
                     )}
                   </p>
                 </div>

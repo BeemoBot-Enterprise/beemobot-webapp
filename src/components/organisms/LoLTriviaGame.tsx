@@ -6,6 +6,8 @@ import { HexButton } from "@/components/atoms/HexButton";
 import { ProgressRing } from "@/components/atoms/ProgressRing";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
+import { BetModal } from "@/components/organisms/BetModal";
+import { getMyPuuid } from "@/lib/honey";
 
 interface Question {
   question: string;
@@ -139,6 +141,8 @@ export function LoLTriviaGame() {
   );
 
   const [shuffledQuestions, setShuffledQuestions] = useState<Question[]>([]);
+  const [bet, setBet] = useState<number | null>(null);
+  const [showBetModal, setShowBetModal] = useState(false);
 
   const shuffleQuestions = useCallback(() => {
     const shuffled = [...questions].sort(() => Math.random() - 0.5).slice(0, 10);
@@ -147,7 +151,7 @@ export function LoLTriviaGame() {
 
   const currentQuestion = shuffledQuestions[state.data.currentQuestionIndex];
 
-  const handleStart = () => {
+  const doStart = () => {
     shuffleQuestions();
     startGame();
     updateData({
@@ -158,6 +162,23 @@ export function LoLTriviaGame() {
       correctAnswers: 0,
       showResult: false,
     });
+  };
+
+  const handleStart = () => {
+    setShowBetModal(true);
+  };
+
+  const handleWin = async (correctAnswers: number) => {
+    if (bet) {
+      const puuid = await getMyPuuid();
+      if (puuid) {
+        await fetch("/api/minigame-win", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "lol-trivia", score: correctAnswers }),
+        });
+      }
+    }
   };
 
   const handleAnswer = (answerIndex: number) => {
@@ -185,7 +206,11 @@ export function LoLTriviaGame() {
       });
     } else {
       updateData({ showResult: true });
-      endGame(state.data.correctAnswers >= 7);
+      const passed = state.data.correctAnswers >= 7;
+      endGame(passed);
+      if (passed) {
+        handleWin(state.data.correctAnswers);
+      }
     }
   };
 
@@ -210,6 +235,13 @@ export function LoLTriviaGame() {
   if (state.status === "idle") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="lol-trivia"
+            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -221,19 +253,19 @@ export function LoLTriviaGame() {
           LoL Trivia
         </h2>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Testez vos connaissances League of Legends ! Répondez à 10 questions sur
-          les champions, les objets, le lore et l'esport. Vous avez 15 secondes par question !
+          Test your League of Legends knowledge! Answer 10 questions about
+          champions, items, lore, and esports. You have 15 seconds per question!
         </p>
         <div className="flex gap-8 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">Meilleur Score</p>
+            <p className="text-sm text-muted-foreground">High Score</p>
           </div>
         </div>
         <HexButton variant="blue" size="lg" onClick={handleStart}>
-          Commencer le Quiz
+          Start Quiz
         </HexButton>
       </div>
     );
@@ -245,6 +277,13 @@ export function LoLTriviaGame() {
 
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="lol-trivia"
+            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -267,11 +306,11 @@ export function LoLTriviaGame() {
             passed ? "text-[var(--hextech-gold)]" : "text-[var(--hextech-blue)]"
           )}
         >
-          {passed ? "Niveau Challenger !" : "Continuez à vous entraîner !"}
+          {passed ? "Challenger Level!" : "Keep Practicing!"}
         </h2>
         <p className="text-muted-foreground mb-4">
-          Vous avez obtenu {state.score} points avec {state.data.correctAnswers}{" "}
-          bonnes réponses !
+          You scored {state.score} points with {state.data.correctAnswers}{" "}
+          correct answers!
         </p>
 
         {state.score > state.highScore && (
@@ -280,16 +319,16 @@ export function LoLTriviaGame() {
             animate={{ opacity: 1, y: 0 }}
             className="text-[var(--rune-cyan)] font-bold mb-4"
           >
-            🎉 Nouveau Meilleur Score !
+            🎉 New High Score!
           </motion.p>
         )}
 
         <div className="flex gap-4">
-          <HexButton variant="blue" onClick={handleStart}>
-            Rejouer
+          <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
+            Play Again
           </HexButton>
           <HexButton variant="gold" onClick={resetGame}>
-            Menu Principal
+            Main Menu
           </HexButton>
         </div>
       </div>
@@ -397,7 +436,7 @@ export function LoLTriviaGame() {
               className="flex justify-center mt-6"
             >
               <HexButton variant="blue" onClick={nextQuestion}>
-                {state.data.currentQuestionIndex < 9 ? "Question Suivante" : "Voir les Résultats"}
+                {state.data.currentQuestionIndex < 9 ? "Next Question" : "See Results"}
               </HexButton>
             </motion.div>
           )}

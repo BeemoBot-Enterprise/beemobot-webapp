@@ -9,6 +9,7 @@ import {
 } from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
 import Image from "next/image";
+import { API_URL } from "@/lib/env";
 
 interface Summoner {
   puuid: string;
@@ -92,11 +93,6 @@ export default function SearchPage() {
     setProfile(null);
 
     try {
-      const apiUrl =
-        process.env.NEXT_PUBLIC_API_URL ||
-        process.env.API_URL ||
-        "http://localhost:65397";
-
       // Normaliser le format de recherche (accepter # ou -)
       let formattedQuery = searchQuery.trim();
 
@@ -107,12 +103,7 @@ export default function SearchPage() {
 
       // Appel à l'endpoint /lol/summoner/:summonerName/profile
       const response = await fetch(
-        `${apiUrl}/lol/summoner/${encodeURIComponent(formattedQuery)}/profile?region=${region}`,
-        {
-          headers: {
-            "ngrok-skip-browser-warning": "true",
-          },
-        },
+        `${API_URL}/lol/summoner/${encodeURIComponent(formattedQuery)}/profile?region=${region}`
       );
 
       if (!response.ok) {

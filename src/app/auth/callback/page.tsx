@@ -1,132 +1,59 @@
+/**
+ * Copyright (c) 2024-2026 BeemoBot Enterprise
+ * All rights reserved.
+ */
+
 "use client";
 
-import { Suspense, useEffect, useState } from "react";
+import { Suspense, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { setToken } from "@/lib/store/token";
+import { API_URL } from "@/lib/env";
 
-function AuthCallbackContent() {
+const TOKEN_KEY = "beemobot_token";
+
+function CallbackContent() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const [status, setStatus] = useState<"loading" | "success" | "error">(
-    "loading",
-  );
-  const [message, setMessage] = useState("Authentification en cours...");
+  const params = useSearchParams();
 
   useEffect(() => {
-    const token = searchParams.get("token");
-    const error = searchParams.get("error");
-
-    if (error) {
-      setStatus("error");
-      setMessage(getErrorMessage(error));
-      setTimeout(() => router.push("/"), 3000);
+    const token = params.get("token");
+    if (!token) {
+      router.replace("/");
       return;
     }
+    localStorage.setItem(TOKEN_KEY, token);
 
-    if (token) {
-      // Sauvegarder le token dans localStorage
-      setToken(token);
-      setStatus("success");
-      setMessage("Connexion réussie ! Redirection...");
-
-      // Rediriger vers la page de profil
-      setTimeout(() => router.push("/profil"), 1500);
-    } else {
-      setStatus("error");
-      setMessage("Token manquant");
-      setTimeout(() => router.push("/"), 3000);
-    }
-  }, [searchParams, router]);
-
-  const getErrorMessage = (error: string): string => {
-    switch (error) {
-      case "access_denied":
-        return "Vous avez refusé l'autorisation Discord";
-      case "state_mismatch":
-        return "Erreur de sécurité OAuth";
-      case "authentication_error":
-        return "Erreur d'authentification";
-      case "server_error":
-        return "Erreur serveur";
-      default:
-        return "Une erreur est survenue";
-    }
-  };
+    fetch(`${API_URL}/profile/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((profile) => {
+        if (!profile?.linked) {
+          router.replace("/auth/link");
+        } else {
+          router.replace(`/u/${profile.gameName}-${profile.tagLine}`);
+        }
+      })
+      .catch(() => router.replace("/auth/link"));
+  }, [params, router]);
 
   return (
-    <main className="min-h-screen bg-gradient-to-b from-[#0a0e1a] via-[#1a1f2e] to-[#0a0e1a] flex items-center justify-center px-4">
-      <div className="text-center">
-        {status === "loading" && (
-          <>
-            <div className="w-20 h-20 mx-auto mb-6 border-4 border-[#00A0FF] border-t-transparent rounded-full animate-spin" />
-            <h1 className="text-3xl font-bold text-white mb-4">{message}</h1>
-          </>
-        )}
-
-        {status === "success" && (
-          <>
-            <div className="w-20 h-20 mx-auto mb-6 bg-green-500 rounded-full flex items-center justify-center">
-              <svg
-                className="w-12 h-12 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M5 13l4 4L19 7"
-                />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-green-400 mb-4">
-              {message}
-            </h1>
-          </>
-        )}
-
-        {status === "error" && (
-          <>
-            <div className="w-20 h-20 mx-auto mb-6 bg-red-500 rounded-full flex items-center justify-center">
-              <svg
-                className="w-12 h-12 text-white"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </div>
-            <h1 className="text-3xl font-bold text-red-400 mb-4">{message}</h1>
-            <p className="text-gray-400">Redirection vers l'accueil...</p>
-          </>
-        )}
-      </div>
+    <main className="min-h-screen flex items-center justify-center bg-[#0f1117]">
+      <p className="text-white text-lg">Connexion...</p>
     </main>
   );
 }
 
-export default function AuthCallbackPage() {
+export default function CallbackPage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-gradient-to-b from-[#0a0e1a] via-[#1a1f2e] to-[#0a0e1a] flex items-center justify-center px-4">
-          <div className="text-center">
-            <div className="w-20 h-20 mx-auto mb-6 border-4 border-[#00A0FF] border-t-transparent rounded-full animate-spin" />
-            <h1 className="text-3xl font-bold text-white mb-4">
-              Authentification en cours...
-            </h1>
-          </div>
+        <main className="min-h-screen flex items-center justify-center bg-[#0f1117]">
+          <p className="text-white text-lg">Connexion...</p>
         </main>
       }
     >
-      <AuthCallbackContent />
+      <CallbackContent />
     </Suspense>
   );
 }

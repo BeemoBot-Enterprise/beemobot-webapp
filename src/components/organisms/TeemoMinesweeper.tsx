@@ -3,6 +3,8 @@
 import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { HexButton } from "@/components/atoms/HexButton";
+import { BetModal } from "@/components/organisms/BetModal";
+import { getMyPuuid } from "@/lib/honey";
 
 interface Cell {
   hasMine: boolean;
@@ -36,6 +38,9 @@ const TeemoMinesweeper = () => {
     typeof setInterval
   > | null>(null);
   const [difficulty, setDifficulty] = useState<Difficulty>("medium");
+  const [bet, setBet] = useState<number | null>(null);
+  const [showBetModal, setShowBetModal] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
 
   // Initialize the game board
   const initializeBoard = (): void => {
@@ -172,6 +177,7 @@ const TeemoMinesweeper = () => {
     if (hasWon) {
       setGameState("won");
       clearInterval(timerInterval as ReturnType<typeof setInterval>);
+      handleWin();
     }
   };
 
@@ -228,9 +234,24 @@ const TeemoMinesweeper = () => {
     setDifficulty(level);
   };
 
-  // Reset game when difficulty changes
+  const handleWin = async () => {
+    if (bet) {
+      const puuid = await getMyPuuid();
+      if (puuid) {
+        await fetch("/api/minigame-win", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "teemo-minesweeper", score: timer }),
+        });
+      }
+    }
+  };
+
+  // Reset game when difficulty changes (only if game already started)
   useEffect(() => {
-    initializeBoard();
+    if (gameStarted) {
+      initializeBoard();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [boardSize, mineCount]);
 
@@ -313,10 +334,58 @@ const TeemoMinesweeper = () => {
     );
   };
 
+  if (!gameStarted) {
+    return (
+      <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="teemo-minesweeper"
+            onConfirm={(b) => { setBet(b); setShowBetModal(false); setGameStarted(true); initializeBoard(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
+        <motion.div
+          initial={{ scale: 0.8, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          className="mb-8"
+        >
+          <span className="text-6xl">🍄</span>
+        </motion.div>
+        <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
+          Teemo&apos;s Mushroom Field
+        </h2>
+        <p className="text-muted-foreground mb-6 max-w-md">
+          Navigate the field without stepping on Teemo&apos;s mushrooms. Flag suspicious cells with right-click!
+        </p>
+        <div className="mb-6">
+          <p className="text-sm text-muted-foreground mb-3">Select Difficulty</p>
+          <div className="flex gap-3 justify-center">
+            {(["easy", "medium", "hard"] as const).map((diff) => (
+              <button
+                key={diff}
+                onClick={() => setGameDifficulty(diff)}
+                className={`px-4 py-2 rounded-lg capitalize transition-all ${
+                  difficulty === diff
+                    ? "glass border border-[var(--hextech-blue)] bg-[var(--hextech-blue)]/20"
+                    : "glass hover:bg-[var(--bg-surface)]"
+                }`}
+              >
+                {diff}
+              </button>
+            ))}
+          </div>
+        </div>
+        <HexButton variant="blue" size="lg" onClick={() => setShowBetModal(true)}>
+          Start Game
+        </HexButton>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center p-6 rounded-xl max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-center gradient-text-hextech">
-        Le Champ de Champignons de Teemo
+        Teemo's Mushroom Field
       </h1>
 
       <div className="mb-6 flex flex-col md:flex-row justify-between w-full items-center gap-4">
@@ -329,7 +398,7 @@ const TeemoMinesweeper = () => {
             }`}
             onClick={() => setGameDifficulty("easy")}
           >
-            Facile
+            Easy
           </button>
           <button
             className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
@@ -339,7 +408,7 @@ const TeemoMinesweeper = () => {
             }`}
             onClick={() => setGameDifficulty("medium")}
           >
-            Moyen
+            Medium
           </button>
           <button
             className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
@@ -349,7 +418,7 @@ const TeemoMinesweeper = () => {
             }`}
             onClick={() => setGameDifficulty("hard")}
           >
-            Difficile
+            Hard
           </button>
         </div>
 
@@ -368,6 +437,14 @@ const TeemoMinesweeper = () => {
       </div>
 
       <AnimatePresence mode="wait">
+        {showBetModal && (
+          <BetModal
+            gameId="teemo-minesweeper"
+            onConfirm={(b) => { setBet(b); setShowBetModal(false); initializeBoard(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
+
         {gameState === "lost" && (
           <motion.div
             initial={{ opacity: 0, y: -20 }}
@@ -376,14 +453,19 @@ const TeemoMinesweeper = () => {
             className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-red-500/30"
           >
             <p className="text-2xl font-bold mb-2 text-red-400">
-              Vous avez marché sur un champignon de Teemo ! Partie terminée !
+              You stepped on a Teemo mushroom! Game Over!
             </p>
             <p className="text-muted-foreground mb-4">
-              Ne vous inquiétez pas, vous détecterez mieux les champignons la prochaine fois.
+              Don&apos;t worry, you&apos;ll detect mushrooms better next time.
             </p>
-            <HexButton variant="blue" onClick={initializeBoard}>
-              Réessayer
-            </HexButton>
+            <div className="flex gap-3 justify-center">
+              <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
+                Try Again
+              </HexButton>
+              <HexButton variant="gold" onClick={() => setGameStarted(false)}>
+                Main Menu
+              </HexButton>
+            </div>
           </motion.div>
         )}
 
@@ -395,14 +477,19 @@ const TeemoMinesweeper = () => {
             className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-[var(--rune-cyan)]/30"
           >
             <p className="text-2xl font-bold mb-2 text-[var(--rune-cyan)]">
-              Vous avez nettoyé le champ ! Victoire !
+              You cleared the field! Victory!
             </p>
             <p className="text-muted-foreground mb-4">
-              Même le Capitaine Teemo n'a pas pu vous piéger !
+              Even Captain Teemo couldn&apos;t trick you!
             </p>
-            <HexButton variant="gold" onClick={initializeBoard}>
-              Rejouer
-            </HexButton>
+            <div className="flex gap-3 justify-center">
+              <HexButton variant="gold" onClick={() => setShowBetModal(true)}>
+                Play Again
+              </HexButton>
+              <HexButton variant="blue" onClick={() => setGameStarted(false)}>
+                Main Menu
+              </HexButton>
+            </div>
           </motion.div>
         )}
       </AnimatePresence>
@@ -430,10 +517,10 @@ const TeemoMinesweeper = () => {
 
       <div className="mt-6 text-center">
         <p className="text-muted-foreground mb-2 italic">
-          Clic gauche pour révéler une case. Clic droit pour placer un drapeau sur les champignons suspects.
+          Left click to reveal a cell. Right click to place a flag on suspicious mushrooms.
         </p>
         <p className="text-xs text-muted-foreground">
-          "La taille ne fait pas tout. Capitaine Teemo en service !" - Teemo
+          "Size doesn't mean everything. Captain Teemo on duty!" - Teemo
         </p>
       </div>
     </div>

@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HexButton } from "@/components/atoms/HexButton";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
+import { BetModal } from "@/components/organisms/BetModal";
+import { getMyPuuid } from "@/lib/honey";
 
 // Champion data with ability descriptions
 const champions = [
@@ -152,6 +154,8 @@ export function GuessChampionGame() {
   );
 
   const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [bet, setBet] = useState<number | null>(null);
+  const [showBetModal, setShowBetModal] = useState(false);
 
   const selectNewChampion = useCallback(() => {
     const randomChamp = champions[Math.floor(Math.random() * champions.length)];
@@ -165,9 +169,26 @@ export function GuessChampionGame() {
     });
   }, [updateData]);
 
-  const handleStart = () => {
+  const doStart = () => {
     startGame();
     selectNewChampion();
+  };
+
+  const handleStart = () => {
+    setShowBetModal(true);
+  };
+
+  const handleWin = async (score: number) => {
+    if (bet) {
+      const puuid = await getMyPuuid();
+      if (puuid) {
+        await fetch("/api/minigame-win", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "guess-champion", score }),
+        });
+      }
+    }
   };
 
   const revealAbility = () => {
@@ -210,6 +231,7 @@ export function GuessChampionGame() {
         isCorrect: true,
         streak: state.data.streak + 1,
       });
+      handleWin(points);
     } else {
       updateData({
         showResult: true,
@@ -246,6 +268,13 @@ export function GuessChampionGame() {
   if (state.status === "idle") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="guess-champion"
+            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}

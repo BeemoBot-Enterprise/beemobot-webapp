@@ -4,6 +4,7 @@ import { BEEMO } from "@/assets/images";
 import Button from "@/components/atoms/Button";
 import Image from "next/image";
 import { FaDiscord } from "react-icons/fa";
+import { BOT_INVITE_URL } from "@/lib/env";
 
 const HeroSection = () => {
   return (
@@ -26,13 +27,7 @@ const HeroSection = () => {
             <div className="flex flex-col sm:flex-row gap-4">
               <Button
                 className="bg-blue-600 hover:bg-blue-700 flex items-center gap-2 px-8 py-4 rounded-md text-lg shadow-lg transition-all duration-200 hover:scale-[1.02]"
-                onClick={() =>
-                  window.open(
-                    process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
-                      process.env.BOT_INVITE_URL,
-                    "_blank",
-                  )
-                }
+                onClick={() => window.open(BOT_INVITE_URL, "_blank")}
               >
                 <FaDiscord className="w-6 h-6" />
                 Ajouter le bot

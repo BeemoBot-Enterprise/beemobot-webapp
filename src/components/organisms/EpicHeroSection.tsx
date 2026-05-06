@@ -8,6 +8,7 @@ import { HexButton } from "@/components/atoms/HexButton";
 import { TypewriterText } from "@/components/atoms/TypewriterText";
 import { ParticleCanvas } from "@/components/atoms/ParticleCanvas";
 import { ParallaxBackground } from "./ParallaxBackground";
+import { BOT_INVITE_URL } from "@/lib/env";
 import { ScrollIndicator } from "@/components/molecules/ScrollIndicator";
 import { BEEMO } from "@/assets/images";
 
@@ -74,13 +75,7 @@ export function EpicHeroSection() {
               <HexButton
                 variant="blue"
                 size="lg"
-                onClick={() =>
-                  window.open(
-                    process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
-                      process.env.BOT_INVITE_URL,
-                    "_blank",
-                  )
-                }
+                onClick={() => window.open(BOT_INVITE_URL, "_blank")}
                 className="shadow-[0_0_30px_-5px_rgba(0,160,255,0.4)] hover:shadow-[0_0_40px_-5px_rgba(0,160,255,0.6)]"
               >
                 <div className="flex items-center gap-3">

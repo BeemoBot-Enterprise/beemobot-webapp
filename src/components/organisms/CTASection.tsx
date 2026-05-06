@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { HexButton } from "@/components/atoms/HexButton";
 import { GlowOrb } from "@/components/atoms/GlowOrb";
 import { FaDiscord } from "react-icons/fa";
+import { BOT_INVITE_URL } from "@/lib/env";
 
 export function CTASection() {
   return (
@@ -68,13 +69,7 @@ export function CTASection() {
             <HexButton
               variant="blue"
               size="lg"
-              onClick={() =>
-                window.open(
-                  process.env.NEXT_PUBLIC_BOT_INVITE_URL ||
-                    process.env.BOT_INVITE_URL,
-                  "_blank",
-                )
-              }
+              onClick={() => window.open(BOT_INVITE_URL, "_blank")}
             >
               <FaDiscord className="w-5 h-5" />
               Ajouter à Discord

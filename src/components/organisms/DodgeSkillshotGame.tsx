@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HexButton } from "@/components/atoms/HexButton";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
+import { BetModal } from "@/components/organisms/BetModal";
 
 interface Skillshot {
   id: number;
@@ -41,6 +42,7 @@ export function DodgeSkillshotGame() {
   const animationRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(0);
   const [keys, setKeys] = useState<Set<string>>(new Set());
+  const [showBetModal, setShowBetModal] = useState(false);
 
   const {
     state,
@@ -301,7 +303,7 @@ export function DodgeSkillshotGame() {
     };
   }, []);
 
-  const handleStart = () => {
+  const doStart = () => {
     startGame();
     updateData({
       beemoX: GAME_WIDTH / 2,
@@ -312,9 +314,20 @@ export function DodgeSkillshotGame() {
     });
   };
 
+  const handleStart = () => {
+    setShowBetModal(true);
+  };
+
   if (state.status === "idle") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="dodge-skillshot"
+            onConfirm={(b) => { setShowBetModal(false); doStart(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -323,21 +336,22 @@ export function DodgeSkillshotGame() {
           <span className="text-6xl">⚡</span>
         </motion.div>
         <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          Esquivez le Skillshot
+          Dodge the Skillshot
         </h2>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Contrôlez Beemo avec les flèches ou WASD. Esquivez les skillshots et collectez le miel pour des points bonus !
+          Control Beemo with arrow keys or WASD. Dodge incoming skillshots and
+          collect honey drops for bonus points!
         </p>
         <div className="flex gap-8 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">Meilleur Score</p>
+            <p className="text-sm text-muted-foreground">High Score</p>
           </div>
         </div>
         <HexButton variant="blue" size="lg" onClick={handleStart}>
-          Commencer
+          Start Game
         </HexButton>
       </div>
     );
@@ -346,6 +360,13 @@ export function DodgeSkillshotGame() {
   if (state.status === "lost") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="dodge-skillshot"
+            onConfirm={(b) => { setShowBetModal(false); doStart(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -354,9 +375,9 @@ export function DodgeSkillshotGame() {
           <span className="text-6xl">💀</span>
         </motion.div>
         <h2 className="text-3xl font-bold mb-4 text-[var(--destructive)]">
-          Partie Terminée !
+          Game Over!
         </h2>
-        <p className="text-muted-foreground mb-4">Vous avez été touché par un skillshot !</p>
+        <p className="text-muted-foreground mb-4">You got hit by a skillshot!</p>
         <div className="flex gap-8 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
@@ -368,15 +389,15 @@ export function DodgeSkillshotGame() {
             <p className="text-2xl font-bold text-[var(--rune-cyan)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">Meilleur Score</p>
+            <p className="text-sm text-muted-foreground">High Score</p>
           </div>
         </div>
         <div className="flex gap-4">
-          <HexButton variant="blue" onClick={handleStart}>
-            Rejouer
+          <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
+            Play Again
           </HexButton>
           <HexButton variant="gold" onClick={resetGame}>
-            Menu Principal
+            Main Menu
           </HexButton>
         </div>
       </div>
@@ -459,7 +480,7 @@ export function DodgeSkillshotGame() {
 
       {/* Controls hint */}
       <p className="text-center text-sm text-muted-foreground mt-4">
-        Utilisez les Flèches ou WASD pour vous déplacer
+        Use Arrow Keys or WASD to move
       </p>
     </div>
   );
