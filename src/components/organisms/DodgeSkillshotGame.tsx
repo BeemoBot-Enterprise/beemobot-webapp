@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { HexButton } from "@/components/atoms/HexButton";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
+import { BetModal } from "@/components/organisms/BetModal";
 
 interface Skillshot {
   id: number;
@@ -41,6 +42,7 @@ export function DodgeSkillshotGame() {
   const animationRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(0);
   const [keys, setKeys] = useState<Set<string>>(new Set());
+  const [showBetModal, setShowBetModal] = useState(false);
 
   const {
     state,
@@ -301,7 +303,7 @@ export function DodgeSkillshotGame() {
     };
   }, []);
 
-  const handleStart = () => {
+  const doStart = () => {
     startGame();
     updateData({
       beemoX: GAME_WIDTH / 2,
@@ -312,9 +314,20 @@ export function DodgeSkillshotGame() {
     });
   };
 
+  const handleStart = () => {
+    setShowBetModal(true);
+  };
+
   if (state.status === "idle") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="dodge-skillshot"
+            onConfirm={(b) => { setShowBetModal(false); doStart(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -347,6 +360,13 @@ export function DodgeSkillshotGame() {
   if (state.status === "lost") {
     return (
       <div className="flex flex-col items-center justify-center p-8 text-center">
+        {showBetModal && (
+          <BetModal
+            gameId="dodge-skillshot"
+            onConfirm={(b) => { setShowBetModal(false); doStart(); }}
+            onCancel={() => setShowBetModal(false)}
+          />
+        )}
         <motion.div
           initial={{ scale: 0.8, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
@@ -373,7 +393,7 @@ export function DodgeSkillshotGame() {
           </div>
         </div>
         <div className="flex gap-4">
-          <HexButton variant="blue" onClick={handleStart}>
+          <HexButton variant="blue" onClick={() => setShowBetModal(true)}>
             Play Again
           </HexButton>
           <HexButton variant="gold" onClick={resetGame}>
