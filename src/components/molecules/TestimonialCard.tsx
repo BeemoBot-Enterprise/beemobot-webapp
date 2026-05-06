@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
@@ -46,10 +47,13 @@ export function TestimonialCard({
         {/* Avatar */}
         <div className="w-12 h-12 rounded-full overflow-hidden bg-gradient-to-br from-[var(--hextech-blue)] to-[var(--rune-purple)]">
           {avatar ? (
-            <img
+            <Image
               src={avatar}
               alt={author}
+              width={48}
+              height={48}
               className="w-full h-full object-cover"
+              unoptimized
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-lg font-bold">

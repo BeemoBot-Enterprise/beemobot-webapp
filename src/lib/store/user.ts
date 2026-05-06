@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getToken, removeToken } from "./token";
+import { API_URL } from "@/lib/env";
 
 export type User = {
   discord_id: string;
@@ -22,14 +23,11 @@ export const getUser = async (): Promise<User | null> => {
     const token = getToken();
     if (token) {
       try {
-        const response = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL || process.env.API_URL}/user`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
+        const response = await axios.get(`${API_URL}/user`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
           },
-        );
+        });
 
         const userData: User = response.data;
         setUser(userData);
