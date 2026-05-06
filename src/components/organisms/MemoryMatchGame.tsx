@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion } from "framer-motion";
 import Button from "@/components/atoms/Button";
 import { Card } from "@/components/atoms/Card";
 import { useGameState } from "@/hooks/useGameState";
@@ -382,35 +381,39 @@ export function MemoryMatchGame() {
           maxWidth: cols * 80 + (cols - 1) * 12,
         }}
       >
-        {state.data.cards.map((card) => (
-          <motion.button
-            key={card.id}
-            onClick={() => handleCardClick(card.id)}
-            disabled={card.isFlipped || card.isMatched || !state.data.canFlip}
-            animate={{
-              rotateY: card.isFlipped || card.isMatched ? 0 : 180,
-            }}
-            transition={{ duration: 0.3 }}
-            className={cn(
-              "aspect-square rounded-md border flex items-center justify-center text-3xl",
-              card.isMatched && "opacity-50 border-border bg-bg",
-              !card.isFlipped &&
-                !card.isMatched &&
-                "border-border bg-bg hover:bg-surface-hover cursor-pointer",
-              card.isFlipped && !card.isMatched && "border-accent bg-accent/10",
-            )}
-            style={{ perspective: 1000 }}
-          >
-            {(card.isFlipped || card.isMatched) && (
-              <span className="text-3xl">
-                {champions[card.championIndex]?.emoji}
-              </span>
-            )}
-            {!card.isFlipped && !card.isMatched && (
-              <span className="text-base text-text-muted">?</span>
-            )}
-          </motion.button>
-        ))}
+        {state.data.cards.map((card) => {
+          const revealed = card.isFlipped || card.isMatched;
+          return (
+            <button
+              key={card.id}
+              onClick={() => handleCardClick(card.id)}
+              disabled={card.isFlipped || card.isMatched || !state.data.canFlip}
+              className={cn(
+                "aspect-square rounded-md border flex items-center justify-center text-3xl transition-transform duration-300",
+                card.isMatched && "opacity-50 border-border bg-bg",
+                !card.isFlipped &&
+                  !card.isMatched &&
+                  "border-border bg-bg hover:bg-surface-hover cursor-pointer",
+                card.isFlipped &&
+                  !card.isMatched &&
+                  "border-accent bg-accent/10",
+              )}
+              style={{
+                perspective: 1000,
+                transform: revealed ? "rotateY(0deg)" : "rotateY(180deg)",
+              }}
+            >
+              {revealed && (
+                <span className="text-3xl">
+                  {champions[card.championIndex]?.emoji}
+                </span>
+              )}
+              {!revealed && (
+                <span className="text-base text-text-muted">?</span>
+              )}
+            </button>
+          );
+        })}
       </div>
 
       <div className="flex justify-center mt-6">
