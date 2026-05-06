@@ -1,28 +1,19 @@
 import MainLayout from "@/components/templates/MainLayout";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Geist } from "next/font/google";
 
-// Use Inter font from Google Fonts
-const inter = Inter({ subsets: ["latin"] });
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
 export const metadata: Metadata = {
-  title: "BeemoBot - Le Bot Discord Teemo Ultime",
+  title: "BeemoBot — Bot Discord League of Legends",
   description:
-    "Le bot Discord League of Legends ultime. Statistiques de champions, recommandations de builds, suivi de joueurs et mini-jeux amusants. Ajoutez BeemoBot à votre serveur dès aujourd'hui !",
-  keywords: [
-    "Bot Discord",
-    "League of Legends",
-    "LoL",
-    "Teemo",
-    "BeemoBot",
-    "statistiques de champions",
-    "builds",
-  ],
+    "Le bot Discord pour ta communauté League of Legends. Stats, profils, leaderboards et mini-jeux.",
+  keywords: ["Bot Discord", "League of Legends", "LoL", "BeemoBot"],
   openGraph: {
-    title: "BeemoBot - Le Bot Discord Teemo Ultime",
+    title: "BeemoBot — Bot Discord League of Legends",
     description:
-      "Statistiques de champions, recommandations de builds, suivi de joueurs et mini-jeux pour votre serveur Discord.",
+      "Stats, profils, leaderboards et mini-jeux pour ta communauté Discord.",
     type: "website",
   },
 };
@@ -33,10 +24,8 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning>
-      <body
-        className={`min-h-screen bg-[var(--bg-void)] text-white flex flex-col ${inter.className}`}
-      >
+    <html lang="fr" suppressHydrationWarning className={geist.variable}>
+      <body className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col font-sans antialiased">
         <MainLayout>{children}</MainLayout>
       </body>
     </html>
