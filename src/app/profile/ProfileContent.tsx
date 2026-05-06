@@ -48,8 +48,7 @@ export default function ProfileContent() {
       console.log("✅ Token trouvé dans l'URL, sauvegarde...");
       setToken(tokenFromUrl);
       localStorage.setItem("beemobot_token", tokenFromUrl);
-      
-      // Sauvegarder aussi les infos utilisateur
+
       if (usernameFromUrl) {
         const userInfo = {
           username: usernameFromUrl,
@@ -57,23 +56,18 @@ export default function ProfileContent() {
           avatar: avatarFromUrl || null,
           discriminator: "0",
         };
-  useEffect(() => {
-    if (token && user) {
-      fetchUserData();
-    } else if (token && !user) {
-      // Si on a un token mais pas d'user, on attend le prochain cycle
-      console.log("⏳ Token présent mais user manquant");
-      setLoading(false);
+        setUser(userInfo as DiscordUser);
+        localStorage.setItem("beemobot_user", JSON.stringify(userInfo));
+      }
+
+      router.replace("/profile");
     } else {
-      setLoading(false);
-    }
-  }, [token, user]);
       const storedToken = localStorage.getItem("beemobot_token");
       const storedUser = localStorage.getItem("beemobot_user");
-      
+
       console.log("💾 Token depuis localStorage:", storedToken ? "Trouvé" : "Non trouvé");
       console.log("💾 User depuis localStorage:", storedUser ? "Trouvé" : "Non trouvé");
-      
+
       if (storedToken) {
         setToken(storedToken);
       }
@@ -107,7 +101,6 @@ export default function ProfileContent() {
 
       console.log("🔄 Récupération des données utilisateur...");
 
-      // Appeler /auth/me pour récupérer les infos utilisateur avec le token
       const userResponse = await fetch(`${apiUrl}/auth/me`, {
         headers: {
           "ngrok-skip-browser-warning": "true",
@@ -127,7 +120,6 @@ export default function ProfileContent() {
       const discordAvatar = userData.avatar || null;
       const discordDiscriminator = userData.discriminator || "0";
 
-      // Définir les informations utilisateur Discord
       setUser({
         id: discordId,
         username: discordUsername,
@@ -135,7 +127,6 @@ export default function ProfileContent() {
         avatar: discordAvatar,
       });
 
-      // Récupérer les statistiques de l'utilisateur
       const statsResponse = await fetch(
         `${apiUrl}/game/stats/${encodeURIComponent(discordUsername)}`,
         {
@@ -151,7 +142,6 @@ export default function ProfileContent() {
         setStats(statsData);
       } else {
         console.log("⚠️ Pas de stats, initialisation à 0");
-        // Si l'utilisateur n'a pas encore de stats, initialiser à 0
         setStats({
           username: discordUsername,
           totalShrooms: 0,
@@ -161,7 +151,6 @@ export default function ProfileContent() {
     } catch (err) {
       console.error("❌ Erreur:", err);
       setError(err instanceof Error ? err.message : "Erreur de chargement");
-      // En cas d'erreur, effacer le token invalide
       localStorage.removeItem("beemobot_token");
       setToken(null);
     } finally {
@@ -173,14 +162,14 @@ export default function ProfileContent() {
     const apiUrl =
       process.env.NEXT_PUBLIC_API_URL ||
       process.env.API_URL ||
+      "https://fb8ff02b18f6.ngrok-free.app";
+    window.location.href = `${apiUrl}/auth/discord/redirect`;
+  };
+
   const handleLogout = () => {
     localStorage.removeItem("beemobot_token");
     localStorage.removeItem("beemobot_user");
     setToken(null);
-    setUser(null);
-    setStats(null);
-    router.push("/");
-  };setToken(null);
     setUser(null);
     setStats(null);
     router.push("/");
@@ -195,7 +184,7 @@ export default function ProfileContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0f1117] py-20 px-4">
+      <main className="min-h-screen bg-[#0f1117] pb-20 px-4">
         <div className="max-w-5xl mx-auto text-center">
           <div className="text-white text-2xl">Chargement...</div>
         </div>
@@ -205,7 +194,7 @@ export default function ProfileContent() {
 
   if (!token || !user) {
     return (
-      <main className="min-h-screen bg-[#0f1117] py-20 px-4">
+      <main className="min-h-screen bg-[#0f1117] pb-20 px-4">
         <div className="max-w-5xl mx-auto">
           <Card className="bg-[#1a1d28] border-gray-700/30 text-center p-12">
             <CardContent>
@@ -230,7 +219,7 @@ export default function ProfileContent() {
   }
 
   return (
-    <main className="min-h-screen bg-[#0f1117] py-20 px-4">
+    <main className="min-h-screen bg-[#0f1117] pb-20 px-4">
       <div className="max-w-5xl mx-auto">
         <Card className="bg-[#1a1d28] border-gray-700/30 overflow-hidden mb-8">
           <CardHeader className="bg-[#5865F2]/10 border-b border-gray-700/30">

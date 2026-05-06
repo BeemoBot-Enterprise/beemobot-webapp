@@ -16,7 +16,7 @@ const MainLayout = ({ children }: MainLayoutProps) => {
   return (
     <>
       <Header />
-      <main className="flex-grow flex flex-col">{children}</main>
+      <main className="flex-grow flex flex-col pt-20">{children}</main>
       <Footer />
     </>
   );
