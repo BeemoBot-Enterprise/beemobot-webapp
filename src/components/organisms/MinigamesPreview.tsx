@@ -7,35 +7,35 @@ import { GamePreviewCard } from "@/components/molecules/GamePreviewCard";
 const games = [
   {
     title: "Teemo Minesweeper",
-    description: "Find all the mushrooms without triggering them! Classic minesweeper with a Teemo twist.",
+    description: "Trouvez tous les champignons sans les déclencher ! Le démineur classique à la sauce Teemo.",
     icon: "🍄",
     color: "honey" as const,
     href: "/game?tab=minesweeper",
   },
   {
     title: "Guess the Champion",
-    description: "Can you identify the champion from their abilities? Test your LoL knowledge!",
+    description: "Pouvez-vous identifier le champion par ses compétences ? Testez vos connaissances LoL !",
     icon: "🎯",
     color: "blue" as const,
     href: "/game?tab=guess",
   },
   {
     title: "Dodge the Skillshot",
-    description: "Control Beemo and dodge incoming skillshots! How long can you survive?",
+    description: "Contrôlez Beemo et esquivez les skillshots ! Combien de temps pouvez-vous survivre ?",
     icon: "⚡",
     color: "cyan" as const,
     href: "/game?tab=dodge",
   },
   {
     title: "LoL Trivia",
-    description: "Test your League of Legends knowledge with questions about champions, items, and lore.",
+    description: "Testez vos connaissances League of Legends avec des questions sur les champions, les objets et le lore.",
     icon: "🧠",
     color: "purple" as const,
     href: "/game?tab=trivia",
   },
   {
     title: "Memory Match",
-    description: "Match champion portraits in this classic memory game. How fast can you clear the board?",
+    description: "Associez les portraits de champions dans ce jeu de mémoire classique. À quelle vitesse pouvez-vous terminer ?",
     icon: "🃏",
     color: "gold" as const,
     href: "/game?tab=memory",
@@ -61,10 +61,10 @@ export function MinigamesPreview() {
             Minigames
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            <span className="gradient-text-beemo">5 Fun Games</span> to Play
+            <span className="gradient-text-beemo">5 Mini-jeux</span> Amusants
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Take a break from the Rift with our collection of LoL-themed minigames
+            Faites une pause de la Faille avec notre collection de mini-jeux sur le thème de LoL
           </p>
         </motion.div>
 
@@ -110,7 +110,7 @@ export function MinigamesPreview() {
             href="/game"
             className="inline-flex items-center gap-2 text-[var(--hextech-blue)] hover:text-[var(--hextech-gold)] transition-colors"
           >
-            View All Games
+            Voir Tous les Jeux
             <svg
               className="w-5 h-5"
               fill="none"
