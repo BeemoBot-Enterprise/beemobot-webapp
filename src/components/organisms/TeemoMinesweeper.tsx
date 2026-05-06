@@ -316,7 +316,7 @@ const TeemoMinesweeper = () => {
   return (
     <div className="flex flex-col items-center p-6 rounded-xl max-w-3xl mx-auto">
       <h1 className="text-3xl font-bold mb-4 text-center gradient-text-hextech">
-        Teemo's Mushroom Field
+        Le Champ de Champignons de Teemo
       </h1>
 
       <div className="mb-6 flex flex-col md:flex-row justify-between w-full items-center gap-4">
@@ -329,7 +329,7 @@ const TeemoMinesweeper = () => {
             }`}
             onClick={() => setGameDifficulty("easy")}
           >
-            Easy
+            Facile
           </button>
           <button
             className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
@@ -339,7 +339,7 @@ const TeemoMinesweeper = () => {
             }`}
             onClick={() => setGameDifficulty("medium")}
           >
-            Medium
+            Moyen
           </button>
           <button
             className={`px-4 py-2 text-sm rounded-lg transition-all duration-300 ${
@@ -349,7 +349,7 @@ const TeemoMinesweeper = () => {
             }`}
             onClick={() => setGameDifficulty("hard")}
           >
-            Hard
+            Difficile
           </button>
         </div>
 
@@ -376,13 +376,13 @@ const TeemoMinesweeper = () => {
             className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-red-500/30"
           >
             <p className="text-2xl font-bold mb-2 text-red-400">
-              You stepped on a Teemo mushroom! Game Over!
+              Vous avez marché sur un champignon de Teemo ! Partie terminée !
             </p>
             <p className="text-muted-foreground mb-4">
-              Don't worry, you'll detect mushrooms better next time.
+              Ne vous inquiétez pas, vous détecterez mieux les champignons la prochaine fois.
             </p>
             <HexButton variant="blue" onClick={initializeBoard}>
-              Try Again
+              Réessayer
             </HexButton>
           </motion.div>
         )}
@@ -395,13 +395,13 @@ const TeemoMinesweeper = () => {
             className="mb-6 glass text-center py-4 px-6 rounded-xl w-full border border-[var(--rune-cyan)]/30"
           >
             <p className="text-2xl font-bold mb-2 text-[var(--rune-cyan)]">
-              You cleared the field! Victory!
+              Vous avez nettoyé le champ ! Victoire !
             </p>
             <p className="text-muted-foreground mb-4">
-              Even Captain Teemo couldn't trick you!
+              Même le Capitaine Teemo n'a pas pu vous piéger !
             </p>
             <HexButton variant="gold" onClick={initializeBoard}>
-              Play Again
+              Rejouer
             </HexButton>
           </motion.div>
         )}
@@ -430,10 +430,10 @@ const TeemoMinesweeper = () => {
 
       <div className="mt-6 text-center">
         <p className="text-muted-foreground mb-2 italic">
-          Left click to reveal a cell. Right click to place a flag on suspicious mushrooms.
+          Clic gauche pour révéler une case. Clic droit pour placer un drapeau sur les champignons suspects.
         </p>
         <p className="text-xs text-muted-foreground">
-          "Size doesn't mean everything. Captain Teemo on duty!" - Teemo
+          "La taille ne fait pas tout. Capitaine Teemo en service !" - Teemo
         </p>
       </div>
     </div>

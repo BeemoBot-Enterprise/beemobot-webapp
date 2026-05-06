@@ -254,22 +254,22 @@ export function GuessChampionGame() {
           <span className="text-6xl">🎯</span>
         </motion.div>
         <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          Guess the Champion
+          Devinez le Champion
         </h2>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Identify the champion based on their ability names. The fewer hints
-          you use, the more points you earn!
+          Identifiez le champion grâce au nom de ses compétences. Moins vous
+          utilisez d&apos;indices, plus vous gagnez de points !
         </p>
         <div className="flex gap-4 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
+            <p className="text-sm text-muted-foreground">Meilleur Score</p>
           </div>
         </div>
         <HexButton variant="blue" size="lg" onClick={handleStart}>
-          Start Game
+          Commencer
         </HexButton>
       </div>
     );
@@ -281,20 +281,20 @@ export function GuessChampionGame() {
       <div className="flex justify-between items-center mb-6">
         <div className="flex gap-4">
           <div className="glass px-4 py-2 rounded-lg">
-            <span className="text-sm text-muted-foreground">Score: </span>
+            <span className="text-sm text-muted-foreground">Score : </span>
             <span className="font-bold text-[var(--hextech-gold)]">
               {state.score}
             </span>
           </div>
           <div className="glass px-4 py-2 rounded-lg">
-            <span className="text-sm text-muted-foreground">Streak: </span>
+            <span className="text-sm text-muted-foreground">Série : </span>
             <span className="font-bold text-[var(--rune-cyan)]">
               {state.data.streak}🔥
             </span>
           </div>
         </div>
         <HexButton variant="honey" size="sm" onClick={resetGame}>
-          End Game
+          Terminer
         </HexButton>
       </div>
 
@@ -310,7 +310,7 @@ export function GuessChampionGame() {
             {/* Ability display */}
             <div className="glass rounded-xl p-6 mb-6">
               <h3 className="text-lg font-semibold mb-4 text-center">
-                Identify this champion by their abilities:
+                Identifiez ce champion par ses compétences :
               </h3>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 {["passive", "Q", "W", "E", "R"].map((key) => (
@@ -341,7 +341,7 @@ export function GuessChampionGame() {
             {/* Hints */}
             {state.data.hintsUsed > 0 && (
               <div className="glass rounded-lg p-4 mb-6">
-                <p className="text-sm text-muted-foreground mb-2">Hints:</p>
+                <p className="text-sm text-muted-foreground mb-2">Indices :</p>
                 <div className="flex flex-wrap gap-2">
                   {state.data.currentChampion?.hints
                     .slice(0, state.data.hintsUsed)
@@ -365,7 +365,7 @@ export function GuessChampionGame() {
                 onClick={revealAbility}
                 disabled={state.data.revealedAbilities.length >= 5}
               >
-                Reveal Ability (-10 pts)
+                Révéler une compétence (-10 pts)
               </HexButton>
               <HexButton
                 variant="gold"
@@ -373,7 +373,7 @@ export function GuessChampionGame() {
                 onClick={useHint}
                 disabled={state.data.hintsUsed >= 3}
               >
-                Get Hint (-15 pts)
+                Obtenir un indice (-15 pts)
               </HexButton>
             </div>
 
@@ -384,7 +384,7 @@ export function GuessChampionGame() {
                 value={state.data.guess}
                 onChange={(e) => handleInputChange(e.target.value)}
                 onKeyPress={(e) => e.key === "Enter" && handleGuess()}
-                placeholder="Enter champion name..."
+                placeholder="Entrez le nom du champion..."
                 className="w-full px-4 py-3 rounded-lg glass border border-[var(--hextech-blue)]/30 focus:border-[var(--hextech-blue)] focus:outline-none bg-transparent"
               />
 
@@ -409,7 +409,7 @@ export function GuessChampionGame() {
                 onClick={handleGuess}
                 disabled={!state.data.guess.trim()}
               >
-                Guess!
+                Deviner !
               </HexButton>
             </div>
           </motion.div>
@@ -432,16 +432,16 @@ export function GuessChampionGame() {
                   : "text-[var(--destructive)]"
               )}
             >
-              {state.data.isCorrect ? "Correct!" : "Wrong!"}
+              {state.data.isCorrect ? "Correct !" : "Raté !"}
             </h3>
             <p className="text-muted-foreground mb-6">
-              The champion was{" "}
+              Le champion était{" "}
               <span className="text-[var(--hextech-gold)] font-bold">
                 {state.data.currentChampion?.name}
               </span>
             </p>
             <HexButton variant="blue" onClick={nextRound}>
-              Next Champion
+              Champion Suivant
             </HexButton>
           </motion.div>
         )}

@@ -98,19 +98,19 @@ const SponsorsSection = () => {
                   </p>
                   <div className="mt-3 grid grid-cols-2 gap-2 text-sm">
                     <div className="bg-[#0a0a0f] p-3 rounded border border-gray-700/30 text-gray-200">
-                      <span className="text-emerald-400 font-bold">✓</span> Lire
+                      <svg className="w-4 h-4 inline-block text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg> Lire
                       les messages
                     </div>
                     <div className="bg-[#0a0a0f] p-3 rounded border border-gray-700/30 text-gray-200">
-                      <span className="text-emerald-400 font-bold">✓</span>{" "}
+                      <svg className="w-4 h-4 inline-block text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>{" "}
                       Envoyer des messages
                     </div>
                     <div className="bg-[#0a0a0f] p-3 rounded border border-gray-700/30 text-gray-200">
-                      <span className="text-emerald-400 font-bold">✓</span>{" "}
+                      <svg className="w-4 h-4 inline-block text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>{" "}
                       Joindre des fichiers
                     </div>
                     <div className="bg-[#0a0a0f] p-3 rounded border border-gray-700/30 text-gray-200">
-                      <span className="text-emerald-400 font-bold">✓</span>{" "}
+                      <svg className="w-4 h-4 inline-block text-emerald-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={3}><path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" /></svg>{" "}
                       Utiliser les commandes slash
                     </div>
                   </div>

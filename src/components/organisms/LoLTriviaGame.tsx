@@ -221,19 +221,19 @@ export function LoLTriviaGame() {
           LoL Trivia
         </h2>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Test your League of Legends knowledge! Answer 10 questions about
-          champions, items, lore, and esports. You have 15 seconds per question!
+          Testez vos connaissances League of Legends ! Répondez à 10 questions sur
+          les champions, les objets, le lore et l'esport. Vous avez 15 secondes par question !
         </p>
         <div className="flex gap-8 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
+            <p className="text-sm text-muted-foreground">Meilleur Score</p>
           </div>
         </div>
         <HexButton variant="blue" size="lg" onClick={handleStart}>
-          Start Quiz
+          Commencer le Quiz
         </HexButton>
       </div>
     );
@@ -267,11 +267,11 @@ export function LoLTriviaGame() {
             passed ? "text-[var(--hextech-gold)]" : "text-[var(--hextech-blue)]"
           )}
         >
-          {passed ? "Challenger Level!" : "Keep Practicing!"}
+          {passed ? "Niveau Challenger !" : "Continuez à vous entraîner !"}
         </h2>
         <p className="text-muted-foreground mb-4">
-          You scored {state.score} points with {state.data.correctAnswers}{" "}
-          correct answers!
+          Vous avez obtenu {state.score} points avec {state.data.correctAnswers}{" "}
+          bonnes réponses !
         </p>
 
         {state.score > state.highScore && (
@@ -280,16 +280,16 @@ export function LoLTriviaGame() {
             animate={{ opacity: 1, y: 0 }}
             className="text-[var(--rune-cyan)] font-bold mb-4"
           >
-            🎉 New High Score!
+            🎉 Nouveau Meilleur Score !
           </motion.p>
         )}
 
         <div className="flex gap-4">
           <HexButton variant="blue" onClick={handleStart}>
-            Play Again
+            Rejouer
           </HexButton>
           <HexButton variant="gold" onClick={resetGame}>
-            Main Menu
+            Menu Principal
           </HexButton>
         </div>
       </div>
@@ -397,7 +397,7 @@ export function LoLTriviaGame() {
               className="flex justify-center mt-6"
             >
               <HexButton variant="blue" onClick={nextQuestion}>
-                {state.data.currentQuestionIndex < 9 ? "Next Question" : "See Results"}
+                {state.data.currentQuestionIndex < 9 ? "Question Suivante" : "Voir les Résultats"}
               </HexButton>
             </motion.div>
           )}
