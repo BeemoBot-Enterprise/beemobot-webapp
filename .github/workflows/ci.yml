@@ -1,0 +1,21 @@
+name: webapp-ci
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm tsc --noEmit
+      - run: pnpm build
+        env:
+          NEXT_PUBLIC_API_URL: http://localhost:3333
+          NEXT_PUBLIC_BOT_INVITE_URL: https://discord.com/oauth2/authorize?client_id=000
+          INTERNAL_API_KEY: ci-dummy
