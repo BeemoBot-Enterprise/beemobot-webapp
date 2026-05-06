@@ -42,15 +42,15 @@ export function EpicHeroSection() {
                 <span className="relative inline-flex rounded-full h-3 w-3 bg-yellow-500"></span>
               </span>
               <span className="text-sm font-medium text-yellow-200 tracking-wide">
-                #1 League of Legends Discord Bot
+                Bot Discord League of Legends #1
               </span>
             </motion.div>
 
             {/* Main headline */}
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold mb-8 leading-tight tracking-tight">
-              <span className="block text-white mb-2">The Ultimate</span>
+              <span className="block text-white mb-2">Le Compagnon</span>
               <span className="bg-gradient-to-r from-[#F5A623] via-[#FFD700] to-[#F5A623] bg-clip-text text-transparent bg-[length:200%_auto] animate-shimmer">
-                Teemo Companion
+                Teemo Ultime
               </span>
             </h1>
 
@@ -59,10 +59,9 @@ export function EpicHeroSection() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-lg md:text-xl text-slate-400 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed"
+              className="text-lg md:text-xl text-slate-200 mb-10 max-w-xl mx-auto lg:mx-0 leading-relaxed"
             >
-              Level up your Discord server with real-time stats, pro builds, and
-              addictive minigames. Join the revolution of the Rift!
+              Améliorez votre serveur Discord avec des stats en temps réel, des builds pro et des mini-jeux addictifs. Rejoignez la révolution de la Faille !
             </motion.p>
 
             {/* CTA Buttons */}
@@ -86,7 +85,7 @@ export function EpicHeroSection() {
               >
                 <div className="flex items-center gap-3">
                   <FaDiscord className="w-6 h-6" />
-                  <span className="font-bold">Add to Discord</span>
+                  <span className="font-bold">Ajouter à Discord</span>
                 </div>
               </HexButton>
 
@@ -94,7 +93,7 @@ export function EpicHeroSection() {
                 variant="gold"
                 size="lg"
                 onClick={() => (window.location.href = "/documentation")}
-                className="bg-white/5 border-white/10 hover:bg-white/10"
+                className="bg-white/5 border-white/10 hover:bg-white/10 text-white"
               >
                 <div className="flex items-center gap-3">
                   <svg
@@ -136,9 +135,9 @@ export function EpicHeroSection() {
                 </div>
               </div>
               <p className="text-sm text-slate-400">
-                Trusted by{" "}
-                <span className="text-white font-semibold">50,000+</span>{" "}
-                servers worldwide
+                Utilisé par{" "}
+                <span className="text-white font-semibold">50 000+</span>{" "}
+                serveurs dans le monde
               </p>
             </motion.div>
           </motion.div>
@@ -180,14 +179,14 @@ export function EpicHeroSection() {
                   delay: 1,
                 },
               }}
-              className="absolute top-20 -right-4 bg-slate-800/80 backdrop-blur-md border border-white/10 p-4 rounded-xl shadow-xl max-w-[180px]"
+              className="absolute top-20 -right-4 bg-slate-800/80 backdrop-blur-md border border-white/10 p-4 rounded-xl shadow-xl max-w-[220px]"
             >
               <div className="flex items-center gap-3 mb-2">
                 <div className="w-8 h-8 rounded-lg bg-yellow-500/20 flex items-center justify-center text-yellow-400">
                   ⚡
                 </div>
                 <div className="text-sm font-bold text-white">
-                  Fast Response
+                  Réponse Rapide
                 </div>
               </div>
               <div className="h-1.5 w-full bg-slate-700 rounded-full overflow-hidden">
@@ -220,10 +219,10 @@ export function EpicHeroSection() {
                 </div>
                 <div>
                   <div className="text-xs text-slate-400">
-                    Win Rate Prediction
+                    Prédiction de Winrate
                   </div>
                   <div className="text-sm font-bold text-white">
-                    High Accuracy
+                    Haute Précision
                   </div>
                 </div>
               </div>

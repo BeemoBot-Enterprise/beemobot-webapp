@@ -323,22 +323,21 @@ export function DodgeSkillshotGame() {
           <span className="text-6xl">⚡</span>
         </motion.div>
         <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          Dodge the Skillshot
+          Esquivez le Skillshot
         </h2>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Control Beemo with arrow keys or WASD. Dodge incoming skillshots and
-          collect honey drops for bonus points!
+          Contrôlez Beemo avec les flèches ou WASD. Esquivez les skillshots et collectez le miel pour des points bonus !
         </p>
         <div className="flex gap-8 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
+            <p className="text-sm text-muted-foreground">Meilleur Score</p>
           </div>
         </div>
         <HexButton variant="blue" size="lg" onClick={handleStart}>
-          Start Game
+          Commencer
         </HexButton>
       </div>
     );
@@ -355,9 +354,9 @@ export function DodgeSkillshotGame() {
           <span className="text-6xl">💀</span>
         </motion.div>
         <h2 className="text-3xl font-bold mb-4 text-[var(--destructive)]">
-          Game Over!
+          Partie Terminée !
         </h2>
-        <p className="text-muted-foreground mb-4">You got hit by a skillshot!</p>
+        <p className="text-muted-foreground mb-4">Vous avez été touché par un skillshot !</p>
         <div className="flex gap-8 mb-6">
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
@@ -369,15 +368,15 @@ export function DodgeSkillshotGame() {
             <p className="text-2xl font-bold text-[var(--rune-cyan)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
+            <p className="text-sm text-muted-foreground">Meilleur Score</p>
           </div>
         </div>
         <div className="flex gap-4">
           <HexButton variant="blue" onClick={handleStart}>
-            Play Again
+            Rejouer
           </HexButton>
           <HexButton variant="gold" onClick={resetGame}>
-            Main Menu
+            Menu Principal
           </HexButton>
         </div>
       </div>
@@ -460,7 +459,7 @@ export function DodgeSkillshotGame() {
 
       {/* Controls hint */}
       <p className="text-center text-sm text-muted-foreground mt-4">
-        Use Arrow Keys or WASD to move
+        Utilisez les Flèches ou WASD pour vous déplacer
       </p>
     </div>
   );

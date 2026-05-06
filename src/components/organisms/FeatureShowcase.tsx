@@ -8,44 +8,44 @@ import { GlowingText } from "@/components/atoms/GlowingText";
 const features = [
   {
     icon: "⚔️",
-    title: "Champion Stats",
+    title: "Stats de Champions",
     description:
-      "Get detailed statistics for any champion including win rates, pick rates, ban rates, and matchup data across all ranks.",
+      "Obtenez des statistiques détaillées pour n'importe quel champion : taux de victoire, taux de sélection, taux de ban et données de matchup à tous les rangs.",
     variant: "blue" as const,
   },
   {
     icon: "🛠️",
-    title: "Build Recommendations",
+    title: "Recommandations de Builds",
     description:
-      "Optimal item builds, runes, and skill orders based on millions of games analyzed. Stay ahead of the meta!",
+      "Builds d'objets optimaux, runes et ordres de compétences basés sur des millions de parties analysées. Gardez une longueur d'avance sur la méta !",
     variant: "gold" as const,
   },
   {
     icon: "👥",
-    title: "Community Tools",
+    title: "Outils Communautaires",
     description:
-      "Custom welcome messages, role management, server stats, and moderation tools to keep your community thriving.",
+      "Messages de bienvenue personnalisés, gestion des rôles, stats du serveur et outils de modération pour garder votre communauté active.",
     variant: "honey" as const,
   },
   {
     icon: "📈",
-    title: "Player Tracking",
+    title: "Suivi de Joueurs",
     description:
-      "Track your ranked progress, match history, and performance metrics. Set goals and watch your LP climb!",
+      "Suivez votre progression en classé, votre historique de matchs et vos performances. Fixez des objectifs et regardez vos LP grimper !",
     variant: "blue" as const,
   },
   {
     icon: "🎮",
-    title: "Minigames",
+    title: "Mini-jeux",
     description:
-      "5 fun LoL-themed minigames including Minesweeper, Champion Quiz, Trivia, Memory Match, and Dodge the Skillshot!",
+      "5 mini-jeux amusants sur le thème de LoL : Démineur, Quiz Champion, Trivia, Memory et Esquive le Skillshot !",
     variant: "gold" as const,
   },
   {
     icon: "🔔",
-    title: "Live Notifications",
+    title: "Notifications en Direct",
     description:
-      "Get notified when your favorite streamers go live, when patches drop, or when friends start a game.",
+      "Soyez notifié quand vos streamers préférés sont en live, quand les patchs sortent ou quand vos amis lancent une partie.",
     variant: "honey" as const,
   },
 ];
@@ -66,17 +66,16 @@ export function FeatureShowcase() {
           className="text-center mb-16"
         >
           <span className="inline-block px-4 py-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-sm text-yellow-200 mb-4 backdrop-blur-md">
-            Features
+            Fonctionnalités
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Everything You Need to{" "}
+            Tout ce qu'il Vous Faut pour{" "}
             <GlowingText variant="gold" as="span" animate={false}>
-              Dominate
+              Dominer
             </GlowingText>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Packed with powerful features to enhance your League of Legends
-            Discord experience
+            Des fonctionnalités puissantes pour améliorer votre expérience League of Legends sur Discord
           </p>
         </motion.div>
 

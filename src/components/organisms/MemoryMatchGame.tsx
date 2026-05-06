@@ -223,11 +223,10 @@ export function MemoryMatchGame() {
           <span className="text-6xl">🃏</span>
         </motion.div>
         <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          Memory Match
+          Jeu de Mémoire
         </h2>
         <p className="text-muted-foreground mb-6 max-w-md">
-          Match champion pairs as quickly as possible! The fewer moves you make,
-          the higher your score!
+          Associez les paires de champions le plus vite possible ! Moins vous faites de coups, plus votre score est élevé !
         </p>
 
         <div className="flex gap-8 mb-6">
@@ -235,13 +234,13 @@ export function MemoryMatchGame() {
             <p className="text-2xl font-bold text-[var(--hextech-gold)]">
               {state.highScore}
             </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
+            <p className="text-sm text-muted-foreground">Meilleur Score</p>
           </div>
         </div>
 
         {/* Difficulty selection */}
         <div className="mb-6">
-          <p className="text-sm text-muted-foreground mb-3">Select Difficulty</p>
+          <p className="text-sm text-muted-foreground mb-3">Choisir la Difficulté</p>
           <div className="flex gap-3">
             {(["easy", "medium", "hard"] as const).map((diff) => (
               <button
@@ -256,7 +255,7 @@ export function MemoryMatchGame() {
               >
                 {diff}
                 <span className="block text-xs text-muted-foreground">
-                  {difficultySettings[diff].pairs} pairs
+                  {difficultySettings[diff].pairs} paires
                 </span>
               </button>
             ))}
@@ -268,7 +267,7 @@ export function MemoryMatchGame() {
           size="lg"
           onClick={() => handleStart(selectedDifficulty)}
         >
-          Start Game
+          Commencer
         </HexButton>
       </div>
     );
@@ -285,10 +284,10 @@ export function MemoryMatchGame() {
           <span className="text-6xl">🎉</span>
         </motion.div>
         <h2 className="text-3xl font-bold mb-2 text-[var(--hextech-gold)]">
-          Victory!
+          Victoire !
         </h2>
         <p className="text-muted-foreground mb-4">
-          You matched all pairs!
+          Vous avez trouvé toutes les paires !
         </p>
 
         <div className="grid grid-cols-3 gap-6 mb-6">
@@ -302,13 +301,13 @@ export function MemoryMatchGame() {
             <p className="text-2xl font-bold text-[var(--hextech-blue)]">
               {state.data.moves}
             </p>
-            <p className="text-sm text-muted-foreground">Moves</p>
+            <p className="text-sm text-muted-foreground">Coups</p>
           </div>
           <div className="text-center">
             <p className="text-2xl font-bold text-[var(--rune-cyan)]">
               {formatTime(state.data.elapsedTime)}
             </p>
-            <p className="text-sm text-muted-foreground">Time</p>
+            <p className="text-sm text-muted-foreground">Temps</p>
           </div>
         </div>
 
@@ -318,7 +317,7 @@ export function MemoryMatchGame() {
             animate={{ opacity: 1, y: 0 }}
             className="text-[var(--rune-cyan)] font-bold mb-4"
           >
-            🎉 New High Score!
+            🎉 Nouveau Meilleur Score !
           </motion.p>
         )}
 
@@ -327,10 +326,10 @@ export function MemoryMatchGame() {
             variant="blue"
             onClick={() => handleStart(state.data.difficulty)}
           >
-            Play Again
+            Rejouer
           </HexButton>
           <HexButton variant="gold" onClick={resetGame}>
-            Main Menu
+            Menu Principal
           </HexButton>
         </div>
       </div>
@@ -344,19 +343,19 @@ export function MemoryMatchGame() {
       {/* Stats bar */}
       <div className="flex justify-center gap-6 mb-6">
         <div className="glass px-4 py-2 rounded-lg">
-          <span className="text-sm text-muted-foreground">Moves: </span>
+          <span className="text-sm text-muted-foreground">Coups : </span>
           <span className="font-bold text-[var(--hextech-blue)]">
             {state.data.moves}
           </span>
         </div>
         <div className="glass px-4 py-2 rounded-lg">
-          <span className="text-sm text-muted-foreground">Matches: </span>
+          <span className="text-sm text-muted-foreground">Paires : </span>
           <span className="font-bold text-[var(--hextech-gold)]">
             {state.data.matches}/{difficultySettings[state.data.difficulty].pairs}
           </span>
         </div>
         <div className="glass px-4 py-2 rounded-lg">
-          <span className="text-sm text-muted-foreground">Time: </span>
+          <span className="text-sm text-muted-foreground">Temps : </span>
           <span className="font-bold text-[var(--rune-cyan)]">
             {formatTime(state.data.elapsedTime)}
           </span>
@@ -408,7 +407,7 @@ export function MemoryMatchGame() {
       {/* Quit button */}
       <div className="flex justify-center mt-6">
         <HexButton variant="honey" size="sm" onClick={resetGame}>
-          Quit Game
+          Quitter
         </HexButton>
       </div>
     </div>
