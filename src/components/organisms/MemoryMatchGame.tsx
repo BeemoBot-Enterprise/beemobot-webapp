@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { motion } from "framer-motion";
 import Button from "@/components/atoms/Button";
+import { Card } from "@/components/atoms/Card";
 import { useGameState } from "@/hooks/useGameState";
 import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
@@ -23,7 +24,7 @@ const championEmojis = [
   { name: "Braum", emoji: "🛡️" },
 ];
 
-interface Card {
+interface CardData {
   id: number;
   championIndex: number;
   isFlipped: boolean;
@@ -31,7 +32,7 @@ interface Card {
 }
 
 interface GameData {
-  cards: Card[];
+  cards: CardData[];
   flippedCards: number[];
   moves: number;
   matches: number;
@@ -48,60 +49,59 @@ const difficultySettings = {
 };
 
 export function MemoryMatchGame() {
-  const {
-    state,
-    startGame,
-    endGame,
-    updateScore,
-    updateData,
-    resetGame,
-  } = useGameState<GameData>(
-    {
-      cards: [],
-      flippedCards: [],
-      moves: 0,
-      matches: 0,
-      canFlip: true,
-      difficulty: "easy",
-      startTime: 0,
-      elapsedTime: 0,
-    },
-    "memory-match"
-  );
+  const { state, startGame, endGame, updateScore, updateData, resetGame } =
+    useGameState<GameData>(
+      {
+        cards: [],
+        flippedCards: [],
+        moves: 0,
+        matches: 0,
+        canFlip: true,
+        difficulty: "easy",
+        startTime: 0,
+        elapsedTime: 0,
+      },
+      "memory-match",
+    );
 
-  const [selectedDifficulty, setSelectedDifficulty] = useState<"easy" | "medium" | "hard">("easy");
+  const [selectedDifficulty, setSelectedDifficulty] = useState<
+    "easy" | "medium" | "hard"
+  >("easy");
   const [bet, setBet] = useState<number | null>(null);
   const [showBetModal, setShowBetModal] = useState(false);
-  const [pendingDifficulty, setPendingDifficulty] = useState<"easy" | "medium" | "hard">("easy");
+  const [pendingDifficulty, setPendingDifficulty] = useState<
+    "easy" | "medium" | "hard"
+  >("easy");
 
-  const initializeCards = useCallback((difficulty: "easy" | "medium" | "hard") => {
-    const { pairs } = difficultySettings[difficulty];
-    const selectedChampions = championEmojis
-      .sort(() => Math.random() - 0.5)
-      .slice(0, pairs);
+  const initializeCards = useCallback(
+    (difficulty: "easy" | "medium" | "hard") => {
+      const { pairs } = difficultySettings[difficulty];
+      const selectedChampions = championEmojis
+        .sort(() => Math.random() - 0.5)
+        .slice(0, pairs);
 
-    const cards: Card[] = [];
-    selectedChampions.forEach((champ, champIndex) => {
-      // Create two cards for each champion (a pair)
-      cards.push({
-        id: cards.length,
-        championIndex: champIndex,
-        isFlipped: false,
-        isMatched: false,
+      const cards: CardData[] = [];
+      selectedChampions.forEach((_, champIndex) => {
+        cards.push({
+          id: cards.length,
+          championIndex: champIndex,
+          isFlipped: false,
+          isMatched: false,
+        });
+        cards.push({
+          id: cards.length,
+          championIndex: champIndex,
+          isFlipped: false,
+          isMatched: false,
+        });
       });
-      cards.push({
-        id: cards.length,
-        championIndex: champIndex,
-        isFlipped: false,
-        isMatched: false,
-      });
-    });
 
-    // Shuffle cards
-    const shuffledCards = cards.sort(() => Math.random() - 0.5);
+      const shuffledCards = cards.sort(() => Math.random() - 0.5);
 
-    return { shuffledCards, selectedChampions };
-  }, []);
+      return { shuffledCards, selectedChampions };
+    },
+    [],
+  );
 
   const [champions, setChampions] = useState(championEmojis.slice(0, 4));
 
@@ -134,7 +134,12 @@ export function MemoryMatchGame() {
         await fetch("/api/minigame-win", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ puuid, amount: bet * 2, gameId: "memory-match", score }),
+          body: JSON.stringify({
+            puuid,
+            amount: bet * 2,
+            gameId: "memory-match",
+            score,
+          }),
         });
       }
     }
@@ -147,9 +152,8 @@ export function MemoryMatchGame() {
     if (!card || card.isFlipped || card.isMatched) return;
     if (state.data.flippedCards.length >= 2) return;
 
-    // Flip the card
     const newCards = state.data.cards.map((c) =>
-      c.id === cardId ? { ...c, isFlipped: true } : c
+      c.id === cardId ? { ...c, isFlipped: true } : c,
     );
     const newFlipped = [...state.data.flippedCards, cardId];
 
@@ -158,7 +162,6 @@ export function MemoryMatchGame() {
       flippedCards: newFlipped,
     });
 
-    // Check for match if two cards are flipped
     if (newFlipped.length === 2) {
       const [firstId, secondId] = newFlipped;
       const firstCard = newCards.find((c) => c.id === firstId)!;
@@ -167,12 +170,11 @@ export function MemoryMatchGame() {
       updateData({ canFlip: false, moves: state.data.moves + 1 });
 
       if (firstCard.championIndex === secondCard.championIndex) {
-        // Match found!
         setTimeout(() => {
           const matchedCards = newCards.map((c) =>
             c.id === firstId || c.id === secondId
               ? { ...c, isMatched: true }
-              : c
+              : c,
           );
           const newMatches = state.data.matches + 1;
           const { pairs } = difficultySettings[state.data.difficulty];
@@ -184,14 +186,14 @@ export function MemoryMatchGame() {
             matches: newMatches,
           });
 
-          // Calculate score based on moves and time
           const basePoints = 50;
           const movePenalty = state.data.moves * 2;
           updateScore(Math.max(10, basePoints - movePenalty));
 
-          // Check for win
           if (newMatches === pairs) {
-            const timeTaken = Math.floor((Date.now() - state.data.startTime) / 1000);
+            const timeTaken = Math.floor(
+              (Date.now() - state.data.startTime) / 1000,
+            );
             const timeBonus = Math.max(0, 300 - timeTaken);
             updateScore(timeBonus);
             updateData({ elapsedTime: timeTaken });
@@ -200,12 +202,11 @@ export function MemoryMatchGame() {
           }
         }, 500);
       } else {
-        // No match - flip cards back
         setTimeout(() => {
           const resetCards = newCards.map((c) =>
             c.id === firstId || c.id === secondId
               ? { ...c, isFlipped: false }
-              : c
+              : c,
           );
           updateData({
             cards: resetCards,
@@ -217,7 +218,6 @@ export function MemoryMatchGame() {
     }
   };
 
-  // Timer effect
   useEffect(() => {
     if (state.status !== "playing") return;
 
@@ -238,54 +238,44 @@ export function MemoryMatchGame() {
 
   if (state.status === "idle") {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="memory-match"
-            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(pendingDifficulty); }}
+            onConfirm={(b) => {
+              setBet(b);
+              setShowBetModal(false);
+              doStart(pendingDifficulty);
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-8"
-        >
-          <span className="text-6xl">🃏</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
-          Jeu de Mémoire
-        </h2>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          Associez les paires de champions le plus vite possible ! Moins vous faites de coups, plus votre score est élevé !
+        <h2 className="text-xl font-semibold text-text mb-2">Jeu de Mémoire</h2>
+        <p className="text-sm text-text-muted mb-6">
+          Associe les paires de champions le plus vite possible.
         </p>
 
-        <div className="flex gap-8 mb-6">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--hextech-gold)]">
-              {state.highScore}
-            </p>
-            <p className="text-sm text-muted-foreground">Meilleur Score</p>
-          </div>
+        <div className="mb-6">
+          <p className="text-base text-text">{state.highScore}</p>
+          <p className="text-sm text-text-muted">Meilleur score</p>
         </div>
 
-        {/* Difficulty selection */}
         <div className="mb-6">
-          <p className="text-sm text-muted-foreground mb-3">Choisir la Difficulté</p>
-          <div className="flex gap-3">
+          <p className="text-sm text-text-muted mb-3">Difficulté</p>
+          <div className="flex gap-2 justify-center">
             {(["easy", "medium", "hard"] as const).map((diff) => (
               <button
                 key={diff}
                 onClick={() => setSelectedDifficulty(diff)}
                 className={cn(
-                  "px-4 py-2 rounded-lg capitalize transition-all",
+                  "px-3 py-2 rounded-md border text-sm capitalize transition-colors",
                   selectedDifficulty === diff
-                    ? "glass-hextech border border-[var(--hextech-blue)]"
-                    : "glass hover:bg-[var(--bg-surface)]"
+                    ? "border-accent bg-accent/10 text-text"
+                    : "border-border bg-bg text-text-muted hover:bg-surface-hover",
                 )}
               >
                 {diff}
-                <span className="block text-xs text-muted-foreground">
+                <span className="block text-xs text-text-muted">
                   {difficultySettings[diff].pairs} paires
                 </span>
               </button>
@@ -295,112 +285,96 @@ export function MemoryMatchGame() {
 
         <Button
           variant="primary"
-          size="lg"
           onClick={() => handleStart(selectedDifficulty)}
         >
           Commencer
         </Button>
-      </div>
+      </Card>
     );
   }
 
   if (state.status === "won") {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="memory-match"
-            onConfirm={(b) => { setBet(b); setShowBetModal(false); doStart(pendingDifficulty); }}
+            onConfirm={(b) => {
+              setBet(b);
+              setShowBetModal(false);
+              doStart(pendingDifficulty);
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-6"
-        >
-          <span className="text-6xl">🎉</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-2 text-[var(--hextech-gold)]">
-          Victoire !
-        </h2>
-        <p className="text-muted-foreground mb-4">
-          Vous avez trouvé toutes les paires !
+        <h2 className="text-xl font-semibold text-text mb-2">Victoire</h2>
+        <p className="text-sm text-text-muted mb-6">
+          Tu as trouvé toutes les paires.
         </p>
 
-        <div className="grid grid-cols-3 gap-6 mb-6">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--hextech-gold)]">
-              {state.score}
-            </p>
-            <p className="text-sm text-muted-foreground">Score</p>
+        <div className="grid grid-cols-3 gap-4 mb-6">
+          <div>
+            <p className="text-base text-text">{state.score}</p>
+            <p className="text-sm text-text-muted">Score</p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--hextech-blue)]">
-              {state.data.moves}
-            </p>
-            <p className="text-sm text-muted-foreground">Coups</p>
+          <div>
+            <p className="text-base text-text">{state.data.moves}</p>
+            <p className="text-sm text-text-muted">Coups</p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--rune-cyan)]">
+          <div>
+            <p className="text-base text-text">
               {formatTime(state.data.elapsedTime)}
             </p>
-            <p className="text-sm text-muted-foreground">Temps</p>
+            <p className="text-sm text-text-muted">Temps</p>
           </div>
         </div>
 
         {state.score > state.highScore && (
-          <motion.p
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-[var(--rune-cyan)] font-bold mb-4"
-          >
-            🎉 Nouveau Meilleur Score !
-          </motion.p>
+          <p className="text-sm text-text mb-4">Nouveau meilleur score.</p>
         )}
 
-        <div className="flex gap-4">
+        <div className="flex justify-center gap-2">
           <Button
             variant="primary"
-            onClick={() => { setPendingDifficulty(state.data.difficulty); setShowBetModal(true); }}
+            onClick={() => {
+              setPendingDifficulty(state.data.difficulty);
+              setShowBetModal(true);
+            }}
           >
             Rejouer
           </Button>
           <Button variant="secondary" onClick={resetGame}>
-            Menu Principal
+            Menu
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   const { cols } = difficultySettings[state.data.difficulty];
 
   return (
-    <div className="p-4">
-      {/* Stats bar */}
-      <div className="flex justify-center gap-6 mb-6">
-        <div className="glass px-4 py-2 rounded-lg">
-          <span className="text-sm text-muted-foreground">Coups : </span>
-          <span className="font-bold text-[var(--hextech-blue)]">
-            {state.data.moves}
-          </span>
+    <div className="rounded-md border border-border bg-surface p-6">
+      <div className="flex flex-wrap items-center justify-center gap-6 mb-6">
+        <div>
+          <p className="text-sm text-text-muted">Coups</p>
+          <p className="text-base text-text">{state.data.moves}</p>
         </div>
-        <div className="glass px-4 py-2 rounded-lg">
-          <span className="text-sm text-muted-foreground">Paires : </span>
-          <span className="font-bold text-[var(--hextech-gold)]">
-            {state.data.matches}/{difficultySettings[state.data.difficulty].pairs}
-          </span>
+        <div>
+          <p className="text-sm text-text-muted">Paires</p>
+          <p className="text-base text-text">
+            {state.data.matches}/
+            {difficultySettings[state.data.difficulty].pairs}
+          </p>
         </div>
-        <div className="glass px-4 py-2 rounded-lg">
-          <span className="text-sm text-muted-foreground">Temps : </span>
-          <span className="font-bold text-[var(--rune-cyan)]">
+        <div>
+          <p className="text-sm text-text-muted">Temps</p>
+          <p className="text-base text-text">
             {formatTime(state.data.elapsedTime)}
-          </span>
+          </p>
         </div>
       </div>
 
-      {/* Game board */}
       <div
         className="grid gap-3 mx-auto"
         style={{
@@ -408,43 +382,39 @@ export function MemoryMatchGame() {
           maxWidth: cols * 80 + (cols - 1) * 12,
         }}
       >
-        <AnimatePresence>
-          {state.data.cards.map((card) => (
-            <motion.button
-              key={card.id}
-              onClick={() => handleCardClick(card.id)}
-              disabled={card.isFlipped || card.isMatched || !state.data.canFlip}
-              initial={{ scale: 0, rotateY: 180 }}
-              animate={{
-                scale: 1,
-                rotateY: card.isFlipped || card.isMatched ? 0 : 180,
-              }}
-              transition={{ duration: 0.3 }}
-              className={cn(
-                "aspect-square rounded-xl transition-all duration-300",
-                "flex items-center justify-center text-3xl",
-                card.isMatched && "opacity-50",
-                !card.isFlipped && !card.isMatched && "glass hover:bg-[var(--hextech-blue)]/20 cursor-pointer",
-                (card.isFlipped || card.isMatched) && "glass-hextech"
-              )}
-              style={{ perspective: 1000 }}
-            >
-              {(card.isFlipped || card.isMatched) && (
-                <span className="text-4xl">
-                  {champions[card.championIndex]?.emoji}
-                </span>
-              )}
-              {!card.isFlipped && !card.isMatched && (
-                <span className="text-2xl opacity-30">?</span>
-              )}
-            </motion.button>
-          ))}
-        </AnimatePresence>
+        {state.data.cards.map((card) => (
+          <motion.button
+            key={card.id}
+            onClick={() => handleCardClick(card.id)}
+            disabled={card.isFlipped || card.isMatched || !state.data.canFlip}
+            animate={{
+              rotateY: card.isFlipped || card.isMatched ? 0 : 180,
+            }}
+            transition={{ duration: 0.3 }}
+            className={cn(
+              "aspect-square rounded-md border flex items-center justify-center text-3xl",
+              card.isMatched && "opacity-50 border-border bg-bg",
+              !card.isFlipped &&
+                !card.isMatched &&
+                "border-border bg-bg hover:bg-surface-hover cursor-pointer",
+              card.isFlipped && !card.isMatched && "border-accent bg-accent/10",
+            )}
+            style={{ perspective: 1000 }}
+          >
+            {(card.isFlipped || card.isMatched) && (
+              <span className="text-3xl">
+                {champions[card.championIndex]?.emoji}
+              </span>
+            )}
+            {!card.isFlipped && !card.isMatched && (
+              <span className="text-base text-text-muted">?</span>
+            )}
+          </motion.button>
+        ))}
       </div>
 
-      {/* Quit button */}
       <div className="flex justify-center mt-6">
-        <Button variant="secondary" size="sm" onClick={resetGame}>
+        <Button variant="ghost" size="sm" onClick={resetGame}>
           Quitter
         </Button>
       </div>
