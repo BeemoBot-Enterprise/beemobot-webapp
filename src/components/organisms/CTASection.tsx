@@ -51,18 +51,17 @@ export function CTASection() {
           >
             <span className="text-lg">🐝</span>
             <span className="text-sm text-[var(--hextech-gold)]">
-              Free Forever
+              Gratuit pour toujours
             </span>
           </motion.div>
 
           {/* Headline */}
           <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold mb-6">
-            Ready to <span className="gradient-text-hextech">Climb</span>?
+            Prêt à <span className="gradient-text-hextech">Grimper</span> ?
           </h2>
 
           <p className="text-xl text-muted-foreground mb-8 max-w-xl mx-auto">
-            Join 50,000+ Discord servers using BeemoBot. Add the ultimate League
-            of Legends companion to your server today!
+            Rejoignez plus de 50 000 serveurs Discord utilisant BeemoBot. Ajoutez le compagnon League of Legends ultime à votre serveur dès aujourd'hui !
           </p>
 
           {/* CTA Buttons */}
@@ -73,7 +72,7 @@ export function CTASection() {
               onClick={() => window.open(BOT_INVITE_URL, "_blank")}
             >
               <FaDiscord className="w-5 h-5" />
-              Add to Discord
+              Ajouter à Discord
             </HexButton>
 
             <HexButton
@@ -100,7 +99,7 @@ export function CTASection() {
                   d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              Try Minigames
+              Essayer les Mini-jeux
             </HexButton>
           </div>
 
@@ -129,11 +128,11 @@ export function CTASection() {
                   </span>
                 </div>
                 <p className="text-sm text-muted-foreground mt-1">
-                  Welcome to the hive! 🍯 Type{" "}
+                  Bienvenue dans la ruche ! 🍯 Tapez{" "}
                   <code className="px-1 py-0.5 rounded bg-[var(--bg-surface)] text-[var(--hextech-blue)]">
                     /help
                   </code>{" "}
-                  to see all my commands!
+                  pour voir toutes mes commandes !
                 </p>
               </div>
             </div>
