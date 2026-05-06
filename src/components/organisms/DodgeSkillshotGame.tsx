@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { motion, AnimatePresence } from "framer-motion";
 import Button from "@/components/atoms/Button";
+import { Card } from "@/components/atoms/Card";
 import { useGameState } from "@/hooks/useGameState";
-import { cn } from "@/lib/utils";
 import { BetModal } from "@/components/organisms/BetModal";
 
 interface Skillshot {
@@ -44,26 +43,24 @@ export function DodgeSkillshotGame() {
   const [keys, setKeys] = useState<Set<string>>(new Set());
   const [showBetModal, setShowBetModal] = useState(false);
 
-  const {
-    state,
-    startGame,
-    endGame,
-    updateScore,
-    updateData,
-    resetGame,
-  } = useGameState<GameData>(
-    {
-      beemoX: GAME_WIDTH / 2,
-      beemoY: GAME_HEIGHT / 2,
-      skillshots: [],
-      honeyDrops: [],
-      invincible: false,
-    },
-    "dodge-skillshot"
-  );
+  const { state, startGame, endGame, updateScore, updateData, resetGame } =
+    useGameState<GameData>(
+      {
+        beemoX: GAME_WIDTH / 2,
+        beemoY: GAME_HEIGHT / 2,
+        skillshots: [],
+        honeyDrops: [],
+        invincible: false,
+      },
+      "dodge-skillshot",
+    );
 
   const spawnSkillshot = useCallback(() => {
-    const types: Array<"linear" | "circular"> = ["linear", "linear", "circular"];
+    const types: Array<"linear" | "circular"> = [
+      "linear",
+      "linear",
+      "circular",
+    ];
     const type = types[Math.floor(Math.random() * types.length)];
     const colors = ["#FF4444", "#FF8800", "#AA44FF", "#44AAFF"];
 
@@ -71,22 +68,22 @@ export function DodgeSkillshotGame() {
     let x, y, angle;
 
     switch (side) {
-      case 0: // top
+      case 0:
         x = Math.random() * GAME_WIDTH;
         y = -20;
         angle = Math.PI / 2 + (Math.random() - 0.5) * 0.5;
         break;
-      case 1: // right
+      case 1:
         x = GAME_WIDTH + 20;
         y = Math.random() * GAME_HEIGHT;
         angle = Math.PI + (Math.random() - 0.5) * 0.5;
         break;
-      case 2: // bottom
+      case 2:
         x = Math.random() * GAME_WIDTH;
         y = GAME_HEIGHT + 20;
         angle = -Math.PI / 2 + (Math.random() - 0.5) * 0.5;
         break;
-      default: // left
+      default:
         x = -20;
         y = Math.random() * GAME_HEIGHT;
         angle = (Math.random() - 0.5) * 0.5;
@@ -118,7 +115,7 @@ export function DodgeSkillshotGame() {
 
   const checkCollision = useCallback(
     (beemoX: number, beemoY: number, skillshots: Skillshot[]) => {
-      const beemoRadius = BEEMO_SIZE / 2 - 5; // Slightly smaller hitbox
+      const beemoRadius = BEEMO_SIZE / 2 - 5;
 
       for (const shot of skillshots) {
         if (shot.type === "circular") {
@@ -129,7 +126,6 @@ export function DodgeSkillshotGame() {
             return true;
           }
         } else {
-          // Linear skillshot - rectangle collision
           const rotatedBeemoX =
             Math.cos(-shot.angle) * (beemoX - shot.x) -
             Math.sin(-shot.angle) * (beemoY - shot.y);
@@ -147,7 +143,7 @@ export function DodgeSkillshotGame() {
       }
       return false;
     },
-    []
+    [],
   );
 
   const checkHoneyCollection = useCallback(
@@ -166,7 +162,7 @@ export function DodgeSkillshotGame() {
 
       return collected;
     },
-    []
+    [],
   );
 
   const gameLoop = useCallback(
@@ -176,7 +172,6 @@ export function DodgeSkillshotGame() {
       const deltaTime = timestamp - lastTimeRef.current;
       lastTimeRef.current = timestamp;
 
-      // Move Beemo based on keys
       let { beemoX, beemoY } = state.data;
       const speed = 5;
 
@@ -193,48 +188,45 @@ export function DodgeSkillshotGame() {
         beemoX = Math.min(GAME_WIDTH - BEEMO_SIZE / 2, beemoX + speed);
       }
 
-      // Update skillshots
       let skillshots = state.data.skillshots.map((shot) => ({
         ...shot,
         x: shot.x + Math.cos(shot.angle) * shot.speed,
         y: shot.y + Math.sin(shot.angle) * shot.speed,
       }));
 
-      // Remove off-screen skillshots
       skillshots = skillshots.filter(
         (shot) =>
           shot.x > -100 &&
           shot.x < GAME_WIDTH + 100 &&
           shot.y > -100 &&
-          shot.y < GAME_HEIGHT + 100
+          shot.y < GAME_HEIGHT + 100,
       );
 
-      // Check collision
       if (!state.data.invincible && checkCollision(beemoX, beemoY, skillshots)) {
         endGame(false);
         return;
       }
 
-      // Check honey collection
-      const collected = checkHoneyCollection(beemoX, beemoY, state.data.honeyDrops);
+      const collected = checkHoneyCollection(
+        beemoX,
+        beemoY,
+        state.data.honeyDrops,
+      );
       let honeyDrops = state.data.honeyDrops;
       if (collected.length > 0) {
         honeyDrops = honeyDrops.filter((drop) => !collected.includes(drop.id));
         updateScore(collected.length * 25);
       }
 
-      // Spawn new skillshots
       const spawnRate = Math.max(500, 1500 - state.score * 2);
       if (Math.random() < deltaTime / spawnRate) {
         skillshots.push(spawnSkillshot());
       }
 
-      // Spawn honey drops
       if (Math.random() < deltaTime / 3000 && honeyDrops.length < 3) {
         honeyDrops.push(spawnHoneyDrop());
       }
 
-      // Update score for survival
       updateScore(Math.floor(deltaTime / 100));
 
       updateData({
@@ -258,7 +250,7 @@ export function DodgeSkillshotGame() {
       updateData,
       updateScore,
       endGame,
-    ]
+    ],
   );
 
   useEffect(() => {
@@ -277,9 +269,16 @@ export function DodgeSkillshotGame() {
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (
-        ["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight", "w", "a", "s", "d"].includes(
-          e.key
-        )
+        [
+          "ArrowUp",
+          "ArrowDown",
+          "ArrowLeft",
+          "ArrowRight",
+          "w",
+          "a",
+          "s",
+          "d",
+        ].includes(e.key)
       ) {
         e.preventDefault();
         setKeys((prev) => new Set(prev).add(e.key));
@@ -320,116 +319,95 @@ export function DodgeSkillshotGame() {
 
   if (state.status === "idle") {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="dodge-skillshot"
-            onConfirm={(b) => { setShowBetModal(false); doStart(); }}
+            onConfirm={() => {
+              setShowBetModal(false);
+              doStart();
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-8"
-        >
-          <span className="text-6xl">⚡</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-4 gradient-text-hextech">
+        <h2 className="text-xl font-semibold text-text mb-2">
           Dodge the Skillshot
         </h2>
-        <p className="text-muted-foreground mb-6 max-w-md">
-          Control Beemo with arrow keys or WASD. Dodge incoming skillshots and
-          collect honey drops for bonus points!
+        <p className="text-sm text-text-muted mb-6">
+          Déplace Beemo avec les flèches ou WASD. Esquive les skillshots et
+          collecte les honey drops.
         </p>
-        <div className="flex gap-8 mb-6">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--hextech-gold)]">
-              {state.highScore}
-            </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
-          </div>
+        <div className="mb-6">
+          <p className="text-base text-text">{state.highScore}</p>
+          <p className="text-sm text-text-muted">Meilleur score</p>
         </div>
-        <Button variant="primary" size="lg" onClick={handleStart}>
-          Start Game
+        <Button variant="primary" onClick={handleStart}>
+          Commencer
         </Button>
-      </div>
+      </Card>
     );
   }
 
   if (state.status === "lost") {
     return (
-      <div className="flex flex-col items-center justify-center p-8 text-center">
+      <Card className="p-8 text-center max-w-sm mx-auto">
         {showBetModal && (
           <BetModal
             gameId="dodge-skillshot"
-            onConfirm={(b) => { setShowBetModal(false); doStart(); }}
+            onConfirm={() => {
+              setShowBetModal(false);
+              doStart();
+            }}
             onCancel={() => setShowBetModal(false)}
           />
         )}
-        <motion.div
-          initial={{ scale: 0.8, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          className="mb-8"
-        >
-          <span className="text-6xl">💀</span>
-        </motion.div>
-        <h2 className="text-3xl font-bold mb-4 text-[var(--destructive)]">
-          Game Over!
-        </h2>
-        <p className="text-muted-foreground mb-4">You got hit by a skillshot!</p>
-        <div className="flex gap-8 mb-6">
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--hextech-gold)]">
-              {state.score}
-            </p>
-            <p className="text-sm text-muted-foreground">Score</p>
+        <h2 className="text-xl font-semibold text-text mb-2">Game Over</h2>
+        <p className="text-sm text-text-muted mb-6">
+          Tu as été touché par un skillshot.
+        </p>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <p className="text-base text-text">{state.score}</p>
+            <p className="text-sm text-text-muted">Score</p>
           </div>
-          <div className="text-center">
-            <p className="text-2xl font-bold text-[var(--rune-cyan)]">
-              {state.highScore}
-            </p>
-            <p className="text-sm text-muted-foreground">High Score</p>
+          <div>
+            <p className="text-base text-text">{state.highScore}</p>
+            <p className="text-sm text-text-muted">Meilleur</p>
           </div>
         </div>
-        <div className="flex gap-4">
+        <div className="flex justify-center gap-2">
           <Button variant="primary" onClick={() => setShowBetModal(true)}>
-            Play Again
+            Rejouer
           </Button>
           <Button variant="secondary" onClick={resetGame}>
-            Main Menu
+            Menu
           </Button>
         </div>
-      </div>
+      </Card>
     );
   }
 
   return (
-    <div className="p-4">
-      {/* Score display */}
-      <div className="flex justify-center mb-4">
-        <div className="glass px-6 py-2 rounded-lg">
-          <span className="text-lg font-bold text-[var(--hextech-gold)]">
-            Score: {state.score}
-          </span>
+    <div className="rounded-md border border-border bg-surface p-6">
+      <div className="flex items-center justify-between mb-4">
+        <div>
+          <p className="text-sm text-text-muted">Score</p>
+          <p className="text-base text-text">{state.score}</p>
         </div>
+        <Button variant="ghost" size="sm" onClick={resetGame}>
+          Quitter
+        </Button>
       </div>
 
-      {/* Game area */}
       <div
         ref={gameRef}
-        className="relative mx-auto rounded-xl overflow-hidden glass"
+        className="relative mx-auto rounded-md overflow-hidden bg-bg border border-border"
         style={{
           width: GAME_WIDTH,
           height: GAME_HEIGHT,
-          background: "linear-gradient(180deg, var(--bg-void) 0%, var(--bg-deep) 100%)",
         }}
       >
-        {/* Honeycomb background */}
-        <div className="absolute inset-0 honeycomb-bg opacity-20" />
-
-        {/* Beemo */}
-        <motion.div
+        <div
           className="absolute"
           style={{
             left: state.data.beemoX - BEEMO_SIZE / 2,
@@ -437,13 +415,10 @@ export function DodgeSkillshotGame() {
             width: BEEMO_SIZE,
             height: BEEMO_SIZE,
           }}
-          animate={{ rotate: [0, 5, -5, 0] }}
-          transition={{ duration: 0.5, repeat: Infinity }}
         >
           <span className="text-4xl">🐝</span>
-        </motion.div>
+        </div>
 
-        {/* Skillshots */}
         {state.data.skillshots.map((shot) => (
           <div
             key={shot.id}
@@ -456,31 +431,26 @@ export function DodgeSkillshotGame() {
               backgroundColor: shot.color,
               borderRadius: shot.type === "circular" ? "50%" : "4px",
               transform: `rotate(${shot.angle}rad)`,
-              boxShadow: `0 0 10px ${shot.color}`,
             }}
           />
         ))}
 
-        {/* Honey drops */}
         {state.data.honeyDrops.map((drop) => (
-          <motion.div
+          <div
             key={drop.id}
             className="absolute"
             style={{
               left: drop.x - 15,
               top: drop.y - 15,
             }}
-            animate={{ y: [0, -5, 0], rotate: [0, 10, -10, 0] }}
-            transition={{ duration: 1, repeat: Infinity }}
           >
             <span className="text-3xl">🍯</span>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      {/* Controls hint */}
-      <p className="text-center text-sm text-muted-foreground mt-4">
-        Use Arrow Keys or WASD to move
+      <p className="text-center text-sm text-text-muted mt-4">
+        Flèches ou WASD pour bouger.
       </p>
     </div>
   );
