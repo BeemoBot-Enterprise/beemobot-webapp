@@ -6,8 +6,12 @@
 "use client";
 
 import Link from "next/link";
+import { Card } from "@/components/atoms/Card";
+import { twMerge } from "tailwind-merge";
 
-interface Row {
+export type LeaderboardType = "respects" | "shrooms" | "honey";
+
+export interface LeaderboardRow {
   puuid: string;
   gameName: string | null;
   tagLine: string | null;
@@ -16,35 +20,83 @@ interface Row {
   honey?: number;
 }
 
-export function LeaderboardTable({ rows, type }: { rows: Row[]; type: "respects" | "shrooms" | "honey" }) {
+const SCORE_LABEL: Record<LeaderboardType, string> = {
+  respects: "Respects",
+  shrooms: "Shrooms",
+  honey: "Honey",
+};
+
+function getScore(row: LeaderboardRow, type: LeaderboardType): string {
+  if (type === "honey") {
+    return Number(row.honey ?? 0).toLocaleString("fr-FR");
+  }
+  const value = Number(row.weighted ?? row.count ?? 0);
+  return value.toFixed(1);
+}
+
+export function LeaderboardTable({
+  rows,
+  type,
+}: {
+  rows: LeaderboardRow[];
+  type: LeaderboardType;
+}) {
   return (
-    <table className="w-full text-left">
-      <thead>
-        <tr className="text-gray-400 border-b border-gray-700/30">
-          <th className="py-3">#</th>
-          <th>Joueur</th>
-          <th className="text-right">{type === "honey" ? "🍯 Honey" : type === "respects" ? "⭐ Respects" : "🍄 Shrooms"}</th>
-        </tr>
-      </thead>
-      <tbody>
-        {rows.map((r, i) => (
-          <tr key={r.puuid} className="border-b border-gray-800/30 hover:bg-[#1a1d28]/50">
-            <td className="py-2 text-gray-500">{i + 1}</td>
-            <td>
-              {r.gameName ? (
-                <Link href={`/u/${r.gameName}-${r.tagLine}`} className="text-white hover:text-blue-400">
-                  {r.gameName}#{r.tagLine}
-                </Link>
-              ) : (
-                <span className="text-gray-500">Compte non lié</span>
-              )}
-            </td>
-            <td className="text-right text-yellow-300">
-              {type === "honey" ? Number(r.honey) : Number(r.weighted ?? r.count).toFixed(1)}
-            </td>
+    <Card className="overflow-hidden">
+      <table className="w-full text-sm">
+        <thead>
+          <tr className="border-b border-border text-text-muted">
+            <th className="w-16 text-left p-3 font-medium">#</th>
+            <th className="text-left p-3 font-medium">Joueur</th>
+            <th className="text-right p-3 font-medium">{SCORE_LABEL[type]}</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+        <tbody>
+          {rows.map((row, i) => {
+            const rank = i + 1;
+            return (
+              <tr
+                key={row.puuid}
+                className="border-b border-border last:border-0 hover:bg-surface-hover"
+              >
+                <td
+                  className={twMerge(
+                    "p-3 font-semibold",
+                    rank <= 3 ? "text-accent-gold" : "text-text-muted",
+                  )}
+                >
+                  {rank}
+                </td>
+                <td className="p-3">
+                  {row.gameName ? (
+                    <Link
+                      href={`/u/${row.gameName}-${row.tagLine}`}
+                      className="text-text hover:text-accent transition-colors"
+                    >
+                      {row.gameName}
+                      <span className="text-text-muted">#{row.tagLine}</span>
+                    </Link>
+                  ) : (
+                    <span className="text-text-muted">Compte non lié</span>
+                  )}
+                </td>
+                <td className="p-3 text-right text-text">
+                  {getScore(row, type)}
+                </td>
+              </tr>
+            );
+          })}
+          {rows.length === 0 && (
+            <tr>
+              <td colSpan={3} className="p-6 text-center text-text-muted">
+                Aucun résultat.
+              </td>
+            </tr>
+          )}
+        </tbody>
+      </table>
+    </Card>
   );
 }
+
+export default LeaderboardTable;

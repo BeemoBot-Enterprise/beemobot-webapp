@@ -8,12 +8,7 @@
 import { useEffect, useState } from "react";
 import Image from "next/image";
 import { useSearchParams, useRouter } from "next/navigation";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/atoms/Card";
+import { Card } from "@/components/atoms/Card";
 import Button from "@/components/atoms/Button";
 import { API_URL } from "@/lib/env";
 
@@ -92,7 +87,7 @@ export default function ProfileContent() {
         localStorage.setItem(USER_KEY, JSON.stringify(nextUser));
 
         const statsResponse = await fetch(
-          `${API_URL}/game/stats/${encodeURIComponent(nextUser.username)}`
+          `${API_URL}/game/stats/${encodeURIComponent(nextUser.username)}`,
         );
         if (statsResponse.ok) {
           setStats(await statsResponse.json());
@@ -139,171 +134,86 @@ export default function ProfileContent() {
 
   if (loading) {
     return (
-      <main className="min-h-screen bg-[#0f1117] py-20 px-4">
-        <div className="max-w-5xl mx-auto text-center">
-          <div className="text-white text-2xl">Chargement...</div>
-        </div>
+      <main className="max-w-[1200px] mx-auto px-6 py-12">
+        <p className="text-text-muted">Chargement…</p>
       </main>
     );
   }
 
   if (!token || !user) {
     return (
-      <main className="min-h-screen bg-[#0f1117] py-20 px-4">
-        <div className="max-w-5xl mx-auto">
-          <Card className="bg-[#1a1d28] border-gray-700/30 text-center p-12">
-            <CardContent>
-              <div className="text-6xl mb-6">🔐</div>
-              <h1 className="text-3xl font-bold text-white mb-4">
-                Connexion requise
-              </h1>
-              <p className="text-gray-300 mb-8 text-lg">
-                Connectez-vous avec Discord pour accéder à votre profil
-              </p>
-              <Button
-                onClick={handleLogin}
-                className="bg-[#5865F2] hover:bg-[#4752C4] text-white font-semibold py-3 px-8 rounded-lg transition-all duration-200 hover:scale-[1.02]"
-              >
-                Se connecter avec Discord
-              </Button>
-            </CardContent>
-          </Card>
-        </div>
+      <main className="max-w-[1200px] mx-auto px-6 py-12">
+        <Card className="p-10 text-center">
+          <h1 className="text-2xl font-semibold text-text mb-2">
+            Connexion requise
+          </h1>
+          <p className="text-text-muted mb-6">
+            Connecte-toi avec Discord pour accéder à ton profil.
+          </p>
+          <Button onClick={handleLogin} variant="primary">
+            Se connecter avec Discord
+          </Button>
+        </Card>
       </main>
     );
   }
 
+  const repScore = stats ? stats.totalRespects - stats.totalShrooms : 0;
+
   return (
-    <main className="min-h-screen bg-[#0f1117] py-20 px-4">
-      <div className="max-w-5xl mx-auto">
-        <Card className="bg-[#1a1d28] border-gray-700/30 overflow-hidden mb-8">
-          <CardHeader className="bg-[#5865F2]/10 border-b border-gray-700/30">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <Image
-                  src={getAvatarUrl(user)}
-                  alt="Avatar"
-                  width={80}
-                  height={80}
-                  className="rounded-full border-2 border-[#5865F2]"
-                />
-                <div>
-                  <h1 className="text-3xl font-bold text-white">
-                    {user.username}
-                    {user.discriminator !== "0" && (
-                      <span className="text-gray-400">
-                        #{user.discriminator}
-                      </span>
-                    )}
-                  </h1>
-                  <p className="text-gray-300">Profil BeemoBot</p>
-                </div>
-              </div>
-              <Button
-                onClick={handleLogout}
-                variant="secondary"
-                className="border-red-500/30 text-red-400 hover:bg-red-500/10"
-              >
-                Déconnexion
-              </Button>
-            </div>
-          </CardHeader>
+    <main className="max-w-[1200px] mx-auto px-6 py-12">
+      {/* Header profil */}
+      <section className="flex items-center gap-6 mb-10">
+        <div className="h-24 w-24 rounded-full bg-surface border border-border overflow-hidden flex items-center justify-center">
+          <Image
+            src={getAvatarUrl(user)}
+            alt={`Avatar de ${user.username}`}
+            width={96}
+            height={96}
+            className="h-full w-full object-cover"
+          />
+        </div>
+        <div>
+          <h1 className="text-2xl font-semibold text-text">{user.username}</h1>
+          <p className="text-text-muted text-sm">
+            {user.discriminator !== "0" ? `#${user.discriminator}` : "Discord"}
+          </p>
+        </div>
+      </section>
+
+      {error && (
+        <Card className="p-4 mb-8 border-danger/40">
+          <p className="text-sm text-danger">{error}</p>
         </Card>
+      )}
 
-        {error && (
-          <Card className="bg-red-900/20 border-red-700/30 mb-8">
-            <CardContent className="p-6">
-              <p className="text-red-400 flex items-center gap-2">
-                <span>⚠️</span> {error}
-              </p>
-            </CardContent>
+      {/* Stats */}
+      {stats && (
+        <section className="grid md:grid-cols-3 gap-4 mb-10">
+          <Card className="p-6">
+            <div className="text-sm text-text-muted">Shrooms</div>
+            <div className="text-3xl font-semibold text-text mt-1">
+              {stats.totalShrooms}
+            </div>
           </Card>
-        )}
-
-        {stats && (
-          <div className="grid md:grid-cols-2 gap-6 mb-8">
-            <Card className="bg-[#1a1d28] border-gray-700/30">
-              <CardHeader className="bg-[#0f1117] border-b border-gray-700/30">
-                <CardTitle className="text-xl flex items-center gap-2">
-                  🍄 Shrooms
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="text-center">
-                  <div className="text-5xl font-bold text-orange-400 mb-2">
-                    {stats.totalShrooms}
-                  </div>
-                  <p className="text-gray-400">Points de réputation négatifs</p>
-                </div>
-              </CardContent>
-            </Card>
-
-            <Card className="bg-[#1a1d28] border-gray-700/30">
-              <CardHeader className="bg-[#0f1117] border-b border-gray-700/30">
-                <CardTitle className="text-xl flex items-center gap-2">
-                  ⭐ Respects
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-6">
-                <div className="text-center">
-                  <div className="text-5xl font-bold text-emerald-400 mb-2">
-                    {stats.totalRespects}
-                  </div>
-                  <p className="text-gray-400">Points de réputation positifs</p>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        )}
-
-        {stats && (
-          <Card className="bg-[#1a1d28] border-gray-700/30">
-            <CardHeader className="bg-[#0f1117] border-b border-gray-700/30">
-              <CardTitle className="text-2xl text-white">
-                📊 Score de Réputation
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="p-6">
-              <div className="text-center">
-                <div className="text-6xl font-bold mb-4">
-                  <span
-                    className={
-                      stats.totalRespects - stats.totalShrooms >= 0
-                        ? "text-emerald-400"
-                        : "text-red-400"
-                    }
-                  >
-                    {stats.totalRespects - stats.totalShrooms >= 0 ? "+" : ""}
-                    {stats.totalRespects - stats.totalShrooms}
-                  </span>
-                </div>
-                <div className="flex justify-center items-center gap-8 text-lg">
-                  <div className="text-emerald-400">
-                    +{stats.totalRespects} Respects
-                  </div>
-                  <div className="text-gray-500">-</div>
-                  <div className="text-orange-400">
-                    {stats.totalShrooms} Shrooms
-                  </div>
-                </div>
-                <div className="mt-6 p-4 bg-[#0f1117] rounded-lg border border-gray-700/30">
-                  <p className="text-gray-300 text-sm leading-relaxed">
-                    {stats.totalRespects - stats.totalShrooms >= 10 ? (
-                      <>🏆 Excellent joueur ! Tu es respecté par la communauté.</>
-                    ) : stats.totalRespects - stats.totalShrooms >= 0 ? (
-                      <>👍 Bon joueur, continue comme ça !</>
-                    ) : stats.totalRespects - stats.totalShrooms >= -10 ? (
-                      <>⚠️ Attention, ta réputation est négative.</>
-                    ) : (
-                      <>🚫 Ta réputation est très mauvaise. Améliore ton comportement !</>
-                    )}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
+          <Card className="p-6">
+            <div className="text-sm text-text-muted">Respects</div>
+            <div className="text-3xl font-semibold text-text mt-1">
+              {stats.totalRespects}
+            </div>
           </Card>
-        )}
-      </div>
+          <Card className="p-6">
+            <div className="text-sm text-text-muted">Rep score</div>
+            <div className="text-3xl font-semibold text-text mt-1">
+              {repScore >= 0 ? `+${repScore}` : repScore}
+            </div>
+          </Card>
+        </section>
+      )}
+
+      <Button onClick={handleLogout} variant="secondary">
+        Se déconnecter
+      </Button>
     </main>
   );
 }

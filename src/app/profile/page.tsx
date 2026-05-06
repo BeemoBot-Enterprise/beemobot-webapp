@@ -7,10 +7,8 @@ export default function ProfilePage() {
   return (
     <Suspense
       fallback={
-        <main className="min-h-screen bg-[#0f1117] py-20 px-4">
-          <div className="max-w-5xl mx-auto text-center">
-            <div className="text-white text-2xl">Chargement...</div>
-          </div>
+        <main className="max-w-[1200px] mx-auto px-6 py-12">
+          <p className="text-text-muted">Chargement…</p>
         </main>
       }
     >
