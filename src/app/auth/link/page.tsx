@@ -42,6 +42,9 @@ export default function LinkPage() {
         throw new Error(body.message ?? "Échec de la liaison.");
       }
       const data = await res.json();
+      if (data.phantomEvents && data.phantomEvents > 0) {
+        alert(`🎉 Tu avais ${data.phantomEvents} events de réputation en attente — ils sont maintenant à toi !`);
+      }
       router.push(`/u/${data.gameName}-${data.tagLine}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue");
