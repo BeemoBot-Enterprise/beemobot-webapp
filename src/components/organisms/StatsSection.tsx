@@ -8,28 +8,28 @@ const stats = [
   {
     value: 50000,
     suffix: "+",
-    label: "Active Servers",
+    label: "Serveurs Actifs",
     icon: "🖥️",
     variant: "blue" as const,
   },
   {
     value: 1000000,
     suffix: "+",
-    label: "Happy Users",
+    label: "Utilisateurs Satisfaits",
     icon: "👥",
     variant: "gold" as const,
   },
   {
     value: 10000000,
     suffix: "+",
-    label: "Commands Run",
+    label: "Commandes Exécutées",
     icon: "⚡",
     variant: "honey" as const,
   },
   {
     value: 99.9,
     suffix: "%",
-    label: "Uptime",
+    label: "Disponibilité",
     icon: "✨",
     variant: "blue" as const,
   },
@@ -51,14 +51,14 @@ export function StatsSection() {
           className="text-center mb-20"
         >
           <span className="inline-block px-4 py-1 rounded-full border border-yellow-500/30 bg-yellow-500/10 text-sm text-yellow-200 mb-4 backdrop-blur-md">
-            Stats
+            Statistiques
           </span>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-            Trusted by the{" "}
-            <span className="gradient-text-beemo">Community</span>
+            Adopté par la{" "}
+            <span className="gradient-text-beemo">Communauté</span>
           </h2>
           <p className="text-muted-foreground max-w-2xl mx-auto">
-            Join thousands of Discord servers already using BeemoBot
+            Rejoignez des milliers de serveurs Discord qui utilisent déjà BeemoBot
           </p>
         </motion.div>
 

@@ -101,7 +101,7 @@ const Header = () => {
             >
               <div className="flex items-center gap-2">
                 <FaDiscord className="w-5 h-5" />
-                <span>Login</span>
+                <span>Connexion</span>
               </div>
             </HexButton>
           )}

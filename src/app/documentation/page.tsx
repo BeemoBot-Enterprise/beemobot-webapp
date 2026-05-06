@@ -19,7 +19,7 @@ export default function Documentation() {
   return (
     <div className="flex min-h-screen bg-[#0f1117]">
       {/* Sidebar */}
-      <div className="w-72 bg-[#1a1d28] border-r border-gray-700/50 p-6 sticky top-0 h-screen overflow-y-auto">
+      <div className="w-72 bg-[#1a1d28] border-r border-gray-700/50 p-6 sticky top-20 h-[calc(100vh-5rem)] overflow-y-auto">
         <h2 className="text-2xl font-bold mb-8 text-white border-b border-gray-700 pb-4">
           Documentation
         </h2>

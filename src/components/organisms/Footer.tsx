@@ -15,21 +15,21 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 mb-16">
           {/* Brand Column */}
           <div className="lg:col-span-4">
-            <Link href="/" className="flex items-center gap-3 mb-6">
+            <div className="flex items-center gap-3 mb-6">
               <Image
                 src={LOGO.teemo}
                 alt="Beemo Logo"
                 width={40}
                 height={40}
-                className="rounded-full grayscale hover:grayscale-0 transition-all duration-300"
+                className="rounded-full"
               />
               <span className="font-bold text-xl text-white">
                 Beemo<span className="text-blue-500">Bot</span>
               </span>
-            </Link>
+            </div>
             <p className="text-slate-400 text-sm leading-relaxed mb-6 max-w-sm">
-              The ultimate League of Legends companion for your Discord server.
-              Level up your community with real-time stats, builds, and minigames.
+              Le compagnon League of Legends ultime pour votre serveur Discord.
+              Faites progresser votre communauté avec des stats en temps réel, des builds et des mini-jeux.
             </p>
             <div className="flex gap-4">
               {/* Social Icons placeholders */}
@@ -44,52 +44,52 @@ const Footer = () => {
 
           {/* Links Columns */}
           <div className="lg:col-span-2 md:col-span-1">
-            <h3 className="font-semibold text-white mb-6">Product</h3>
+            <h3 className="font-semibold text-white mb-6">Produit</h3>
             <ul className="space-y-4">
-              <li><Link href="/features" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Features</Link></li>
+              <li><Link href="/features" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Fonctionnalités</Link></li>
               <li><Link href="/premium" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Premium</Link></li>
-              <li><Link href="/commands" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Commands</Link></li>
-              <li><Link href="/changelog" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Changelog</Link></li>
+              <li><Link href="/commands" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Commandes</Link></li>
+              <li><Link href="/changelog" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Historique</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2 md:col-span-1">
-            <h3 className="font-semibold text-white mb-6">Resources</h3>
+            <h3 className="font-semibold text-white mb-6">Ressources</h3>
             <ul className="space-y-4">
               <li><Link href="/documentation" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Documentation</Link></li>
-              <li><Link href="/api" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">API Reference</Link></li>
+              <li><Link href="/api" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Référence API</Link></li>
               <li><Link href="/guides" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Guides</Link></li>
               <li><Link href="/blog" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Blog</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2 md:col-span-1">
-            <h3 className="font-semibold text-white mb-6">Company</h3>
+            <h3 className="font-semibold text-white mb-6">Entreprise</h3>
             <ul className="space-y-4">
-              <li><Link href="/about" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">About Us</Link></li>
-              <li><Link href="/careers" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Careers</Link></li>
-              <li><Link href="/legal" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Legal</Link></li>
+              <li><Link href="/about" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">À propos</Link></li>
+              <li><Link href="/careers" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Carrières</Link></li>
+              <li><Link href="/legal" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Mentions légales</Link></li>
               <li><Link href="/contact" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Contact</Link></li>
             </ul>
           </div>
 
           <div className="lg:col-span-2 md:col-span-1">
-            <h3 className="font-semibold text-white mb-6">Legal</h3>
+            <h3 className="font-semibold text-white mb-6">Juridique</h3>
             <ul className="space-y-4">
-              <li><Link href="/privacy" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Privacy Policy</Link></li>
-              <li><Link href="/terms" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Terms of Service</Link></li>
-              <li><Link href="/cookies" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Cookie Policy</Link></li>
+              <li><Link href="/privacy" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Politique de confidentialité</Link></li>
+              <li><Link href="/terms" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Conditions d'utilisation</Link></li>
+              <li><Link href="/cookies" className="text-sm text-slate-400 hover:text-blue-400 transition-colors">Politique de cookies</Link></li>
             </ul>
           </div>
         </div>
 
         <div className="border-t border-white/5 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-slate-500">
-            © {new Date().getFullYear()} BeemoBot. Not endorsed by Riot Games.
+            © {new Date().getFullYear()} BeemoBot. Non affilié à Riot Games.
           </p>
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
-            <span className="text-xs text-slate-400">All systems operational</span>
+            <span className="text-xs text-slate-400">Tous les systèmes opérationnels</span>
           </div>
         </div>
       </div>

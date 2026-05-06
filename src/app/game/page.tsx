@@ -9,7 +9,7 @@ function GameTabsLoading() {
     <div className="flex items-center justify-center p-12">
       <div className="animate-pulse text-center">
         <span className="text-4xl">🎮</span>
-        <p className="text-muted-foreground mt-4">Loading games...</p>
+        <p className="text-muted-foreground mt-4">Chargement des jeux...</p>
       </div>
     </div>
   );
@@ -32,8 +32,7 @@ export default function Game() {
             Beemo Minigames
           </h1>
           <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Take on the challenge with our League of Legends themed minigames and
-            prove your skills!
+            Relevez le défi avec nos mini-jeux sur le thème de League of Legends et prouvez vos compétences !
           </p>
         </div>
 
