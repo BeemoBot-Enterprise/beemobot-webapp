@@ -17,6 +17,7 @@ import { RankBadge } from "@/components/_design/RankBadge";
 import { ChampionPortrait } from "@/components/_design/ChampionPortrait";
 import { MatchCard } from "@/components/_design/MatchCard";
 import { HeaderHF } from "@/components/_design/Header";
+import { FooterHF } from "@/components/_design/Footer";
 
 export default function ComponentsDemoPage() {
   return (
@@ -197,6 +198,7 @@ export default function ComponentsDemoPage() {
 
         {/* Sections 12-13 added incrementally as components are built */}
       </div>
+      <FooterHF />
     </main>
   );
 }

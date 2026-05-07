@@ -26,3 +26,4 @@ export type { ChampionPortraitProps } from "./ChampionPortrait";
 export { MatchCard } from "./MatchCard";
 export type { MatchCardProps } from "./MatchCard";
 export { HeaderHF } from "./Header";
+export { FooterHF } from "./Footer";
