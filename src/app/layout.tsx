@@ -1,7 +1,21 @@
 import MainLayout from "@/components/templates/MainLayout";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Bricolage_Grotesque, Onest, Geist } from "next/font/google";
+
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  variable: "--font-bricolage",
+  display: "swap",
+  weight: ["400", "500", "600", "700", "800"],
+});
+
+const onest = Onest({
+  subsets: ["latin"],
+  variable: "--font-onest",
+  display: "swap",
+  weight: ["400", "500", "600", "700"],
+});
 
 const geist = Geist({ subsets: ["latin"], variable: "--font-geist" });
 
@@ -24,7 +38,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="fr" suppressHydrationWarning className={geist.variable}>
+    <html lang="fr" suppressHydrationWarning className={`${geist.variable} ${bricolage.variable} ${onest.variable}`}>
       <body className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col font-sans antialiased">
         <MainLayout>{children}</MainLayout>
       </body>
