@@ -2,9 +2,11 @@
  * Copyright (c) 2024-2026 BeemoBot Enterprise
  * All rights reserved.
  */
+"use client";
 import Link from "next/link";
 import * as React from "react";
-import { RiDiscordFill } from "@remixicon/react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { RiDiscordFill, RiMenuLine, RiCloseLine } from "@remixicon/react";
 import { Button } from "./Button";
 import { cn } from "@/lib/design/cn";
 import { BOT_INVITE_URL } from "@/lib/env";
@@ -17,6 +19,7 @@ const NAV = [
 ];
 
 export function HeaderHF({ className }: { className?: string }) {
+  const [open, setOpen] = React.useState(false);
   return (
     <header
       className={cn(
@@ -34,7 +37,7 @@ export function HeaderHF({ className }: { className?: string }) {
             <Link
               key={item.href}
               href={item.href}
-              className="text-hf-body-sm font-medium text-hf-navy-soft hover:text-hf-honey transition-colors"
+              className="text-hf-body-sm font-medium text-hf-navy-soft hover:text-hf-honey-text transition-colors"
             >
               {item.label}
             </Link>
@@ -47,17 +50,80 @@ export function HeaderHF({ className }: { className?: string }) {
           >
             Mon profil
           </Link>
-          <a
-            href={BOT_INVITE_URL}
-            target="_blank"
-            rel="noreferrer"
-            className="inline-flex"
-          >
+          <a href={BOT_INVITE_URL} target="_blank" rel="noreferrer" className="hidden md:inline-flex">
             <Button size="sm" variant="primary">
               <RiDiscordFill className="size-4" />
               Ajouter
             </Button>
           </a>
+          <Dialog.Root open={open} onOpenChange={setOpen}>
+            <Dialog.Trigger asChild>
+              <button
+                type="button"
+                aria-label="Ouvrir le menu"
+                className="md:hidden flex items-center justify-center size-10 rounded-hf-btn border border-hf-line bg-hf-surface text-hf-navy hover:border-hf-honey transition-colors"
+              >
+                <RiMenuLine className="size-5" />
+              </button>
+            </Dialog.Trigger>
+            <Dialog.Portal>
+              <Dialog.Overlay className="fixed inset-0 z-50 bg-hf-navy/30 backdrop-blur-sm data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:fade-in data-[state=closed]:fade-out" />
+              <Dialog.Content
+                className="fixed inset-x-0 top-0 z-50 bg-hf-bg border-b border-hf-line p-6 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=open]:slide-in-from-top data-[state=closed]:slide-out-to-top"
+              >
+                <Dialog.Title className="sr-only">Menu</Dialog.Title>
+                <Dialog.Description className="sr-only">
+                  Navigation principale du site
+                </Dialog.Description>
+                <div className="flex items-center justify-between mb-6">
+                  <Link href="/" onClick={() => setOpen(false)} className="flex items-center gap-2 font-display font-bold text-hf-navy">
+                    <BeeMark />
+                    <span className="text-hf-body-lg tracking-tight">Beemobot</span>
+                  </Link>
+                  <Dialog.Close asChild>
+                    <button
+                      type="button"
+                      aria-label="Fermer le menu"
+                      className="flex items-center justify-center size-10 rounded-hf-btn border border-hf-line bg-hf-surface text-hf-navy hover:border-hf-honey transition-colors"
+                    >
+                      <RiCloseLine className="size-5" />
+                    </button>
+                  </Dialog.Close>
+                </div>
+                <nav className="flex flex-col">
+                  {NAV.map((item) => (
+                    <Link
+                      key={item.href}
+                      href={item.href}
+                      onClick={() => setOpen(false)}
+                      className="py-3 border-b border-hf-line text-hf-body-lg font-medium text-hf-navy hover:text-hf-honey-text transition-colors"
+                    >
+                      {item.label}
+                    </Link>
+                  ))}
+                  <Link
+                    href="/profile"
+                    onClick={() => setOpen(false)}
+                    className="py-3 border-b border-hf-line text-hf-body-lg font-medium text-hf-navy hover:text-hf-honey-text transition-colors"
+                  >
+                    Mon profil
+                  </Link>
+                </nav>
+                <a
+                  href={BOT_INVITE_URL}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-6 inline-flex w-full"
+                  onClick={() => setOpen(false)}
+                >
+                  <Button size="lg" variant="primary" className="w-full">
+                    <RiDiscordFill className="size-5" />
+                    Ajouter à Discord
+                  </Button>
+                </a>
+              </Dialog.Content>
+            </Dialog.Portal>
+          </Dialog.Root>
         </div>
       </div>
     </header>
