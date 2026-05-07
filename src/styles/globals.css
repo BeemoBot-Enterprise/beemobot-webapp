@@ -14,6 +14,19 @@
   --accent-gold: #f5b528;
   --danger: #ef4444;
   --radius: 8px;
+  /* Honey Friendly — Phase 1 (additive, doesn't override AlignUI dark) */
+  --hf-bg: #FAFAF7;
+  --hf-surface: #FFFFFF;
+  --hf-surface-alt: #F5F0E0;
+  --hf-navy: #14172B;
+  --hf-navy-soft: #4D526B;
+  --hf-line: #ECE9DF;
+  --hf-honey: #E5A422;
+  --hf-honey-soft: #FFD56E;
+  --hf-honey-glow: rgba(229, 164, 34, 0.18);
+  --hf-discord: #5865F2;
+  --hf-win: #10B981;
+  --hf-loss: #F43F5E;
 }
 
 @layer base {
