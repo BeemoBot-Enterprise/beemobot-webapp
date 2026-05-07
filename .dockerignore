@@ -42,3 +42,4 @@ docs
 .vercel
 *.pem
 package-lock.json
+pnpm-workspace.yaml

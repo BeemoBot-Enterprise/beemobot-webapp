@@ -12,7 +12,7 @@ ENV PNPM_HOME=/pnpm \
 
 # ─── deps ────────────────────────────────────────────────────────────────────
 FROM base AS deps
-COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY package.json pnpm-lock.yaml ./
 RUN --mount=type=cache,id=pnpm-store,target=/pnpm/store \
     pnpm config set store-dir /pnpm/store \
  && pnpm install --frozen-lockfile --prefer-offline
