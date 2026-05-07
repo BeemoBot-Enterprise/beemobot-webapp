@@ -15,6 +15,7 @@ import { SectionShell } from "@/components/_design/SectionShell";
 import { TeemoMascot } from "@/components/_design/TeemoMascot";
 import { RankBadge } from "@/components/_design/RankBadge";
 import { ChampionPortrait } from "@/components/_design/ChampionPortrait";
+import { MatchCard } from "@/components/_design/MatchCard";
 
 export default function ComponentsDemoPage() {
   return (
@@ -160,7 +161,39 @@ export default function ComponentsDemoPage() {
           </div>
         </Section>
 
-        {/* Sections 11-12 added incrementally as components are built */}
+        <Section id="match" title="11 · MatchCard">
+          <div className="space-y-3 max-w-3xl">
+            <MatchCard
+              outcome="win"
+              champion="Yasuo"
+              role="Mid"
+              kda={{ k: 12, d: 4, a: 7 }}
+              durationMin={28}
+              queue="Ranked Solo"
+              when="il y a 2h"
+            />
+            <MatchCard
+              outcome="loss"
+              champion="LeeSin"
+              role="Jungle"
+              kda={{ k: 3, d: 9, a: 4 }}
+              durationMin={32}
+              queue="Ranked Flex"
+              when="il y a 5h"
+            />
+            <MatchCard
+              outcome="win"
+              champion="Ahri"
+              role="Mid"
+              kda={{ k: 8, d: 2, a: 14 }}
+              durationMin={24}
+              queue="Normal"
+              when="hier"
+            />
+          </div>
+        </Section>
+
+        {/* Sections 12-13 added incrementally as components are built */}
       </div>
     </main>
   );

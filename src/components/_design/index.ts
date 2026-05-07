@@ -23,3 +23,5 @@ export { RankBadge } from "./RankBadge";
 export type { RankBadgeProps, Tier, Division } from "./RankBadge";
 export { ChampionPortrait } from "./ChampionPortrait";
 export type { ChampionPortraitProps } from "./ChampionPortrait";
+export { MatchCard } from "./MatchCard";
+export type { MatchCardProps } from "./MatchCard";
