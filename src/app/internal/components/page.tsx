@@ -12,6 +12,7 @@ import { Pill } from "@/components/_design/Pill";
 import { Card } from "@/components/_design/Card";
 import { StatNumber } from "@/components/_design/StatNumber";
 import { SectionShell } from "@/components/_design/SectionShell";
+import { TeemoMascot } from "@/components/_design/TeemoMascot";
 
 export default function ComponentsDemoPage() {
   return (
@@ -122,7 +123,15 @@ export default function ComponentsDemoPage() {
           </SectionShell>
         </Section>
 
-        {/* Sections 8-12 added incrementally as components are built */}
+        <Section id="teemo" title="8 · TeemoMascot">
+          <div className="flex flex-wrap items-end gap-8">
+            <TeemoMascot size="sm" />
+            <TeemoMascot size="md" />
+            <TeemoMascot size="lg" />
+          </div>
+        </Section>
+
+        {/* Sections 9-12 added incrementally as components are built */}
       </div>
     </main>
   );

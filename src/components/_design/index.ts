@@ -17,3 +17,5 @@ export { StatNumber } from "./StatNumber";
 export type { StatNumberProps } from "./StatNumber";
 export { SectionShell } from "./SectionShell";
 export type { SectionShellProps } from "./SectionShell";
+export { TeemoMascot } from "./TeemoMascot";
+export type { TeemoMascotProps } from "./TeemoMascot";
