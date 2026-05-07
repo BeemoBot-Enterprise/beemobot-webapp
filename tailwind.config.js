@@ -147,6 +147,20 @@ module.exports = {
 
         // Misc
         overlay: "rgba(0,0,0,0.6)",
+
+        // Honey Friendly — Phase 1 (use these in new components, prefix `hf-`)
+        "hf-bg": "var(--hf-bg)",
+        "hf-surface": "var(--hf-surface)",
+        "hf-surface-alt": "var(--hf-surface-alt)",
+        "hf-navy": "var(--hf-navy)",
+        "hf-navy-soft": "var(--hf-navy-soft)",
+        "hf-line": "var(--hf-line)",
+        "hf-honey": "var(--hf-honey)",
+        "hf-honey-soft": "var(--hf-honey-soft)",
+        "hf-honey-glow": "var(--hf-honey-glow)",
+        "hf-discord": "var(--hf-discord)",
+        "hf-win": "var(--hf-win)",
+        "hf-loss": "var(--hf-loss)",
       },
       borderRadius: {
         DEFAULT: "var(--radius)",
@@ -155,9 +169,17 @@ module.exports = {
         lg: "12px",
         10: "10px",
         20: "20px",
+        // Honey Friendly
+        "hf-card": "16px",
+        "hf-card-lg": "20px",
+        "hf-btn": "12px",
+        "hf-pill": "9999px",
       },
       fontFamily: {
         sans: ["var(--font-geist)", "system-ui", "sans-serif"],
+        // Honey Friendly Phase 1
+        display: ["var(--font-bricolage)", "Georgia", "serif"],
+        body: ["var(--font-onest)", "system-ui", "sans-serif"],
       },
       fontSize: {
         // AlignUI titles
@@ -189,6 +211,15 @@ module.exports = {
         "subheading-sm": ["14px", { lineHeight: "20px", letterSpacing: "0.06em", fontWeight: "500" }],
         "subheading-md": ["16px", { lineHeight: "20px", letterSpacing: "0.06em", fontWeight: "500" }],
 
+        // Honey Friendly displays
+        "hf-display-1": ["clamp(40px, 6vw, 64px)", { lineHeight: "0.94", letterSpacing: "-0.04em", fontWeight: "800" }],
+        "hf-display-2": ["clamp(32px, 4.5vw, 44px)", { lineHeight: "1", letterSpacing: "-0.03em", fontWeight: "800" }],
+        "hf-display-3": ["clamp(24px, 3vw, 32px)", { lineHeight: "1.05", letterSpacing: "-0.025em", fontWeight: "700" }],
+        "hf-body-lg": ["17px", { lineHeight: "1.55", fontWeight: "400" }],
+        "hf-body": ["15px", { lineHeight: "1.55", fontWeight: "400" }],
+        "hf-body-sm": ["13px", { lineHeight: "1.5", fontWeight: "400" }],
+        "hf-eyebrow": ["11px", { lineHeight: "1.3", letterSpacing: "0.15em", fontWeight: "700" }],
+
         // AlignUI doc tokens
         "doc-label": ["14px", { lineHeight: "20px", fontWeight: "500" }],
         "doc-paragraph": ["14px", { lineHeight: "20px", fontWeight: "400" }],
@@ -216,6 +247,9 @@ module.exports = {
         "button-defaults": "0 1px 2px 0 rgba(0,0,0,0.5)",
         "button-important-focus": "0 0 0 4px rgba(59,130,246,0.35)",
         "button-error-focus": "0 0 0 4px rgba(244,63,94,0.35)",
+        "hf-card": "0 8px 24px -10px rgba(20, 23, 43, 0.15)",
+        "hf-card-hover": "0 12px 30px -10px rgba(20, 23, 43, 0.18)",
+        "hf-btn-primary": "0 6px 16px -4px rgba(88, 101, 242, 0.5)",
       },
       spacing: {
         4.5: "1.125rem",
