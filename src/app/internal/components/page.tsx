@@ -8,6 +8,7 @@
 import { Button } from "@/components/_design/Button";
 import { RiDiscordFill, RiArrowRightLine } from "@remixicon/react";
 import { Eyebrow } from "@/components/_design/Eyebrow";
+import { Pill } from "@/components/_design/Pill";
 
 export default function ComponentsDemoPage() {
   return (
@@ -55,6 +56,15 @@ export default function ComponentsDemoPage() {
             <Eyebrow>— Fonctionnalités</Eyebrow>
             <Eyebrow tone="navy">— Section sombre</Eyebrow>
             <Eyebrow>SECTION SANS TIRET</Eyebrow>
+          </div>
+        </Section>
+
+        <Section id="pill" title="4 · Pill">
+          <div className="flex flex-wrap items-center gap-3">
+            <Pill variant="live">Bot live · 320 serveurs</Pill>
+            <Pill variant="default">Nouveau</Pill>
+            <Pill variant="honey">Premium</Pill>
+            <Pill variant="riot">Nunch <span className="opacity-60">#N7789</span></Pill>
           </div>
         </Section>
 
