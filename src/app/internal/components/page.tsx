@@ -14,6 +14,7 @@ import { StatNumber } from "@/components/_design/StatNumber";
 import { SectionShell } from "@/components/_design/SectionShell";
 import { TeemoMascot } from "@/components/_design/TeemoMascot";
 import { RankBadge } from "@/components/_design/RankBadge";
+import { ChampionPortrait } from "@/components/_design/ChampionPortrait";
 
 export default function ComponentsDemoPage() {
   return (
@@ -147,7 +148,19 @@ export default function ComponentsDemoPage() {
           </div>
         </Section>
 
-        {/* Sections 10-12 added incrementally as components are built */}
+        <Section id="champion" title="10 · ChampionPortrait">
+          <div className="space-y-6">
+            <div className="flex flex-wrap items-end gap-4">
+              <ChampionPortrait name="Yasuo" variant="square" size="md" />
+              <ChampionPortrait name="LeeSin" variant="square" size="md" />
+              <ChampionPortrait name="Teemo" variant="circle" size="md" />
+              <ChampionPortrait name="Ahri" variant="circle" size="lg" />
+            </div>
+            <ChampionPortrait name="Yasuo" variant="splash" size="lg" />
+          </div>
+        </Section>
+
+        {/* Sections 11-12 added incrementally as components are built */}
       </div>
     </main>
   );

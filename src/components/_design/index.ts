@@ -21,3 +21,5 @@ export { TeemoMascot } from "./TeemoMascot";
 export type { TeemoMascotProps } from "./TeemoMascot";
 export { RankBadge } from "./RankBadge";
 export type { RankBadgeProps, Tier, Division } from "./RankBadge";
+export { ChampionPortrait } from "./ChampionPortrait";
+export type { ChampionPortraitProps } from "./ChampionPortrait";
