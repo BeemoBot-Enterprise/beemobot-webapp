@@ -5,6 +5,7 @@
  * Internal demo page for the Honey Friendly design system (Phase 1).
  * Each section validates one component visually. Not linked from main nav.
  */
+import type { Metadata } from "next";
 import { Button } from "@/components/_design/Button";
 import { RiDiscordFill, RiArrowRightLine } from "@remixicon/react";
 import { Eyebrow } from "@/components/_design/Eyebrow";
@@ -18,6 +19,11 @@ import { ChampionPortrait } from "@/components/_design/ChampionPortrait";
 import { MatchCard } from "@/components/_design/MatchCard";
 import { HeaderHF } from "@/components/_design/Header";
 import { FooterHF } from "@/components/_design/Footer";
+
+export const metadata: Metadata = {
+  title: "Components — Honey Friendly",
+  robots: { index: false, follow: false },
+};
 
 export default function ComponentsDemoPage() {
   return (
