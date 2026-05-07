@@ -7,3 +7,5 @@
  */
 export { Button, buttonVariants } from "./Button";
 export type { ButtonProps } from "./Button";
+export { Eyebrow } from "./Eyebrow";
+export type { EyebrowProps } from "./Eyebrow";

@@ -7,6 +7,7 @@
  */
 import { Button } from "@/components/_design/Button";
 import { RiDiscordFill, RiArrowRightLine } from "@remixicon/react";
+import { Eyebrow } from "@/components/_design/Eyebrow";
 
 export default function ComponentsDemoPage() {
   return (
@@ -46,6 +47,14 @@ export default function ComponentsDemoPage() {
               <Button variant="primary" disabled>Disabled primary</Button>
               <Button variant="outline" disabled>Disabled outline</Button>
             </div>
+          </div>
+        </Section>
+
+        <Section id="eyebrow" title="3 · Eyebrow">
+          <div className="space-y-3">
+            <Eyebrow>— Fonctionnalités</Eyebrow>
+            <Eyebrow tone="navy">— Section sombre</Eyebrow>
+            <Eyebrow>SECTION SANS TIRET</Eyebrow>
           </div>
         </Section>
 
