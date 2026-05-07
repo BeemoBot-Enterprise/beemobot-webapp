@@ -51,7 +51,7 @@ export function FooterHF({ className }: { className?: string }) {
           </div>
           {COLS.map((col) => (
             <div key={col.title}>
-              <div className="text-hf-eyebrow uppercase tracking-[0.15em] text-hf-honey mb-3">
+              <div className="text-hf-eyebrow uppercase tracking-[0.15em] text-hf-honey-text mb-3">
                 {col.title}
               </div>
               <ul className="flex flex-col gap-2">

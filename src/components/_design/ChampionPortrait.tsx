@@ -2,10 +2,10 @@
  * Copyright (c) 2024-2026 BeemoBot Enterprise
  * All rights reserved.
  */
+import Image from "next/image";
 import * as React from "react";
 import { cn } from "@/lib/design/cn";
-
-const DDRAGON_VERSION = "15.1.1";
+import { championIconUrl, championSplashUrl } from "@/lib/ddragon";
 
 export interface ChampionPortraitProps {
   /** Champion key, PascalCase, e.g. "Yasuo", "LeeSin", "MissFortune". */
@@ -28,15 +28,15 @@ export function ChampionPortrait({
     const w = SPLASH_W[size];
     return (
       <div
-        className={cn("relative overflow-hidden rounded-hf-card-lg border border-hf-line", className)}
+        className={cn("relative overflow-hidden rounded-hf-card-lg border border-hf-line bg-hf-surface-alt", className)}
         style={{ width: w, aspectRatio: "16 / 9" }}
       >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={`https://ddragon.leagueoflegends.com/cdn/img/champion/splash/${name}_0.jpg`}
+        <Image
+          src={championSplashUrl(name)}
           alt={`Splash art ${name}`}
-          loading="lazy"
-          className="absolute inset-0 size-full object-cover"
+          fill
+          sizes={`${w}px`}
+          className="object-cover"
         />
       </div>
     );
@@ -44,14 +44,17 @@ export function ChampionPortrait({
   const px = SQUARE_PX[size];
   const radius = variant === "circle" ? "rounded-full" : "rounded-md";
   return (
-    /* eslint-disable-next-line @next/next/no-img-element */
-    <img
-      src={`https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/champion/${name}.png`}
-      alt={`Portrait ${name}`}
-      width={px}
-      height={px}
-      loading="lazy"
-      className={cn(radius, "object-cover border border-hf-line", className)}
-    />
+    <div
+      className={cn(radius, "relative overflow-hidden border border-hf-line bg-hf-surface-alt", className)}
+      style={{ width: px, height: px }}
+    >
+      <Image
+        src={championIconUrl(name)}
+        alt={`Portrait ${name}`}
+        fill
+        sizes={`${px}px`}
+        className="object-cover"
+      />
+    </div>
   );
 }

@@ -5,6 +5,7 @@
  * Internal demo page for the Honey Friendly design system (Phase 1).
  * Each section validates one component visually. Not linked from main nav.
  */
+import type { Metadata } from "next";
 import { Button } from "@/components/_design/Button";
 import { RiDiscordFill, RiArrowRightLine } from "@remixicon/react";
 import { Eyebrow } from "@/components/_design/Eyebrow";
@@ -16,16 +17,17 @@ import { TeemoMascot } from "@/components/_design/TeemoMascot";
 import { RankBadge } from "@/components/_design/RankBadge";
 import { ChampionPortrait } from "@/components/_design/ChampionPortrait";
 import { MatchCard } from "@/components/_design/MatchCard";
-import { HeaderHF } from "@/components/_design/Header";
-import { FooterHF } from "@/components/_design/Footer";
+
+export const metadata: Metadata = {
+  title: "Components — Honey Friendly",
+  robots: { index: false, follow: false },
+};
 
 export default function ComponentsDemoPage() {
   return (
-    <main className="min-h-screen bg-hf-bg font-body text-hf-navy">
-      <HeaderHF />
-      <div className="mx-auto max-w-[1100px] px-6 py-16">
+    <div className="mx-auto max-w-[1100px] px-6 py-16">
         <header className="mb-16">
-          <p className="font-display text-hf-eyebrow uppercase tracking-[0.15em] text-hf-honey mb-2">
+          <p className="font-display text-hf-eyebrow uppercase tracking-[0.15em] text-hf-honey-text mb-2">
             Honey Friendly · Phase 1
           </p>
           <h1 className="font-display text-hf-display-1 text-hf-navy">
@@ -197,9 +199,7 @@ export default function ComponentsDemoPage() {
         </Section>
 
         {/* Sections 12-13 added incrementally as components are built */}
-      </div>
-      <FooterHF />
-    </main>
+    </div>
   );
 }
 
@@ -244,7 +244,7 @@ function TokensPreview() {
         <div className="text-hf-body-lg">Body lg — Onest 17px</div>
         <div className="text-hf-body">Body — Onest 15px</div>
         <div className="text-hf-body-sm text-hf-navy-soft">Body sm — Onest 13px</div>
-        <div className="text-hf-eyebrow uppercase text-hf-honey">Eyebrow — Onest 11px</div>
+        <div className="text-hf-eyebrow uppercase text-hf-honey-text">Eyebrow — Onest 11px</div>
       </div>
     </div>
   );

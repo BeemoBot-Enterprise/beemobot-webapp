@@ -11,7 +11,7 @@ const eyebrowVariants = cva(
   {
     variants: {
       tone: {
-        honey: "text-hf-honey",
+        honey: "text-hf-honey-text",
         navy: "text-hf-navy-soft",
       },
     },

@@ -161,6 +161,7 @@ module.exports = {
         "hf-discord": "var(--hf-discord)",
         "hf-win": "var(--hf-win)",
         "hf-loss": "var(--hf-loss)",
+        "hf-honey-text": "var(--hf-honey-text)",
       },
       borderRadius: {
         DEFAULT: "var(--radius)",
@@ -262,5 +263,5 @@ module.exports = {
       },
     },
   },
-  plugins: [],
+  plugins: [require("tailwindcss-animate")],
 };

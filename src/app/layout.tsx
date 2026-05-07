@@ -1,7 +1,8 @@
-import MainLayout from "@/components/templates/MainLayout";
 import "@/styles/globals.css";
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Onest, Geist } from "next/font/google";
+import { HeaderHF } from "@/components/_design/Header";
+import { FooterHF } from "@/components/_design/Footer";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -39,8 +40,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="fr" suppressHydrationWarning className={`${geist.variable} ${bricolage.variable} ${onest.variable}`}>
-      <body className="min-h-screen bg-[var(--bg)] text-[var(--text)] flex flex-col font-sans antialiased">
-        <MainLayout>{children}</MainLayout>
+      <body className="min-h-screen bg-hf-bg text-hf-navy flex flex-col font-body antialiased">
+        <HeaderHF />
+        <main className="flex-grow">{children}</main>
+        <FooterHF />
       </body>
     </html>
   );
