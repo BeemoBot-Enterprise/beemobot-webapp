@@ -5,7 +5,6 @@
  * Internal demo page for the Honey Friendly design system (Phase 1).
  * Each section validates one component visually. Not linked from main nav.
  */
-"use client";
 
 export default function ComponentsDemoPage() {
   return (
