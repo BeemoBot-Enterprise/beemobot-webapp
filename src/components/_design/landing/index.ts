@@ -11,3 +11,4 @@ export { FeaturesLanding } from "./FeaturesLanding";
 export { IntegrationsLanding } from "./IntegrationsLanding";
 export { LeaderboardTeaserLanding } from "./LeaderboardTeaserLanding";
 export { FaqLanding } from "./FaqLanding";
+export { CtaLanding } from "./CtaLanding";
