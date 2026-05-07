@@ -2,12 +2,12 @@
  * Copyright (c) 2024-2026 BeemoBot Enterprise
  * All rights reserved.
  */
-"use client";
 import Link from "next/link";
 import * as React from "react";
 import { RiDiscordFill } from "@remixicon/react";
 import { Button } from "./Button";
 import { cn } from "@/lib/design/cn";
+import { BOT_INVITE_URL } from "@/lib/env";
 
 const NAV = [
   { label: "Fonctionnalités", href: "/#features" },
@@ -47,10 +47,17 @@ export function HeaderHF({ className }: { className?: string }) {
           >
             Mon profil
           </Link>
-          <Button size="sm" variant="primary">
-            <RiDiscordFill className="size-4" />
-            Ajouter
-          </Button>
+          <a
+            href={BOT_INVITE_URL}
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex"
+          >
+            <Button size="sm" variant="primary">
+              <RiDiscordFill className="size-4" />
+              Ajouter
+            </Button>
+          </a>
         </div>
       </div>
     </header>
