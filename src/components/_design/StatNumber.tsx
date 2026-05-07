@@ -20,7 +20,7 @@ export function StatNumber({ value, unit, label, tone = "default", className }: 
     <div className={cn("flex flex-col gap-1", className)}>
       <div className={cn("font-display text-hf-display-2 tabular-nums", toneClass)}>
         {value}
-        {unit ? <span className="text-hf-honey">{unit}</span> : null}
+        {unit ? <span className="text-hf-honey-text">{unit}</span> : null}
       </div>
       <div className="text-hf-body-sm text-hf-navy-soft font-medium">{label}</div>
     </div>

@@ -25,7 +25,7 @@ export default function ComponentsDemoPage() {
       <HeaderHF />
       <div className="mx-auto max-w-[1100px] px-6 py-16">
         <header className="mb-16">
-          <p className="font-display text-hf-eyebrow uppercase tracking-[0.15em] text-hf-honey mb-2">
+          <p className="font-display text-hf-eyebrow uppercase tracking-[0.15em] text-hf-honey-text mb-2">
             Honey Friendly · Phase 1
           </p>
           <h1 className="font-display text-hf-display-1 text-hf-navy">

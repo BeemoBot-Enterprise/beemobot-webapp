@@ -13,7 +13,7 @@ const pillVariants = cva(
       variant: {
         default: "bg-hf-surface border border-hf-line text-hf-navy-soft",
         live: "bg-hf-surface border border-hf-line text-hf-navy-soft",
-        honey: "bg-hf-honey-glow text-hf-honey border border-transparent",
+        honey: "bg-hf-honey-glow text-hf-honey-text border border-transparent",
         riot: "bg-hf-navy text-white border border-transparent",
       },
     },
