@@ -244,7 +244,7 @@ function TokensPreview() {
         <div className="text-hf-body-lg">Body lg — Onest 17px</div>
         <div className="text-hf-body">Body — Onest 15px</div>
         <div className="text-hf-body-sm text-hf-navy-soft">Body sm — Onest 13px</div>
-        <div className="text-hf-eyebrow uppercase text-hf-honey">Eyebrow — Onest 11px</div>
+        <div className="text-hf-eyebrow uppercase text-hf-honey-text">Eyebrow — Onest 11px</div>
       </div>
     </div>
   );
