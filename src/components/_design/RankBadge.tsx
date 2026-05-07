@@ -2,6 +2,7 @@
  * Copyright (c) 2024-2026 BeemoBot Enterprise
  * All rights reserved.
  */
+"use client";
 import * as React from "react";
 import { cn } from "@/lib/design/cn";
 
@@ -35,17 +36,23 @@ const EMBLEM_BASE =
 export function RankBadge({ tier, division, lp, size = "md", className }: RankBadgeProps) {
   const px = SIZE_PX[size];
   const hasDivision = !["master", "grandmaster", "challenger"].includes(tier);
+  const [errored, setErrored] = React.useState(false);
   return (
     <div className={cn("flex flex-col items-center gap-1", className)}>
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src={`${EMBLEM_BASE}/emblem-${tier}.png`}
-        alt={`Rank emblem ${tier}`}
-        width={px}
-        height={px}
-        loading="lazy"
-        className="object-contain"
-      />
+      {errored ? (
+        <FallbackEmblem tier={tier} px={px} />
+      ) : (
+        /* eslint-disable-next-line @next/next/no-img-element */
+        <img
+          src={`${EMBLEM_BASE}/emblem-${tier}.png`}
+          alt={`Rank emblem ${tier}`}
+          width={px}
+          height={px}
+          loading="lazy"
+          onError={() => setErrored(true)}
+          className="object-contain"
+        />
+      )}
       <div className="text-hf-eyebrow uppercase tracking-[0.15em] font-bold text-hf-navy">
         {tier}
         {hasDivision && division ? ` ${division}` : ""}
@@ -53,6 +60,18 @@ export function RankBadge({ tier, division, lp, size = "md", className }: RankBa
       {typeof lp === "number" ? (
         <div className="text-hf-body-sm text-hf-navy-soft tabular-nums">{lp} LP</div>
       ) : null}
+    </div>
+  );
+}
+
+function FallbackEmblem({ tier, px }: { tier: Tier; px: number }) {
+  return (
+    <div
+      className="flex items-center justify-center rounded-full bg-hf-surface-alt border border-hf-line text-hf-navy font-display font-bold"
+      style={{ width: px, height: px, fontSize: Math.round(px / 2.5) }}
+      aria-label={`Rank emblem unavailable, ${tier}`}
+    >
+      {tier.charAt(0).toUpperCase()}
     </div>
   );
 }
