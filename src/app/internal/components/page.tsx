@@ -9,6 +9,7 @@ import { Button } from "@/components/_design/Button";
 import { RiDiscordFill, RiArrowRightLine } from "@remixicon/react";
 import { Eyebrow } from "@/components/_design/Eyebrow";
 import { Pill } from "@/components/_design/Pill";
+import { Card } from "@/components/_design/Card";
 
 export default function ComponentsDemoPage() {
   return (
@@ -65,6 +66,29 @@ export default function ComponentsDemoPage() {
             <Pill variant="default">Nouveau</Pill>
             <Pill variant="honey">Premium</Pill>
             <Pill variant="riot">Nunch <span className="opacity-60">#N7789</span></Pill>
+          </div>
+        </Section>
+
+        <Section id="card" title="5 · Card">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card>
+              <h4 className="font-display text-hf-display-3 mb-2">Default</h4>
+              <p className="text-hf-body-sm text-hf-navy-soft">
+                Surface blanche, bordure ECE9DF, radius 16px.
+              </p>
+            </Card>
+            <Card variant="accent">
+              <h4 className="font-display text-hf-display-3 mb-2">Accent</h4>
+              <p className="text-hf-body-sm text-hf-navy-soft">
+                Surface-alt avec halo honey discret.
+              </p>
+            </Card>
+            <Card variant="interactive">
+              <h4 className="font-display text-hf-display-3 mb-2">Interactive</h4>
+              <p className="text-hf-body-sm text-hf-navy-soft">
+                Hover : translate-y et bordure honey.
+              </p>
+            </Card>
           </div>
         </Section>
 

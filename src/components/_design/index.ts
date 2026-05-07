@@ -11,3 +11,5 @@ export { Eyebrow } from "./Eyebrow";
 export type { EyebrowProps } from "./Eyebrow";
 export { Pill } from "./Pill";
 export type { PillProps } from "./Pill";
+export { Card } from "./Card";
+export type { CardProps } from "./Card";
