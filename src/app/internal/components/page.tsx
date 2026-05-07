@@ -5,6 +5,8 @@
  * Internal demo page for the Honey Friendly design system (Phase 1).
  * Each section validates one component visually. Not linked from main nav.
  */
+import { Button } from "@/components/_design/Button";
+import { RiDiscordFill, RiArrowRightLine } from "@remixicon/react";
 
 export default function ComponentsDemoPage() {
   return (
@@ -25,6 +27,26 @@ export default function ComponentsDemoPage() {
 
         <Section id="tokens" title="1 · Tokens (palette + typo)">
           <TokensPreview />
+        </Section>
+
+        <Section id="button" title="2 · Button">
+          <div className="space-y-6">
+            <div className="flex flex-wrap gap-3">
+              <Button variant="primary"><RiDiscordFill className="size-5" />Ajouter à Discord</Button>
+              <Button variant="outline">Voir la démo<RiArrowRightLine className="size-4" /></Button>
+              <Button variant="ghost">Annuler</Button>
+              <Button variant="danger">Supprimer</Button>
+            </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <Button size="sm">Small</Button>
+              <Button size="md">Medium</Button>
+              <Button size="lg">Large</Button>
+            </div>
+            <div className="flex flex-wrap gap-3">
+              <Button variant="primary" disabled>Disabled primary</Button>
+              <Button variant="outline" disabled>Disabled outline</Button>
+            </div>
+          </div>
         </Section>
 
         {/* Sections 2-12 added incrementally as components are built */}
