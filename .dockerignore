@@ -1,0 +1,44 @@
+# --- VCS ---
+.git
+.gitignore
+.github
+
+# --- deps & build artefacts ---
+node_modules
+.next
+out
+build
+coverage
+*.tsbuildinfo
+
+# --- env (passés via Coolify, pas dans l'image) ---
+.env
+.env.*
+!.env.example
+
+# --- logs / debug ---
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+
+# --- éditeurs / OS ---
+.vscode
+.idea
+.DS_Store
+*.swp
+
+# --- docs / assets dev ---
+README.md
+CLAUDE.md
+docs
+.playwright-mcp
+
+# --- screenshots / images de dev à la racine ---
+*.png
+!public/**/*.png
+
+# --- divers ---
+.vercel
+*.pem
+package-lock.json

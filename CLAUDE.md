@@ -121,6 +121,6 @@ Doc exhaustive : `beemobot-api/API.md` (66 KB).
 ## Identifiants & URLs utiles
 
 - API prod : `https://api.beemobot.fr`
-- Discord bot invite : `https://discord.com/oauth2/authorize?client_id=1316056047936471133&permissions=8&scope=bot`
+- Discord bot invite : `https://discord.com/oauth2/authorize?client_id=1501691388830679070&permissions=8&integration_type=0&scope=bot`
 - Discord callback (dev) : `http://localhost:3333/auth/discord/callback`
 - Riot callback (dev, désactivé) : `http://localhost:3333/auth/riot/callback`
