@@ -10,6 +10,7 @@ import { RiDiscordFill, RiArrowRightLine } from "@remixicon/react";
 import { Eyebrow } from "@/components/_design/Eyebrow";
 import { Pill } from "@/components/_design/Pill";
 import { Card } from "@/components/_design/Card";
+import { StatNumber } from "@/components/_design/StatNumber";
 
 export default function ComponentsDemoPage() {
   return (
@@ -92,7 +93,21 @@ export default function ComponentsDemoPage() {
           </div>
         </Section>
 
-        {/* Sections 2-12 added incrementally as components are built */}
+        <Section id="stat" title="6 · StatNumber">
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <Card>
+              <StatNumber value="320" unit="+" label="Serveurs Discord actifs" />
+            </Card>
+            <Card>
+              <StatNumber value="85" unit="k" label="Parties LoL indexées" />
+            </Card>
+            <Card>
+              <StatNumber value="+87" unit="%" label="Engagement serveur" tone="win" />
+            </Card>
+          </div>
+        </Section>
+
+        {/* Sections 7-12 added incrementally as components are built */}
       </div>
     </main>
   );

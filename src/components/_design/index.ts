@@ -13,3 +13,5 @@ export { Pill } from "./Pill";
 export type { PillProps } from "./Pill";
 export { Card } from "./Card";
 export type { CardProps } from "./Card";
+export { StatNumber } from "./StatNumber";
+export type { StatNumberProps } from "./StatNumber";
