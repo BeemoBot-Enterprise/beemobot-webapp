@@ -3,6 +3,7 @@
  * All rights reserved.
  */
 
+import Eyebrow from "@/components/atoms/Eyebrow";
 import { Card } from "@/components/atoms/Card";
 
 const sections = [
@@ -106,7 +107,7 @@ export default function DocumentationPage() {
     <main className="max-w-[1200px] mx-auto px-6 py-12 grid md:grid-cols-[220px_1fr] gap-12">
       <aside className="md:sticky md:top-20 md:self-start">
         <nav>
-          <p className="text-xs uppercase tracking-wide text-text-muted mb-3 px-3">
+          <p className="text-subheading-2xs text-text-soft-400 mb-3 px-3">
             Documentation
           </p>
           <ul className="flex flex-col gap-1">
@@ -114,7 +115,7 @@ export default function DocumentationPage() {
               <li key={s.id}>
                 <a
                   href={`#${s.id}`}
-                  className="block px-3 py-2 text-sm text-text-muted hover:text-text hover:bg-surface rounded-md transition-colors"
+                  className="block px-3 py-2 text-paragraph-sm text-text-sub-600 hover:text-text-strong-950 hover:bg-bg-weak-50 rounded-md transition-colors"
                 >
                   {s.label}
                 </a>
@@ -125,11 +126,14 @@ export default function DocumentationPage() {
       </aside>
 
       <article className="max-w-3xl">
-        <section id="intro" className="mb-14">
-          <h1 className="text-3xl font-semibold text-text mb-3">
+        <section id="intro" className="mb-14 flex flex-col gap-3">
+          <Eyebrow>
+            Documentation
+          </Eyebrow>
+          <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
             Documentation BeemoBot
           </h1>
-          <p className="text-text-muted leading-relaxed">
+          <p className="text-paragraph-md text-text-sub-600">
             BeemoBot est un bot Discord communautaire pour League of Legends. Il
             propose un système de réputation entre joueurs, une économie virtuelle
             (honey), et des mini-jeux. Cette page couvre les bases pour
@@ -138,20 +142,20 @@ export default function DocumentationPage() {
         </section>
 
         <section id="quickstart" className="mb-14">
-          <h2 className="text-2xl font-semibold text-text mb-4">Quick start</h2>
-          <p className="text-text-muted mb-6 leading-relaxed">
+          <h2 className="text-title-h5 text-text-strong-950 !font-[600] mb-4">Quick start</h2>
+          <p className="text-text-sub-600 mb-6 leading-relaxed">
             Prends en main BeemoBot en 5 étapes.
           </p>
           <ol className="flex flex-col gap-3">
             {quickstart.map((item) => (
               <li key={item.step}>
                 <Card className="p-5 flex gap-4">
-                  <span className="flex-shrink-0 h-7 w-7 rounded-full border border-border bg-bg flex items-center justify-center text-xs font-semibold text-text">
+                  <span className="flex-shrink-0 h-7 w-7 rounded-full border border-stroke-soft-200 bg-bg-white-0 flex items-center justify-center text-xs font-semibold text-text">
                     {item.step}
                   </span>
                   <div>
-                    <p className="text-text font-medium mb-1">{item.title}</p>
-                    <p className="text-sm text-text-muted leading-relaxed">
+                    <p className="text-label-sm text-text-strong-950 mb-1">{item.title}</p>
+                    <p className="text-sm text-text-sub-600">
                       {item.desc}
                     </p>
                   </div>
@@ -162,10 +166,10 @@ export default function DocumentationPage() {
         </section>
 
         <section id="reputation" className="mb-14">
-          <h2 className="text-2xl font-semibold text-text mb-4">
+          <h2 className="text-title-h5 text-text-strong-950 !font-[600] mb-4">
             Le système de réputation
           </h2>
-          <p className="text-text-muted mb-6 leading-relaxed">
+          <p className="text-text-sub-600 mb-6 leading-relaxed">
             La réputation BeemoBot est un reflet communautaire de ton
             comportement en jeu. Elle repose sur une preuve par match : tu ne
             peux juger que des gens avec qui tu as vraiment joué.
@@ -173,16 +177,16 @@ export default function DocumentationPage() {
 
           <div className="grid md:grid-cols-2 gap-4 mb-6">
             <Card className="p-5">
-              <h3 className="text-base font-semibold text-text mb-1">Shroom</h3>
-              <p className="text-sm text-text-muted leading-relaxed">
+              <h3 className="text-label-md text-text-strong-950 mb-1">Shroom</h3>
+              <p className="text-sm text-text-sub-600">
                 « Tu as joué comme une chèvre » ou « tu as été toxique ». Un
                 shroom signale un comportement problématique : troll, AFK,
                 insultes, int intentionnel.
               </p>
             </Card>
             <Card className="p-5">
-              <h3 className="text-base font-semibold text-text mb-1">Respect</h3>
-              <p className="text-sm text-text-muted leading-relaxed">
+              <h3 className="text-label-md text-text-strong-950 mb-1">Respect</h3>
+              <p className="text-sm text-text-sub-600">
                 « GG bien joué ». Un respect salue un bon comportement, de
                 l’entraide, du fair-play, ou simplement un bon game.
               </p>
@@ -192,8 +196,8 @@ export default function DocumentationPage() {
           <div className="flex flex-col gap-3">
             {reputationRules.map((rule) => (
               <Card key={rule.title} className="p-5">
-                <p className="text-text font-medium mb-1">{rule.title}</p>
-                <p className="text-sm text-text-muted leading-relaxed">
+                <p className="text-label-sm text-text-strong-950 mb-1">{rule.title}</p>
+                <p className="text-sm text-text-sub-600">
                   {rule.desc}
                 </p>
               </Card>
@@ -202,24 +206,24 @@ export default function DocumentationPage() {
         </section>
 
         <section id="honey" className="mb-14">
-          <h2 className="text-2xl font-semibold text-text mb-4">Honey &amp; shop</h2>
-          <p className="text-text-muted mb-6 leading-relaxed">
+          <h2 className="text-title-h5 text-text-strong-950 !font-[600] mb-4">Honey &amp; shop</h2>
+          <p className="text-text-sub-600 mb-6 leading-relaxed">
             Le honey est la monnaie de BeemoBot. Il s’accumule avec ta
             réputation et ton activité. Dépense-le dans le shop pour
             personnaliser ton profil.
           </p>
 
-          <h3 className="text-sm font-semibold text-text uppercase tracking-wide mb-3">
+          <h3 className="text-subheading-xs text-text-strong-950 mb-3">
             Gagner du honey
           </h3>
           <Card className="overflow-hidden mb-8 p-0">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-border">
-                  <th className="py-3 px-5 text-left font-medium text-text-muted">
+                <tr className="border-b border-stroke-soft-200">
+                  <th className="py-3 px-5 text-left font-medium text-text-soft-400">
                     Action
                   </th>
-                  <th className="py-3 px-5 text-left font-medium text-text-muted">
+                  <th className="py-3 px-5 text-left font-medium text-text-soft-400">
                     Honey gagné
                   </th>
                 </tr>
@@ -228,7 +232,7 @@ export default function DocumentationPage() {
                 {honeyEarnings.map((row) => (
                   <tr
                     key={row.action}
-                    className="border-b border-border last:border-b-0"
+                    className="border-b border-stroke-soft-200 last:border-b-0"
                   >
                     <td className="py-3 px-5 text-text">{row.action}</td>
                     <td className="py-3 px-5 text-text-muted font-mono">
@@ -240,43 +244,43 @@ export default function DocumentationPage() {
             </table>
           </Card>
 
-          <h3 className="text-sm font-semibold text-text uppercase tracking-wide mb-3">
+          <h3 className="text-subheading-xs text-text-strong-950 mb-3">
             Shop
           </h3>
           <div className="grid md:grid-cols-3 gap-3">
             {shopItems.map((item) => (
               <Card key={item.name} className="p-5">
-                <p className="text-text font-medium mb-1">{item.name}</p>
+                <p className="text-label-sm text-text-strong-950 mb-1">{item.name}</p>
                 <p className="text-text-muted font-mono text-sm mb-2">
                   {item.price}
                 </p>
-                <p className="text-sm text-text-muted leading-relaxed">
+                <p className="text-sm text-text-sub-600">
                   {item.desc}
                 </p>
               </Card>
             ))}
           </div>
-          <p className="mt-4 text-sm text-text-muted">
+          <p className="mt-4 text-paragraph-sm text-text-sub-600">
             Le honey est dépensable — ta réputation, elle, ne l’est pas. Les
             deux évoluent indépendamment.
           </p>
         </section>
 
         <section id="faq" className="mb-14">
-          <h2 className="text-2xl font-semibold text-text mb-4">FAQ</h2>
+          <h2 className="text-title-h5 text-text-strong-950 !font-[600] mb-4">FAQ</h2>
           <div className="flex flex-col gap-3">
             {faq.map((item) => (
               <Card key={item.q} className="p-0">
                 <details className="group">
                   <summary className="flex items-center justify-between p-5 cursor-pointer list-none">
-                    <span className="text-text font-medium text-sm">
+                    <span className="text-label-sm text-text-strong-950 text-sm">
                       {item.q}
                     </span>
                     <span className="text-text-muted text-xs group-open:rotate-180 transition-transform">
                       ▼
                     </span>
                   </summary>
-                  <p className="px-5 pb-5 text-sm text-text-muted leading-relaxed">
+                  <p className="px-5 pb-5 text-sm text-text-sub-600">
                     {item.a}
                   </p>
                 </details>

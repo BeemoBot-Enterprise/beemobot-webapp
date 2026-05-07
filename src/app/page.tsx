@@ -8,7 +8,10 @@
 import HeroSection from "@/components/organisms/HeroSection";
 import { StatsSection } from "@/components/organisms/StatsSection";
 import { FeatureShowcase } from "@/components/organisms/FeatureShowcase";
-import { MinigamesPreview } from "@/components/organisms/MinigamesPreview";
+import { IntegrationsSection } from "@/components/organisms/IntegrationsSection";
+import LeaderboardTeaser from "@/components/organisms/LeaderboardTeaser";
+import { TeamSection } from "@/components/organisms/TeamSection";
+import { FaqSection } from "@/components/organisms/FaqSection";
 import { CTASection } from "@/components/organisms/CTASection";
 
 export default function Home() {
@@ -17,8 +20,11 @@ export default function Home() {
       <HeroSection />
       <StatsSection />
       <FeatureShowcase />
-      <MinigamesPreview />
+      <IntegrationsSection />
+      <LeaderboardTeaser />
+      <TeamSection />
       <CTASection />
+      <FaqSection />
     </>
   );
 }

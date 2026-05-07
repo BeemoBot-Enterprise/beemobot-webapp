@@ -10,6 +10,7 @@ import { API_URL } from "@/lib/env";
 import Button from "@/components/atoms/Button";
 import { Card } from "@/components/atoms/Card";
 import Badge from "@/components/atoms/Badge";
+import Eyebrow from "@/components/atoms/Eyebrow";
 
 const TOKEN_KEY = "beemobot_token";
 
@@ -94,32 +95,39 @@ export default function ShopPage() {
 
   return (
     <main className="max-w-[1200px] mx-auto px-6 py-12">
-      <header className="flex items-end justify-between mb-8 flex-wrap gap-4">
-        <div>
-          <h1 className="text-3xl font-semibold text-text mb-1">Shop</h1>
-          <p className="text-text-muted">
-            Personnalise ton profil avec du honey gagné en jeu.
+      <header className="flex items-end justify-between mb-10 flex-wrap gap-4">
+        <div className="flex flex-col gap-3">
+          <Eyebrow>Shop</Eyebrow>
+          <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
+            Personnalise ton profil
+          </h1>
+          <p className="text-paragraph-md text-text-sub-600 max-w-2xl">
+            Dépense ton honey en badges, borders et effets. Le honey s'accumule
+            avec ta réputation et ton activité.
           </p>
         </div>
         {authed && (
-          <Badge variant="gold" className="text-sm px-3 py-1">
-            Solde : {balance}
-          </Badge>
+          <span className="inline-flex items-center gap-2 rounded-full border border-stroke-soft-200 bg-bg-weak-50 px-3 py-1.5">
+            <span className="size-2 rounded-full bg-warning-base" />
+            <span className="text-label-sm text-text-strong-950 tabular-nums">
+              {balance} honey
+            </span>
+          </span>
         )}
       </header>
 
       {error && (
-        <Card className="p-4 mb-6 border-danger/40">
-          <p className="text-sm text-danger">{error}</p>
+        <Card className="p-4 mb-6 rounded-20 border-error-base/40 bg-error-lighter">
+          <p className="text-paragraph-sm text-error-base">{error}</p>
         </Card>
       )}
 
       {items.length === 0 ? (
-        <Card className="p-10 text-center">
-          <h2 className="text-lg font-semibold text-text mb-1">
+        <Card className="p-12 rounded-20 border-stroke-soft-200 bg-bg-weak-50 text-center">
+          <h2 className="text-label-lg text-text-strong-950 mb-1">
             Aucun item disponible
           </h2>
-          <p className="text-text-muted text-sm">
+          <p className="text-paragraph-sm text-text-sub-600">
             Le catalogue est vide ou indisponible pour le moment.
           </p>
         </Card>
@@ -129,14 +137,17 @@ export default function ShopPage() {
             const isOwned = owned.has(item.id);
             const cantAfford = authed && balance < item.priceHoney;
             return (
-              <Card key={item.id} className="p-6 flex flex-col gap-3">
-                <p className="text-xs uppercase tracking-wide text-text-muted">
+              <Card
+                key={item.id}
+                className="p-6 rounded-20 border-stroke-soft-200 bg-bg-weak-50 flex flex-col gap-3 hover:bg-bg-soft-200 transition-colors"
+              >
+                <p className="text-subheading-2xs text-text-soft-400">
                   {item.type}
                 </p>
-                <h3 className="text-lg font-semibold text-text">
+                <h3 className="text-label-lg text-text-strong-950">
                   {item.name}
                 </h3>
-                <p className="text-text-muted font-mono text-sm">
+                <p className="text-label-sm text-warning-base tabular-nums">
                   {item.priceHoney} honey
                 </p>
                 <div className="mt-auto pt-2">

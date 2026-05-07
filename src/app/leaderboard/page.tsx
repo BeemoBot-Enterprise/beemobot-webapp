@@ -8,6 +8,7 @@
 import { useEffect, useState } from "react";
 import { twMerge } from "tailwind-merge";
 import { API_URL } from "@/lib/env";
+import Eyebrow from "@/components/atoms/Eyebrow";
 import {
   LeaderboardTable,
   type LeaderboardRow,
@@ -43,21 +44,27 @@ export default function LeaderboardPage() {
 
   return (
     <main className="max-w-[1200px] mx-auto px-6 py-12">
-      <h1 className="text-3xl font-semibold text-text mb-2">Leaderboard</h1>
-      <p className="text-text-muted mb-8">
-        Top des joueurs de la communauté.
-      </p>
+      <div className="flex flex-col gap-3 mb-10">
+        <Eyebrow>Leaderboard</Eyebrow>
+        <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
+          Top des joueurs de la communauté
+        </h1>
+        <p className="text-paragraph-md text-text-sub-600 max-w-2xl">
+          Suis qui sème le chaos, qui collectionne les respects, et qui
+          accumule du honey — mis à jour en temps réel.
+        </p>
+      </div>
 
-      <div className="border-b border-border mb-6 flex gap-1">
+      <div className="border-b border-stroke-soft-200 mb-6 flex gap-1">
         {TYPES.map((t) => (
           <button
             key={t.value}
             onClick={() => setType(t.value)}
             className={twMerge(
-              "px-4 py-2 text-sm transition-colors",
+              "px-4 py-2.5 text-label-sm transition-colors -mb-px border-b-2",
               type === t.value
-                ? "text-text border-b-2 border-accent -mb-px"
-                : "text-text-muted hover:text-text",
+                ? "text-text-strong-950 border-primary-base"
+                : "text-text-sub-600 hover:text-text-strong-950 border-transparent",
             )}
           >
             {t.label}
@@ -65,16 +72,16 @@ export default function LeaderboardPage() {
         ))}
       </div>
 
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-8">
         {PERIODS.map((p) => (
           <button
             key={p.value}
             onClick={() => setPeriod(p.value)}
             className={twMerge(
-              "px-3 py-1.5 rounded-md text-xs font-medium transition-colors border",
+              "px-3 py-1.5 rounded-full text-label-xs transition-colors border",
               period === p.value
-                ? "bg-surface text-text border-border"
-                : "bg-transparent text-text-muted border-transparent hover:text-text hover:bg-surface",
+                ? "bg-bg-weak-50 text-text-strong-950 border-stroke-soft-200"
+                : "bg-transparent text-text-sub-600 border-transparent hover:text-text-strong-950 hover:bg-bg-weak-50",
             )}
           >
             {p.label}
@@ -83,7 +90,9 @@ export default function LeaderboardPage() {
       </div>
 
       {loading ? (
-        <p className="text-text-muted">Chargement…</p>
+        <div className="rounded-20 border border-stroke-soft-200 bg-bg-weak-50 p-12 text-center">
+          <p className="text-paragraph-sm text-text-sub-600">Chargement…</p>
+        </div>
       ) : (
         <LeaderboardTable rows={rows} type={type} />
       )}

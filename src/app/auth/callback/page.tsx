@@ -16,7 +16,7 @@ const TOKEN_KEY = "beemobot_token";
 function Spinner() {
   return (
     <svg
-      className="animate-spin h-8 w-8 text-text-muted"
+      className="animate-spin h-8 w-8 text-text-sub-600"
       viewBox="0 0 24 24"
       fill="none"
       aria-hidden="true"
@@ -44,7 +44,7 @@ function CallbackFallback() {
     <main className="min-h-[calc(100vh-64px)] flex items-center justify-center px-6">
       <div className="flex flex-col items-center gap-4">
         <Spinner />
-        <p className="text-text-muted">Connexion en cours…</p>
+        <p className="text-text-sub-600">Connexion en cours…</p>
       </div>
     </main>
   );
@@ -88,11 +88,11 @@ function CallbackContent() {
     return (
       <main className="min-h-[calc(100vh-64px)] flex items-center justify-center px-6">
         <div className="max-w-md w-full text-center">
-          <h1 className="text-2xl font-semibold text-text mb-2">
+          <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
             Connexion impossible
           </h1>
-          <p className="text-text-muted mb-6">
-            Une erreur est survenue : <code className="text-text">{error}</code>
+          <p className="text-text-sub-600 mb-6">
+            Une erreur est survenue : <code className="text-text-strong-950">{error}</code>
           </p>
           <Link href="/">
             <Button variant="primary">Retour à l&apos;accueil</Button>
@@ -106,7 +106,7 @@ function CallbackContent() {
     <main className="min-h-[calc(100vh-64px)] flex items-center justify-center px-6">
       <div className="flex flex-col items-center gap-4">
         <Spinner />
-        <p className="text-text-muted">Connexion en cours…</p>
+        <p className="text-text-sub-600">Connexion en cours…</p>
       </div>
     </main>
   );

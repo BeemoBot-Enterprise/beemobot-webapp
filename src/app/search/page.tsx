@@ -7,6 +7,7 @@ import Button from "@/components/atoms/Button";
 import Input from "@/components/atoms/Input";
 import Label from "@/components/atoms/Label";
 import Badge from "@/components/atoms/Badge";
+import Eyebrow from "@/components/atoms/Eyebrow";
 import { API_URL } from "@/lib/env";
 
 interface Summoner {
@@ -133,7 +134,8 @@ export default function SearchPage() {
             "Invocateur non trouvé. Vérifie le format (ex: nunch#N7789) et la région.",
           );
         }
-        throw new Error("Erreur lors de la recherche.");
+        const body = await response.json().catch(() => ({}));
+        throw new Error(body.message ?? "Erreur lors de la recherche.");
       }
 
       const profileData = await response.json();
@@ -152,10 +154,17 @@ export default function SearchPage() {
 
   return (
     <main className="max-w-[1200px] mx-auto px-6 py-12">
-      <h1 className="text-3xl font-semibold text-text mb-2">Recherche</h1>
-      <p className="text-text-muted mb-8">
-        Trouve un summoner par GameName#TagLine.
-      </p>
+      <div className="flex flex-col gap-3 mb-10">
+        <Eyebrow>Recherche</Eyebrow>
+        <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
+          Trouve n'importe quel summoner
+        </h1>
+        <p className="text-paragraph-md text-text-sub-600 max-w-2xl">
+          Tape un Riot ID au format <span className="text-text-strong-950">GameName#TagLine</span>,
+          choisis la région, et BeemoBot ramène stats, ranks et derniers
+          matchs depuis l'API officielle.
+        </p>
+      </div>
 
       <form
         onSubmit={onSubmit}
@@ -176,7 +185,7 @@ export default function SearchPage() {
           aria-label="Région"
           value={region}
           onChange={(e) => setRegion(e.target.value)}
-          className="h-10 rounded-md border border-border bg-surface px-3 text-sm text-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+          className="h-10 rounded-md border border-stroke-soft-200 bg-bg-weak-50 px-3 text-sm text-text-strong-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
         >
           {REGIONS.map((r) => (
             <option key={r.value} value={r.value}>
@@ -191,7 +200,7 @@ export default function SearchPage() {
 
       {error && (
         <Card className="p-4 mb-8 border-danger/40">
-          <p className="text-sm text-danger">{error}</p>
+          <p className="text-sm text-error-base">{error}</p>
         </Card>
       )}
 
@@ -199,7 +208,7 @@ export default function SearchPage() {
         <div className="space-y-8">
           {/* Header profil */}
           <section className="flex items-center gap-6">
-            <div className="h-24 w-24 rounded-full bg-surface border border-border overflow-hidden flex items-center justify-center">
+            <div className="h-24 w-24 rounded-full bg-bg-weak-50 border border-stroke-soft-200 overflow-hidden flex items-center justify-center">
               <Image
                 src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/profileicon/${profile.summoner.profileIconId}.png`}
                 alt="Profile Icon"
@@ -209,10 +218,10 @@ export default function SearchPage() {
               />
             </div>
             <div>
-              <h2 className="text-2xl font-semibold text-text">
+              <h2 className="text-title-h5 text-text-strong-950 !font-[600]">
                 {profile.summoner.gameName}
               </h2>
-              <p className="text-text-muted text-sm">
+              <p className="text-text-sub-600 text-sm">
                 #{profile.summoner.tagLine} · Niveau{" "}
                 {profile.summoner.summonerLevel}
               </p>
@@ -234,37 +243,37 @@ export default function SearchPage() {
           {/* Ranks */}
           {profile.ranks && profile.ranks.length > 0 && (
             <section>
-              <h3 className="text-xl font-semibold text-text mb-4">
+              <h3 className="text-title-h6 text-text-strong-950 !font-[600] mb-4">
                 Classements
               </h3>
               <div className="grid md:grid-cols-2 gap-4">
                 {profile.ranks.map((rank, index) => (
                   <Card key={index} className="p-6">
-                    <div className="text-sm text-text-muted">
+                    <div className="text-sm text-text-sub-600">
                       {getQueueName(rank.queueType)}
                     </div>
-                    <div className="text-2xl font-semibold text-text mt-1">
+                    <div className="text-title-h5 text-text-strong-950 !font-[600] mt-1">
                       {rank.tier} {rank.rank}{" "}
-                      <span className="text-text-muted text-base font-normal">
+                      <span className="text-text-sub-600 text-base font-normal">
                         · {rank.leaguePoints} LP
                       </span>
                     </div>
                     <div className="grid grid-cols-3 gap-4 mt-4 text-sm">
                       <div>
-                        <div className="text-text-muted">Victoires</div>
-                        <div className="text-text font-medium">
+                        <div className="text-text-sub-600">Victoires</div>
+                        <div className="text-text-strong-950 font-medium">
                           {rank.wins}
                         </div>
                       </div>
                       <div>
-                        <div className="text-text-muted">Défaites</div>
-                        <div className="text-text font-medium">
+                        <div className="text-text-sub-600">Défaites</div>
+                        <div className="text-text-strong-950 font-medium">
                           {rank.losses}
                         </div>
                       </div>
                       <div>
-                        <div className="text-text-muted">Winrate</div>
-                        <div className="text-text font-medium">
+                        <div className="text-text-sub-600">Winrate</div>
+                        <div className="text-text-strong-950 font-medium">
                           {rank.winRate}%
                         </div>
                       </div>
@@ -278,7 +287,7 @@ export default function SearchPage() {
           {/* Top Champions */}
           {profile.topChampions && profile.topChampions.length > 0 && (
             <section>
-              <h3 className="text-xl font-semibold text-text mb-4">
+              <h3 className="text-title-h6 text-text-strong-950 !font-[600] mb-4">
                 Meilleurs champions
               </h3>
               <Card className="p-6">
@@ -290,12 +299,12 @@ export default function SearchPage() {
                         alt={champ.championName}
                         width={64}
                         height={64}
-                        className="rounded-full mx-auto mb-2 border border-border"
+                        className="rounded-full mx-auto mb-2 border border-stroke-soft-200"
                       />
-                      <div className="text-sm text-text font-medium">
+                      <div className="text-sm text-text-strong-950 font-medium">
                         {champ.championName}
                       </div>
-                      <div className="text-xs text-text-muted">
+                      <div className="text-xs text-text-sub-600">
                         Niv. {champ.championLevel} ·{" "}
                         {champ.championPoints.toLocaleString("fr-FR")} pts
                       </div>
@@ -309,13 +318,13 @@ export default function SearchPage() {
           {/* Recent Matches */}
           {profile.recentMatches && profile.recentMatches.length > 0 && (
             <section>
-              <h3 className="text-xl font-semibold text-text mb-4">
+              <h3 className="text-title-h6 text-text-strong-950 !font-[600] mb-4">
                 Matchs récents
               </h3>
               <Card className="overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-border text-text-muted">
+                    <tr className="border-b border-stroke-soft-200 text-text-sub-600">
                       <th className="text-left p-3 font-medium">Champion</th>
                       <th className="text-left p-3 font-medium">KDA</th>
                       <th className="text-left p-3 font-medium">Durée</th>
@@ -328,21 +337,21 @@ export default function SearchPage() {
                       return (
                         <tr
                           key={match.matchId}
-                          className="border-b border-border last:border-0 hover:bg-surface-hover"
+                          className="border-b border-stroke-soft-200 last:border-0 hover:bg-bg-soft-200"
                         >
-                          <td className="p-3 text-text">
+                          <td className="p-3 text-text-strong-950">
                             {participant.championName}
                           </td>
-                          <td className="p-3 text-text">
+                          <td className="p-3 text-text-strong-950">
                             {participant.kills}/{participant.deaths}/
                             {participant.assists}
                           </td>
-                          <td className="p-3 text-text-muted">
+                          <td className="p-3 text-text-sub-600">
                             {formatDuration(match.gameDuration)}
                           </td>
                           <td
                             className={`p-3 text-right font-medium ${
-                              participant.win ? "text-text" : "text-text-muted"
+                              participant.win ? "text-text-strong-950" : "text-text-sub-600"
                             }`}
                           >
                             {participant.win ? "Victoire" : "Défaite"}
@@ -360,9 +369,9 @@ export default function SearchPage() {
 
       {!profile && !loading && !error && (
         <Card className="p-10 text-center">
-          <p className="text-text-muted">
+          <p className="text-text-sub-600">
             Recherche un invocateur pour voir ses statistiques. Exemple :{" "}
-            <code className="text-text">nunch#N7789</code>
+            <code className="text-text-strong-950">nunch#N7789</code>
           </p>
         </Card>
       )}

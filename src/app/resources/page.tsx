@@ -3,6 +3,7 @@
  * All rights reserved.
  */
 
+import Eyebrow from "@/components/atoms/Eyebrow";
 import { Card } from "@/components/atoms/Card";
 import { BOT_INVITE_URL } from "@/lib/env";
 
@@ -80,11 +81,18 @@ const resources: Resource[] = [
 export default function ResourcesPage() {
   return (
     <main className="max-w-[1200px] mx-auto px-6 py-12">
-      <h1 className="text-3xl font-semibold text-text mb-2">Ressources</h1>
-      <p className="text-text-muted mb-8">
-        Liens, guides et outils utiles pour utiliser BeemoBot et League of
-        Legends.
-      </p>
+      <div className="flex flex-col gap-3 mb-10">
+        <Eyebrow>
+          Ressources
+        </Eyebrow>
+        <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
+          Liens, guides et outils
+        </h1>
+        <p className="text-paragraph-md text-text-sub-600 max-w-2xl">
+          Tout ce qui peut t'aider à mieux utiliser BeemoBot ou progresser
+          sur League of Legends.
+        </p>
+      </div>
 
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
         {resources.map((r) => (
@@ -95,12 +103,14 @@ export default function ResourcesPage() {
             rel={r.external ? "noreferrer" : undefined}
             className="block"
           >
-            <Card className="p-6 hover:bg-surface-hover transition-colors h-full flex flex-col gap-2">
-              <p className="text-xs uppercase tracking-wide text-text-muted">
+            <Card className="p-6 rounded-20 border-stroke-soft-200 bg-bg-weak-50 hover:bg-bg-soft-200 transition-colors h-full flex flex-col gap-2">
+              <p className="text-subheading-2xs text-text-soft-400">
                 {r.category}
               </p>
-              <h3 className="text-lg font-semibold text-text">{r.title}</h3>
-              <p className="text-sm text-text-muted leading-relaxed">
+              <h3 className="text-label-md text-text-strong-950">
+                {r.title}
+              </h3>
+              <p className="text-paragraph-sm text-text-sub-600">
                 {r.description}
               </p>
             </Card>

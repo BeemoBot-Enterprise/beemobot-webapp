@@ -3,11 +3,14 @@ import { getToken, removeToken } from "./token";
 import { API_URL } from "@/lib/env";
 
 export type User = {
-  discord_id: string;
-  username: string;
+  discordId: string | null;
+  username: string | null;
   email: string;
-  avatar_url: string;
-  accessToken: string | null;
+  avatarUrl: string | null;
+  puuid: string | null;
+  gameName: string | null;
+  tagLine: string | null;
+  linked: boolean;
 };
 
 export const getUser = async (): Promise<User | null> => {
@@ -23,7 +26,7 @@ export const getUser = async (): Promise<User | null> => {
     const token = getToken();
     if (token) {
       try {
-        const response = await axios.get(`${API_URL}/user`, {
+        const response = await axios.get(`${API_URL}/profile/me`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },

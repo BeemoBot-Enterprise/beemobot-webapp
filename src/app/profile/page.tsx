@@ -8,7 +8,7 @@ export default function ProfilePage() {
     <Suspense
       fallback={
         <main className="max-w-[1200px] mx-auto px-6 py-12">
-          <p className="text-text-muted">Chargement…</p>
+          <p className="text-text-sub-600">Chargement…</p>
         </main>
       }
     >
