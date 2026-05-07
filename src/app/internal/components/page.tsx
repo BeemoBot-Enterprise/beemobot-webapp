@@ -11,6 +11,7 @@ import { Eyebrow } from "@/components/_design/Eyebrow";
 import { Pill } from "@/components/_design/Pill";
 import { Card } from "@/components/_design/Card";
 import { StatNumber } from "@/components/_design/StatNumber";
+import { SectionShell } from "@/components/_design/SectionShell";
 
 export default function ComponentsDemoPage() {
   return (
@@ -107,7 +108,21 @@ export default function ComponentsDemoPage() {
           </div>
         </Section>
 
-        {/* Sections 7-12 added incrementally as components are built */}
+        <Section id="section-shell" title="7 · SectionShell">
+          <SectionShell
+            eyebrow="— Fonctionnalités"
+            title="Tout pour ta communauté."
+            lead="Les outils dont ta guilde a besoin, sans usine à gaz. Tu invites, tu joues, le bot fait le reste."
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <Card><h4 className="font-display text-hf-display-3">A</h4></Card>
+              <Card><h4 className="font-display text-hf-display-3">B</h4></Card>
+              <Card><h4 className="font-display text-hf-display-3">C</h4></Card>
+            </div>
+          </SectionShell>
+        </Section>
+
+        {/* Sections 8-12 added incrementally as components are built */}
       </div>
     </main>
   );

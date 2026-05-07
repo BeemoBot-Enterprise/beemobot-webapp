@@ -15,3 +15,5 @@ export { Card } from "./Card";
 export type { CardProps } from "./Card";
 export { StatNumber } from "./StatNumber";
 export type { StatNumberProps } from "./StatNumber";
+export { SectionShell } from "./SectionShell";
+export type { SectionShellProps } from "./SectionShell";
