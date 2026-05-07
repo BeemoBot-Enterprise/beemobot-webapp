@@ -6,3 +6,4 @@
  * Sections added incrementally as they're built.
  */
 export { HeroLanding } from "./HeroLanding";
+export { StatsLanding } from "./StatsLanding";
