@@ -8,3 +8,4 @@
 export { HeroLanding } from "./HeroLanding";
 export { StatsLanding } from "./StatsLanding";
 export { FeaturesLanding } from "./FeaturesLanding";
+export { IntegrationsLanding } from "./IntegrationsLanding";
