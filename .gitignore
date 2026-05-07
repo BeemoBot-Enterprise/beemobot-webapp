@@ -43,3 +43,6 @@ next-env.d.ts
 # dev screenshots & playwright MCP artefacts (à la racine seulement)
 /.playwright-mcp/
 /*.png
+
+# brainstorming visual companion
+/.superpowers/
