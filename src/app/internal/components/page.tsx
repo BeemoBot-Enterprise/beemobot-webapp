@@ -17,8 +17,6 @@ import { TeemoMascot } from "@/components/_design/TeemoMascot";
 import { RankBadge } from "@/components/_design/RankBadge";
 import { ChampionPortrait } from "@/components/_design/ChampionPortrait";
 import { MatchCard } from "@/components/_design/MatchCard";
-import { HeaderHF } from "@/components/_design/Header";
-import { FooterHF } from "@/components/_design/Footer";
 
 export const metadata: Metadata = {
   title: "Components — Honey Friendly",
@@ -27,9 +25,7 @@ export const metadata: Metadata = {
 
 export default function ComponentsDemoPage() {
   return (
-    <main className="min-h-screen bg-hf-bg font-body text-hf-navy">
-      <HeaderHF />
-      <div className="mx-auto max-w-[1100px] px-6 py-16">
+    <div className="mx-auto max-w-[1100px] px-6 py-16">
         <header className="mb-16">
           <p className="font-display text-hf-eyebrow uppercase tracking-[0.15em] text-hf-honey-text mb-2">
             Honey Friendly · Phase 1
@@ -203,9 +199,7 @@ export default function ComponentsDemoPage() {
         </Section>
 
         {/* Sections 12-13 added incrementally as components are built */}
-      </div>
-      <FooterHF />
-    </main>
+    </div>
   );
 }
 
