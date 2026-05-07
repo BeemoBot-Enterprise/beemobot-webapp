@@ -13,6 +13,7 @@ import { Card } from "@/components/_design/Card";
 import { StatNumber } from "@/components/_design/StatNumber";
 import { SectionShell } from "@/components/_design/SectionShell";
 import { TeemoMascot } from "@/components/_design/TeemoMascot";
+import { RankBadge } from "@/components/_design/RankBadge";
 
 export default function ComponentsDemoPage() {
   return (
@@ -131,7 +132,22 @@ export default function ComponentsDemoPage() {
           </div>
         </Section>
 
-        {/* Sections 9-12 added incrementally as components are built */}
+        <Section id="rank" title="9 · RankBadge">
+          <div className="flex flex-wrap items-end gap-6">
+            <RankBadge tier="iron" division="IV" lp={42} />
+            <RankBadge tier="bronze" division="II" lp={66} />
+            <RankBadge tier="silver" division="I" lp={88} />
+            <RankBadge tier="gold" division="III" lp={120} />
+            <RankBadge tier="platinum" division="II" lp={50} />
+            <RankBadge tier="emerald" division="IV" lp={12} />
+            <RankBadge tier="diamond" division="I" lp={75} />
+            <RankBadge tier="master" lp={210} />
+            <RankBadge tier="grandmaster" lp={487} />
+            <RankBadge tier="challenger" lp={1024} />
+          </div>
+        </Section>
+
+        {/* Sections 10-12 added incrementally as components are built */}
       </div>
     </main>
   );

@@ -19,3 +19,5 @@ export { SectionShell } from "./SectionShell";
 export type { SectionShellProps } from "./SectionShell";
 export { TeemoMascot } from "./TeemoMascot";
 export type { TeemoMascotProps } from "./TeemoMascot";
+export { RankBadge } from "./RankBadge";
+export type { RankBadgeProps, Tier, Division } from "./RankBadge";
