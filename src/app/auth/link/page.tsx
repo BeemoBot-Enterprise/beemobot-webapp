@@ -30,6 +30,7 @@ const REGIONS = [
   "ru",
 ];
 const TOKEN_KEY = "beemobot_token";
+const RETURN_TO_KEY = "beemobot_return_to";
 const DDRAGON_VERSION = "14.1.1";
 
 interface PreviewData {
@@ -54,14 +55,27 @@ interface ChallengeData {
   ttlSeconds: number;
 }
 
-type Step = "search" | "preview" | "challenge" | "done";
+type Step =
+  | "loading"
+  | "search"
+  | "preview"
+  | "challenge"
+  | "done"
+  | "already-linked";
+
+interface LinkedProfile {
+  gameName: string;
+  tagLine: string;
+}
 
 const iconUrl = (id: number) =>
   `https://ddragon.leagueoflegends.com/cdn/${DDRAGON_VERSION}/img/profileicon/${id}.png`;
 
 export default function LinkPage() {
   const router = useRouter();
-  const [step, setStep] = useState<Step>("search");
+  const [step, setStep] = useState<Step>("loading");
+  const [linkedProfile, setLinkedProfile] = useState<LinkedProfile | null>(null);
+  const [unlinking, setUnlinking] = useState(false);
   const [gameName, setGameName] = useState("");
   const [tagLine, setTagLine] = useState("");
   const [region, setRegion] = useState("euw1");
@@ -81,6 +95,51 @@ export default function LinkPage() {
 
   const getToken = () =>
     typeof window !== "undefined" ? localStorage.getItem(TOKEN_KEY) : null;
+
+  // Bootstrap au mount: décide où l'utilisateur doit être.
+  // - pas de token → login Discord (avec return_to pour revenir ici)
+  // - token + linked: true → écran "déjà lié"
+  // - token + linked: false → formulaire de recherche (état actuel)
+  useEffect(() => {
+    const token = getToken();
+    if (!token) {
+      localStorage.setItem(RETURN_TO_KEY, "/auth/link");
+      window.location.href = `${API_URL}/auth/discord/redirect`;
+      return;
+    }
+
+    fetch(`${API_URL}/profile/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    })
+      .then(async (r) => {
+        if (r.status === 401) {
+          localStorage.removeItem(TOKEN_KEY);
+          localStorage.setItem(RETURN_TO_KEY, "/auth/link");
+          window.location.href = `${API_URL}/auth/discord/redirect`;
+          return;
+        }
+        if (!r.ok) {
+          setError("Impossible de récupérer ton profil. Réessaie.");
+          setStep("search");
+          return;
+        }
+        const profile = await r.json();
+        if (profile?.linked && profile.gameName && profile.tagLine) {
+          setLinkedProfile({
+            gameName: profile.gameName,
+            tagLine: profile.tagLine,
+          });
+          setStep("already-linked");
+        } else {
+          setStep("search");
+        }
+      })
+      .catch(() => {
+        setError("Réseau indisponible. Réessaie.");
+        setStep("search");
+      });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Compte à rebours du challenge
   useEffect(() => {
@@ -208,36 +267,137 @@ export default function LinkPage() {
     setError(null);
   };
 
+  const handleUnlink = async () => {
+    setUnlinking(true);
+    setError(null);
+    try {
+      const token = getToken();
+      if (!token) throw new Error("Token manquant. Reconnecte-toi.");
+      const res = await fetch(`${API_URL}/auth/unlink`, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.message ?? "Impossible de délier le compte.");
+      }
+      setLinkedProfile(null);
+      setStep("search");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erreur inconnue");
+    } finally {
+      setUnlinking(false);
+    }
+  };
+
   return (
     <main className="min-h-[calc(100vh-64px)] flex items-center justify-center px-6 py-12">
       <Card className="max-w-md w-full p-8 rounded-20 border-stroke-soft-200 bg-bg-weak-50">
-        <div className="flex items-center gap-2 mb-6 text-subheading-2xs uppercase tracking-widest">
-          <span
-            className={
-              step === "search" ? "text-text-strong-950" : "text-text-soft-400"
-            }
-          >
-            01 · Recherche
-          </span>
-          <span className="text-text-soft-400">›</span>
-          <span
-            className={
-              step === "preview" ? "text-text-strong-950" : "text-text-soft-400"
-            }
-          >
-            02 · Confirmation
-          </span>
-          <span className="text-text-soft-400">›</span>
-          <span
-            className={
-              step === "challenge" || step === "done"
-                ? "text-text-strong-950"
-                : "text-text-soft-400"
-            }
-          >
-            03 · Vérification
-          </span>
-        </div>
+        {step !== "loading" && step !== "already-linked" && (
+          <div className="flex items-center gap-2 mb-6 text-subheading-2xs uppercase tracking-widest">
+            <span
+              className={
+                step === "search"
+                  ? "text-text-strong-950"
+                  : "text-text-soft-400"
+              }
+            >
+              01 · Recherche
+            </span>
+            <span className="text-text-soft-400">›</span>
+            <span
+              className={
+                step === "preview"
+                  ? "text-text-strong-950"
+                  : "text-text-soft-400"
+              }
+            >
+              02 · Confirmation
+            </span>
+            <span className="text-text-soft-400">›</span>
+            <span
+              className={
+                step === "challenge" || step === "done"
+                  ? "text-text-strong-950"
+                  : "text-text-soft-400"
+              }
+            >
+              03 · Vérification
+            </span>
+          </div>
+        )}
+
+        {step === "loading" && (
+          <div className="flex flex-col items-center gap-4 py-12">
+            <svg
+              className="animate-spin h-8 w-8 text-text-sub-600"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle
+                cx="12"
+                cy="12"
+                r="10"
+                stroke="currentColor"
+                strokeWidth="2"
+                opacity="0.2"
+              />
+              <path
+                d="M12 2a10 10 0 0 1 10 10"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+              />
+            </svg>
+            <p className="text-text-sub-600 text-sm">Chargement…</p>
+          </div>
+        )}
+
+        {step === "already-linked" && linkedProfile && (
+          <>
+            <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+              Déjà lié ✓
+            </h1>
+            <p className="text-text-sub-600 mb-6 text-sm">
+              Ton compte Discord est lié à{" "}
+              <strong className="text-text-strong-950">
+                {linkedProfile.gameName}#{linkedProfile.tagLine}
+              </strong>
+              . Tu peux donner des shrooms et des respects.
+            </p>
+
+            {error && (
+              <p className="text-sm text-error-base mb-3" role="alert">
+                {error}
+              </p>
+            )}
+
+            <div className="flex flex-col gap-3">
+              <Button
+                variant="primary"
+                onClick={() =>
+                  router.push(
+                    `/u/${encodeURIComponent(`${linkedProfile.gameName}-${linkedProfile.tagLine}`)}`,
+                  )
+                }
+              >
+                Voir mon profil public
+              </Button>
+              <Button
+                onClick={handleUnlink}
+                variant="ghost"
+                disabled={unlinking}
+              >
+                {unlinking ? "Déliage…" : "Délier ce compte"}
+              </Button>
+            </div>
+
+            <p className="text-xs text-text-sub-600 mt-4">
+              Pour changer de compte Riot, délie d&apos;abord celui-ci.
+            </p>
+          </>
+        )}
 
         {step === "search" && (
           <>

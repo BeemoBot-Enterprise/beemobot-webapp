@@ -12,6 +12,16 @@ import Button from "@/components/atoms/Button";
 import { API_URL } from "@/lib/env";
 
 const TOKEN_KEY = "beemobot_token";
+const RETURN_TO_KEY = "beemobot_return_to";
+
+// N'autorise que les chemins internes (commençant par "/" mais pas "//"
+// qui serait un protocol-relative URL). Évite l'open-redirect.
+function safeReturnTo(value: string | null): string | null {
+  if (!value) return null;
+  if (!value.startsWith("/")) return null;
+  if (value.startsWith("//")) return null;
+  return value;
+}
 
 function Spinner() {
   return (
@@ -69,6 +79,13 @@ function CallbackContent() {
     }
 
     localStorage.setItem(TOKEN_KEY, token);
+
+    const returnTo = safeReturnTo(localStorage.getItem(RETURN_TO_KEY));
+    if (returnTo) {
+      localStorage.removeItem(RETURN_TO_KEY);
+      router.replace(returnTo);
+      return;
+    }
 
     fetch(`${API_URL}/profile/me`, {
       headers: { Authorization: `Bearer ${token}` },
