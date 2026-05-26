@@ -103,7 +103,7 @@ function PlayerRow({
   type: LeaderboardType;
 }) {
   const linked = !!row.gameName;
-  const profileHref = linked ? `/u/${row.gameName}-${row.tagLine}` : null;
+  const profileHref = linked ? `/profile/${row.gameName}-${row.tagLine}` : null;
 
   const inner = (
     <div className="flex items-center gap-4 px-4 py-3">

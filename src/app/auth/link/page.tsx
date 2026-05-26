@@ -398,7 +398,7 @@ export default function LinkPage() {
                 variant="primary"
                 onClick={() =>
                   router.push(
-                    `/u/${encodeURIComponent(`${linkedProfile.gameName}-${linkedProfile.tagLine}`)}`,
+                    `/profile/${encodeURIComponent(`${linkedProfile.gameName}-${linkedProfile.tagLine}`)}`,
                   )
                 }
               >
@@ -712,7 +712,7 @@ export default function LinkPage() {
                 variant="primary"
                 onClick={() =>
                   router.push(
-                    `/u/${encodeURIComponent(`${doneData.gameName}-${doneData.tagLine}`)}`,
+                    `/profile/${encodeURIComponent(`${doneData.gameName}-${doneData.tagLine}`)}`,
                   )
                 }
               >

@@ -99,7 +99,7 @@ function CallbackContent() {
         if (!profile?.linked) {
           router.replace("/auth/link");
         } else {
-          router.replace(`/u/${profile.gameName}-${profile.tagLine}`);
+          router.replace(`/profile/${profile.gameName}-${profile.tagLine}`);
         }
       })
       .catch(() => router.replace("/auth/link"));

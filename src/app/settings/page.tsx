@@ -202,7 +202,7 @@ function SettingsContent() {
               </div>
               <div className="flex gap-2">
                 <Link
-                  href={`/u/${encodeURIComponent(`${me.gameName}-${me.tagLine}`)}`}
+                  href={`/profile/${encodeURIComponent(`${me.gameName}-${me.tagLine}`)}`}
                 >
                   <Button variant="outline" size="sm">
                     Voir le profil

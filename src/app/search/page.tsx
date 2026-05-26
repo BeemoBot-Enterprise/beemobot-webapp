@@ -62,7 +62,7 @@ export default function SearchPage() {
       return;
     }
     // Accepte les deux séparateurs courants (# saisi par l'utilisateur, - dans
-    // les URLs Riot officielles). On normalise en `-` pour notre route /u/.
+    // les URLs Riot officielles). On normalise en `-` pour notre route /profile/.
     const normalized = trimmed.replace("#", "-");
     if (!normalized.includes("-")) {
       setError("Format attendu : GameName#TagLine (ex. Nunch#N7789).");
@@ -73,7 +73,7 @@ export default function SearchPage() {
     setError(null);
 
     // On vérifie que le compte existe avant de naviguer, sinon on tombe sur
-    // une 404 de /u/ sans message clair. Cheap : un seul HEAD-equivalent.
+    // une 404 de /profile/ sans message clair. Cheap : un seul HEAD-equivalent.
     try {
       const res = await fetch(
         `${API_URL}/lol/summoner/${encodeURIComponent(normalized)}?region=${region}`,
@@ -87,7 +87,7 @@ export default function SearchPage() {
         const body = await res.json().catch(() => ({}));
         throw new Error(body.message ?? "Erreur lors de la recherche.");
       }
-      router.push(`/u/${encodeURIComponent(normalized)}`);
+      router.push(`/profile/${encodeURIComponent(normalized)}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Erreur inconnue.");
     } finally {
@@ -158,7 +158,7 @@ export default function SearchPage() {
         <p className="text-hf-body text-hf-navy mt-2">
           Tu peux aussi passer directement par l&apos;URL :{" "}
           <code className="font-mono text-hf-honey-text">
-            /u/Nunch-N7789
+            /profile/Nunch-N7789
           </code>{" "}
           (avec un tiret entre le nom et le tag).
         </p>

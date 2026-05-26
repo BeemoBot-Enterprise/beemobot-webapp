@@ -12,6 +12,8 @@ export interface Profile {
   linked: boolean;
   counts: { respects: number; shrooms: number };
   weighted: { respects: number; shrooms: number };
+  /** Reps que CE joueur a donnés. Ajouté côté API en mai 2026. */
+  given?: { respects: number; shrooms: number };
   honey: number;
   recentEvents: Array<{
     id: number;
