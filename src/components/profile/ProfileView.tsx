@@ -237,6 +237,12 @@ interface ProfileViewProps {
   /** Riot ID utilisé pour le routing (gameName-tagLine). Fallback affichage. */
   fallbackGameName?: string;
   fallbackTagLine?: string;
+  /** Si défini, prend la place du titre principal (cas du profil "Mon profil"
+   *  où on connaît le pseudo Discord du visiteur). Le Riot ID passe en
+   *  sous-texte. Sur un profil public on n'a pas cette info → on garde le
+   *  Riot ID en titre principal. */
+  discordName?: string;
+  discordAvatarUrl?: string | null;
   /** Affiché en haut à droite si défini ; sert pour les CTA "Paramètres" ou "Lier". */
   ownerActions?: React.ReactNode;
 }
@@ -245,6 +251,8 @@ export function ProfileView({
   profile,
   fallbackGameName,
   fallbackTagLine,
+  discordName,
+  discordAvatarUrl,
   ownerActions,
 }: ProfileViewProps) {
   // Défense en profondeur : tous les accès passent par des constantes locales
@@ -305,27 +313,58 @@ export function ProfileView({
         <div className="relative max-w-[1100px] mx-auto px-6 py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8">
             <div className="flex items-end gap-5">
-              {summonerData && (
+              {summonerData ? (
                 <div className="relative shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={profileIconUrl(summonerData!.profileIconId)}
+                    src={profileIconUrl(summonerData.profileIconId)}
                     alt={`Icône de ${displayName}`}
                     width={104}
                     height={104}
                     className="rounded-hf-card-lg border-4 border-hf-bg shadow-hf-card block bg-hf-surface-alt"
                   />
                   <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-hf-navy text-white text-xs font-bold px-2.5 py-1 whitespace-nowrap border-2 border-hf-bg shadow-hf-card">
-                    Niv. {summonerData!.summonerLevel}
+                    Niv. {summonerData.summonerLevel}
                   </span>
                 </div>
-              )}
+              ) : discordAvatarUrl ? (
+                // Pas (encore) lié à Riot : fallback sur l'avatar Discord pour
+                // éviter un hero amputé.
+                <div className="relative shrink-0">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={discordAvatarUrl}
+                    alt={`Avatar Discord de ${discordName ?? "user"}`}
+                    width={104}
+                    height={104}
+                    className="rounded-hf-card-lg border-4 border-hf-bg shadow-hf-card block bg-hf-surface-alt"
+                  />
+                </div>
+              ) : null}
               <div className="flex flex-col gap-2 min-w-0">
                 <Eyebrow>Profil BeemoBot</Eyebrow>
-                <h1 className="font-display font-extrabold text-hf-display-2 leading-none text-hf-navy">
-                  {displayName}
-                  <span className="text-hf-navy-soft font-semibold"> #{displayTag}</span>
-                </h1>
+                {discordName ? (
+                  // Mon profil : pseudo Discord en titre principal, Riot ID
+                  // optionnel en sous-texte (un user n'est pas forcément lié).
+                  <>
+                    <h1 className="font-display font-extrabold text-hf-display-2 leading-none text-hf-navy">
+                      {discordName}
+                    </h1>
+                    {profile.linked && (
+                      <p className="text-hf-body-lg font-semibold text-hf-navy-soft">
+                        {displayName}
+                        <span className="opacity-70"> #{displayTag}</span>
+                      </p>
+                    )}
+                  </>
+                ) : (
+                  // Profil public : pas de pseudo Discord exposé par l'API,
+                  // on garde le Riot ID en titre.
+                  <h1 className="font-display font-extrabold text-hf-display-2 leading-none text-hf-navy">
+                    {displayName}
+                    <span className="text-hf-navy-soft font-semibold"> #{displayTag}</span>
+                  </h1>
+                )}
                 <div className="flex items-center gap-2 flex-wrap mt-1">
                   {profile.linked ? (
                     <Pill variant="honey">✓ Compte lié</Pill>

@@ -139,77 +139,59 @@ export default function ProfileContent() {
     );
   }
 
-  // Connecté mais pas lié → CTA lier le compte Riot.
-  if (!me.linked || !profile) {
-    return (
-      <main className="max-w-[700px] mx-auto px-6 py-16 flex flex-col gap-6">
-        <header className="flex items-center gap-4">
-          {me.avatarUrl && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={me.avatarUrl}
-              alt={`Avatar Discord de ${me.username ?? ""}`}
-              width={56}
-              height={56}
-              className="rounded-full border-2 border-hf-line"
-            />
-          )}
-          <div>
-            <h1 className="font-display text-hf-display-3 text-hf-navy">
-              Salut {me.username ?? "joueur"} 👋
-            </h1>
-            <p className="text-hf-body-sm text-hf-navy-soft mt-1">
-              Une dernière étape avant d&apos;avoir ton profil.
-            </p>
-          </div>
-        </header>
+  // Connecté : on rend TOUJOURS la vue partagée, même si pas (encore) lié à
+  // Riot. L'utilisateur n'est pas obligé de lier — on veut au moins lui
+  // montrer son identité Discord et un CTA discret. Quand pas lié, on bâtit
+  // un FullProfile-stub (compteurs à 0, pas de LoL data) pour que ProfileView
+  // s'affiche normalement.
+  const renderProfile = profile ?? {
+    puuid: "",
+    gameName: null,
+    tagLine: null,
+    linked: false,
+    counts: { respects: 0, shrooms: 0 },
+    weighted: { respects: 0, shrooms: 0 },
+    honey: 0,
+    recentEvents: [],
+    lol: null,
+  };
 
-        <Card variant="accent">
-          <h2 className="font-display text-hf-display-3 text-hf-navy mb-2">
-            Lie ton compte Riot
-          </h2>
-          <p className="text-hf-body text-hf-navy-soft mb-5">
-            Sans ça, on ne peut pas afficher tes stats LoL, ton rank, ni cumuler
-            tes shrooms / respects / honey. Ça prend 30 secondes.
-          </p>
-          <div className="flex flex-wrap gap-2">
-            <Link href="/auth/link">
-              <Button variant="primary">Lier maintenant</Button>
-            </Link>
-            <Link href="/settings">
-              <Button variant="ghost">Paramètres</Button>
-            </Link>
-          </div>
-        </Card>
-
-        {error && (
+  return (
+    <ProfileErrorBoundary>
+      {error && (
+        <div className="max-w-[1100px] mx-auto px-6 pt-6">
           <Card className="border-hf-loss/40 bg-hf-loss/5">
             <p className="text-hf-body-sm text-hf-loss">{error}</p>
           </Card>
-        )}
-      </main>
-    );
-  }
-
-  // Cas plein : compte lié, on rend la vue partagée avec les actions owner.
-  return (
-    <ProfileErrorBoundary>
+        </div>
+      )}
       <ProfileView
-        profile={profile}
+        profile={renderProfile}
+        discordName={me.username ?? "Joueur"}
+        discordAvatarUrl={me.avatarUrl}
         fallbackGameName={me.gameName ?? undefined}
         fallbackTagLine={me.tagLine ?? undefined}
         ownerActions={
           <>
+            {!me.linked && (
+              <Link href="/auth/link">
+                <Button variant="primary" size="sm">
+                  Lier mon compte Riot
+                </Button>
+              </Link>
+            )}
             <Link href="/settings">
               <Button variant="outline" size="sm">
                 Paramètres
               </Button>
             </Link>
-            <Link href="/auth/link">
-              <Button variant="ghost" size="sm">
-                Modifier mon Riot ID
-              </Button>
-            </Link>
+            {me.linked && (
+              <Link href="/auth/link">
+                <Button variant="ghost" size="sm">
+                  Modifier mon Riot ID
+                </Button>
+              </Link>
+            )}
           </>
         }
       />
