@@ -47,14 +47,22 @@ function SettingsContent() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then(async (r) => {
-        if (!r.ok) throw new Error("Token invalide ou expiré.");
+        if (!r.ok) {
+          const expired = r.status === 401 || r.status === 403;
+          // On ne purge le token QUE si l'API rejette explicitement (401/403).
+          // Sur 5xx / réseau / CORS on garde le token pour éviter de déconnecter
+          // l'utilisateur à la moindre intermittence.
+          if (expired) {
+            localStorage.removeItem(TOKEN_KEY);
+            localStorage.removeItem(USER_KEY);
+          }
+          throw new Error(expired ? "Token invalide ou expiré." : "Erreur de chargement");
+        }
         return r.json();
       })
       .then((data) => setMe(data))
       .catch((err) => {
         setError(err instanceof Error ? err.message : "Erreur de chargement");
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem(USER_KEY);
       })
       .finally(() => setLoading(false));
   }, [router]);

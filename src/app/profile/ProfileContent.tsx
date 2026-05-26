@@ -87,7 +87,12 @@ export default function ProfileContent() {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!userResponse.ok) {
-          throw new Error("Token invalide ou expiré.");
+          // Seul un 401/403 invalide réellement le token ; sur 5xx ou réseau
+          // on remonte une erreur "soft" qui ne déconnectera pas l'utilisateur.
+          const expired = userResponse.status === 401 || userResponse.status === 403;
+          const e = new Error(expired ? "Token invalide ou expiré." : "Erreur de chargement");
+          (e as Error & { expired?: boolean }).expired = expired;
+          throw e;
         }
         const userData = await userResponse.json();
         const nextUser: DiscordUser = {
@@ -117,8 +122,11 @@ export default function ProfileContent() {
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur de chargement");
-        localStorage.removeItem(TOKEN_KEY);
-        setToken(null);
+        // On ne purge le token que si l'API a explicitement rejeté (401/403).
+        if ((err as Error & { expired?: boolean })?.expired) {
+          localStorage.removeItem(TOKEN_KEY);
+          setToken(null);
+        }
       } finally {
         setLoading(false);
       }

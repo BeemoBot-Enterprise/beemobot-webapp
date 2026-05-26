@@ -10,6 +10,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import Button from "@/components/atoms/Button";
 import { API_URL } from "@/lib/env";
+import { setUser } from "@/lib/store/user";
 
 const TOKEN_KEY = "beemobot_token";
 const RETURN_TO_KEY = "beemobot_return_to";
@@ -92,6 +93,9 @@ function CallbackContent() {
     })
       .then((r) => (r.ok ? r.json() : null))
       .then((profile) => {
+        // On persiste tout de suite le profil pour que useAuth voie l'utilisateur
+        // comme connecté sans refaire un /profile/me au prochain mount.
+        if (profile) setUser(profile);
         if (!profile?.linked) {
           router.replace("/auth/link");
         } else {
