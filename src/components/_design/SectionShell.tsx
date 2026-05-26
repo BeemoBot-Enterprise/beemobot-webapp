@@ -41,7 +41,7 @@ export function SectionShell({
       <div className="relative mx-auto max-w-[1100px]">
         <header className="mb-10 max-w-2xl">
           {eyebrow ? <Eyebrow className="mb-2">{eyebrow}</Eyebrow> : null}
-          <h2 className="font-display text-hf-display-2 text-hf-navy">{title}</h2>
+          <h2 className="font-display text-hf-display-3 text-hf-navy">{title}</h2>
           {lead ? <p className="mt-3 text-hf-body-lg text-hf-navy-soft">{lead}</p> : null}
         </header>
         {children}

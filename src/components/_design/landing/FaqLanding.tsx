@@ -58,16 +58,16 @@ export function FaqLanding() {
             className="rounded-hf-card-lg border border-hf-line bg-hf-surface overflow-hidden"
           >
             <Accordion.Header>
-              <Accordion.Trigger className="group flex items-center justify-between w-full px-6 py-5 text-left font-display text-hf-display-3 text-hf-navy hover:bg-hf-surface-alt transition-colors">
+              <Accordion.Trigger className="group flex items-center justify-between w-full px-5 py-4 text-left text-hf-body-lg font-semibold text-hf-navy hover:bg-hf-surface-alt transition-colors">
                 <span>{item.question}</span>
                 <RiAddLine
                   aria-hidden
-                  className="size-6 text-hf-honey-text shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-45"
+                  className="size-5 text-hf-honey-text shrink-0 transition-transform duration-200 group-data-[state=open]:rotate-45"
                 />
               </Accordion.Trigger>
             </Accordion.Header>
             <Accordion.Content className="overflow-hidden data-[state=open]:animate-accordion-down data-[state=closed]:animate-accordion-up">
-              <div className="px-6 pb-5 text-hf-body text-hf-navy-soft leading-relaxed">{item.answer}</div>
+              <div className="px-5 pb-4 text-hf-body-sm text-hf-navy-soft leading-relaxed">{item.answer}</div>
             </Accordion.Content>
           </Accordion.Item>
         ))}

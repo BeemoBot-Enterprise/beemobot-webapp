@@ -43,11 +43,11 @@ export function FeaturesLanding() {
           {FEATURES.map((feature) => {
             const Icon = feature.icon;
             return (
-              <Card key={feature.title} variant="interactive">
-                <div className="size-12 rounded-hf-card bg-hf-honey-glow text-hf-honey-text flex items-center justify-center mb-5">
-                  <Icon className="size-6" />
+              <Card key={feature.title} variant="interactive" className="p-5">
+                <div className="size-10 rounded-hf-card bg-hf-honey-glow text-hf-honey-text flex items-center justify-center mb-4">
+                  <Icon className="size-5" />
                 </div>
-                <h3 className="font-display text-hf-display-3 text-hf-navy mb-2">{feature.title}</h3>
+                <h3 className="text-hf-body-lg font-semibold text-hf-navy mb-1.5">{feature.title}</h3>
                 <p className="text-hf-body-sm text-hf-navy-soft">{feature.description}</p>
               </Card>
             );
