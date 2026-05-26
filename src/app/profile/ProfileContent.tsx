@@ -9,9 +9,9 @@ import { useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Card } from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
+import { Card } from "@/components/_design/Card";
+import { Button } from "@/components/_design/Button";
+import { Pill } from "@/components/_design/Pill";
 import { API_URL } from "@/lib/env";
 
 interface DiscordUser {
@@ -87,8 +87,6 @@ export default function ProfileContent() {
           headers: { Authorization: `Bearer ${token}` },
         });
         if (!userResponse.ok) {
-          // Seul un 401/403 invalide réellement le token ; sur 5xx ou réseau
-          // on remonte une erreur "soft" qui ne déconnectera pas l'utilisateur.
           const expired = userResponse.status === 401 || userResponse.status === 403;
           const e = new Error(expired ? "Token invalide ou expiré." : "Erreur de chargement");
           (e as Error & { expired?: boolean }).expired = expired;
@@ -122,7 +120,6 @@ export default function ProfileContent() {
         }
       } catch (err) {
         setError(err instanceof Error ? err.message : "Erreur de chargement");
-        // On ne purge le token que si l'API a explicitement rejeté (401/403).
         if ((err as Error & { expired?: boolean })?.expired) {
           localStorage.removeItem(TOKEN_KEY);
           setToken(null);
@@ -147,7 +144,7 @@ export default function ProfileContent() {
   if (loading) {
     return (
       <main className="max-w-[1200px] mx-auto px-6 py-12">
-        <p className="text-text-sub-600">Chargement…</p>
+        <p className="text-hf-navy-soft">Chargement…</p>
       </main>
     );
   }
@@ -156,10 +153,10 @@ export default function ProfileContent() {
     return (
       <main className="max-w-[1200px] mx-auto px-6 py-12">
         <Card className="p-10 text-center">
-          <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+          <h1 className="font-display text-hf-display-3 text-hf-navy mb-2">
             Connexion requise
           </h1>
-          <p className="text-text-sub-600 mb-6">
+          <p className="text-hf-body text-hf-navy-soft mb-6">
             Connecte-toi avec Discord pour accéder à ton profil.
           </p>
           <Button onClick={handleLogin} variant="primary">
@@ -187,7 +184,7 @@ export default function ProfileContent() {
       {/* Header profil */}
       <section className="flex flex-wrap items-center justify-between gap-6 mb-10">
         <div className="flex items-center gap-6">
-          <div className="h-24 w-24 rounded-full bg-bg-weak-50 border border-stroke-soft-200 overflow-hidden flex items-center justify-center">
+          <div className="h-24 w-24 rounded-full bg-hf-surface-alt border border-hf-line overflow-hidden flex items-center justify-center">
             <Image
               src={getAvatarUrl(user)}
               alt={`Avatar de ${user.username}`}
@@ -197,24 +194,24 @@ export default function ProfileContent() {
             />
           </div>
           <div>
-            <h1 className="text-title-h3 text-text-strong-950 !font-[600]">
+            <h1 className="font-display text-hf-display-2 text-hf-navy">
               {user.username}
             </h1>
             <div className="flex items-center gap-2 flex-wrap mt-2">
               {user.linked && user.gameName ? (
                 <>
-                  <Badge variant="accent">
+                  <Pill variant="honey">
                     {user.gameName}
                     <span className="opacity-70 ml-1">#{user.tagLine}</span>
-                  </Badge>
-                  <span className="text-xs text-text-sub-600">Compte lié</span>
+                  </Pill>
+                  <span className="text-hf-body-sm text-hf-navy-soft">Compte lié</span>
                 </>
               ) : (
-                <Badge variant="gold">Compte Riot non lié</Badge>
+                <Pill variant="honey">Compte Riot non lié</Pill>
               )}
             </div>
             {user.email && (
-              <p className="text-text-sub-600 text-xs mt-1">{user.email}</p>
+              <p className="text-hf-body-sm text-hf-navy-soft mt-1">{user.email}</p>
             )}
           </div>
         </div>
@@ -222,29 +219,29 @@ export default function ProfileContent() {
         <div className="flex items-center gap-2">
           {publicProfileHref && (
             <Link href={publicProfileHref}>
-              <Button variant="secondary">Voir mon profil public</Button>
+              <Button variant="outline" size="sm">Voir mon profil public</Button>
             </Link>
           )}
           <Link href="/settings">
-            <Button variant="ghost">Paramètres</Button>
+            <Button variant="ghost" size="sm">Paramètres</Button>
           </Link>
         </div>
       </section>
 
       {error && (
-        <Card className="p-4 mb-8 border-danger/40">
-          <p className="text-sm text-error-base">{error}</p>
+        <Card className="p-4 mb-8 border-hf-loss/40">
+          <p className="text-hf-body-sm text-hf-loss">{error}</p>
         </Card>
       )}
 
       {/* CTA si non lié */}
       {!user.linked && (
-        <Card className="p-6 mb-10 flex flex-wrap items-center justify-between gap-4 border-accent-gold/40">
+        <Card variant="accent" className="mb-10 flex flex-wrap items-center justify-between gap-4">
           <div>
-            <h2 className="text-label-lg text-text-strong-950 mb-1">
+            <h2 className="font-display text-hf-display-3 text-hf-navy mb-1">
               Lie ton compte Riot pour activer ton profil
             </h2>
-            <p className="text-sm text-text-sub-600">
+            <p className="text-hf-body-sm text-hf-navy-soft">
               Sans ça, impossible de cumuler des shrooms, respects ou honey.
             </p>
           </div>
@@ -257,46 +254,46 @@ export default function ProfileContent() {
       {/* Stats principales */}
       <section className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-10">
         <Card className="p-6">
-          <div className="text-sm text-text-sub-600">Respects</div>
-          <div className="text-title-h3 text-text-strong-950 !font-[600] mt-1">
+          <div className="text-hf-eyebrow uppercase text-hf-navy-soft">Respects</div>
+          <div className="font-display text-hf-display-3 text-hf-navy mt-1">
             {respects}
           </div>
           {profile && profile.weighted.respects !== respects && (
-            <div className="text-xs text-text-sub-600 mt-1">
+            <div className="text-hf-body-sm text-hf-navy-soft mt-1">
               pondéré · {profile.weighted.respects}
             </div>
           )}
         </Card>
         <Card className="p-6">
-          <div className="text-sm text-text-sub-600">Shrooms</div>
-          <div className="text-title-h3 text-text-strong-950 !font-[600] mt-1">{shrooms}</div>
+          <div className="text-hf-eyebrow uppercase text-hf-navy-soft">Shrooms</div>
+          <div className="font-display text-hf-display-3 text-hf-navy mt-1">{shrooms}</div>
           {profile && profile.weighted.shrooms !== shrooms && (
-            <div className="text-xs text-text-sub-600 mt-1">
+            <div className="text-hf-body-sm text-hf-navy-soft mt-1">
               pondéré · {profile.weighted.shrooms}
             </div>
           )}
         </Card>
         <Card className="p-6">
-          <div className="text-sm text-text-sub-600">Honey</div>
-          <div className="text-3xl font-semibold text-primary-base-gold mt-1">
+          <div className="text-hf-eyebrow uppercase text-hf-navy-soft">Honey</div>
+          <div className="font-display text-hf-display-3 text-hf-honey-text mt-1">
             {honey}
           </div>
-          <div className="text-xs text-text-sub-600 mt-1">monnaie du shop</div>
+          <div className="text-hf-body-sm text-hf-navy-soft mt-1">monnaie du shop</div>
         </Card>
         <Card className="p-6">
-          <div className="text-sm text-text-sub-600">Score net</div>
+          <div className="text-hf-eyebrow uppercase text-hf-navy-soft">Score net</div>
           <div
-            className={`text-3xl font-semibold mt-1 ${
+            className={`font-display text-hf-display-3 mt-1 ${
               netRep > 0
-                ? "text-primary-base"
+                ? "text-hf-win"
                 : netRep < 0
-                  ? "text-error-base"
-                  : "text-text-strong-950"
+                  ? "text-hf-loss"
+                  : "text-hf-navy"
             }`}
           >
             {netLabel}
           </div>
-          <div className="text-xs text-text-sub-600 mt-1">
+          <div className="text-hf-body-sm text-hf-navy-soft mt-1">
             respects − shrooms
           </div>
         </Card>
@@ -305,28 +302,28 @@ export default function ProfileContent() {
       {/* Ratio + events */}
       <section className="grid md:grid-cols-[1fr_2fr] gap-4 mb-10">
         <Card className="p-6">
-          <div className="text-sm text-text-sub-600 mb-3">Ratio de respect</div>
+          <div className="text-hf-eyebrow uppercase text-hf-navy-soft mb-3">Ratio de respect</div>
           {totalEvents === 0 ? (
-            <p className="text-sm text-text-sub-600">
+            <p className="text-hf-body-sm text-hf-navy-soft">
               Pas encore d&apos;évènements.
             </p>
           ) : (
             <>
               <div className="flex items-baseline gap-2 mb-3">
-                <span className="text-title-h3 text-text-strong-950 !font-[600]">
+                <span className="font-display text-hf-display-3 text-hf-navy">
                   {ratio}%
                 </span>
-                <span className="text-xs text-text-sub-600">
+                <span className="text-hf-body-sm text-hf-navy-soft">
                   ({respects}/{totalEvents})
                 </span>
               </div>
-              <div className="h-2 w-full rounded-full bg-bg-weak-50 overflow-hidden">
+              <div className="h-2 w-full rounded-full bg-hf-surface-alt overflow-hidden">
                 <div
-                  className="h-full bg-primary-base transition-all"
+                  className="h-full bg-hf-honey transition-all"
                   style={{ width: `${ratio}%` }}
                 />
               </div>
-              <p className="text-xs text-text-sub-600 mt-3">
+              <p className="text-hf-body-sm text-hf-navy-soft mt-3">
                 Part de respects dans le total des évènements reçus.
               </p>
             </>
@@ -335,17 +332,17 @@ export default function ProfileContent() {
 
         <Card className="p-6">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-label-md text-text-strong-950">
+            <h2 className="font-display text-hf-display-3 text-hf-navy">
               Évènements récents
             </h2>
             {profile && profile.recentEvents.length > 0 && (
-              <span className="text-xs text-text-sub-600">
+              <span className="text-hf-body-sm text-hf-navy-soft">
                 {profile.recentEvents.length} derniers
               </span>
             )}
           </div>
           {!profile || profile.recentEvents.length === 0 ? (
-            <p className="text-sm text-text-sub-600">
+            <p className="text-hf-body-sm text-hf-navy-soft">
               {user.linked
                 ? "Aucun évènement encore. Joue, fais-toi des amis."
                 : "Lie ton compte pour voir ton historique."}
@@ -355,19 +352,17 @@ export default function ProfileContent() {
               {profile.recentEvents.map((e) => (
                 <li
                   key={e.id}
-                  className="flex items-center justify-between gap-3 text-sm border-b border-stroke-soft-200 last:border-b-0 pb-2 last:pb-0"
+                  className="flex items-center justify-between gap-3 text-hf-body-sm border-b border-hf-line last:border-b-0 pb-2 last:pb-0"
                 >
                   <span className="flex items-center gap-2 min-w-0">
-                    <Badge
-                      variant={e.type === "respect" ? "accent" : "default"}
-                    >
+                    <Pill variant={e.type === "respect" ? "honey" : "default"}>
                       {e.type}
-                    </Badge>
-                    <code className="text-text-sub-600 font-mono text-xs truncate">
+                    </Pill>
+                    <code className="text-hf-navy-soft font-mono text-hf-body-sm truncate">
                       {e.match_id}
                     </code>
                   </span>
-                  <span className="text-text-sub-600 text-xs whitespace-nowrap">
+                  <span className="text-hf-navy-soft text-hf-body-sm whitespace-nowrap">
                     ×{e.weight} ·{" "}
                     {new Date(e.created_at).toLocaleDateString("fr-FR", {
                       day: "2-digit",
@@ -384,14 +379,14 @@ export default function ProfileContent() {
       {/* Liens utiles */}
       <section className="flex flex-wrap gap-3">
         <Link href="/leaderboard">
-          <Button variant="secondary">Leaderboard</Button>
+          <Button variant="outline" size="sm">Leaderboard</Button>
         </Link>
         <Link href="/shop">
-          <Button variant="secondary">Shop</Button>
+          <Button variant="outline" size="sm">Shop</Button>
         </Link>
         {user.linked && (
           <Link href="/auth/link">
-            <Button variant="ghost">Modifier mon Riot ID</Button>
+            <Button variant="ghost" size="sm">Modifier mon Riot ID</Button>
           </Link>
         )}
       </section>

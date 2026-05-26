@@ -9,10 +9,10 @@ import { Suspense, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Badge from "@/components/atoms/Badge";
-import Eyebrow from "@/components/atoms/Eyebrow";
+import { Card } from "@/components/_design/Card";
+import { Button } from "@/components/_design/Button";
+import { Pill } from "@/components/_design/Pill";
+import { Eyebrow } from "@/components/_design/Eyebrow";
 import { API_URL } from "@/lib/env";
 
 interface MeData {
@@ -105,7 +105,7 @@ function SettingsContent() {
   if (loading) {
     return (
       <main className="max-w-[800px] mx-auto px-6 py-12">
-        <p className="text-text-sub-600">Chargement…</p>
+        <p className="text-hf-navy-soft">Chargement…</p>
       </main>
     );
   }
@@ -114,10 +114,10 @@ function SettingsContent() {
     return (
       <main className="max-w-[800px] mx-auto px-6 py-12">
         <Card className="p-10 text-center">
-          <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+          <h1 className="font-display text-hf-display-3 text-hf-navy mb-2">
             Connexion requise
           </h1>
-          <p className="text-text-sub-600 mb-6">
+          <p className="text-hf-navy-soft mb-6">
             Connecte-toi avec Discord pour accéder à tes paramètres.
           </p>
           <Button
@@ -137,23 +137,23 @@ function SettingsContent() {
     <main className="max-w-[800px] mx-auto px-6 py-12">
       <header className="mb-10 flex flex-col gap-3">
         <Eyebrow>Paramètres</Eyebrow>
-        <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
+        <h1 className="font-display text-hf-display-2 text-hf-navy">
           Gère ton compte BeemoBot
         </h1>
-        <p className="text-paragraph-md text-text-sub-600">
+        <p className="text-hf-body-lg text-hf-navy-soft">
           Comptes liés, session, préférences — tout est ici.
         </p>
       </header>
 
       {error && (
-        <Card className="p-4 mb-6 border-danger/40">
-          <p className="text-sm text-error-base">{error}</p>
+        <Card className="p-4 mb-6 border-hf-loss">
+          <p className="text-sm text-hf-loss">{error}</p>
         </Card>
       )}
 
       {/* Compte Discord */}
       <section className="mb-8">
-        <h2 className="text-label-lg text-text-strong-950 mb-3">Compte Discord</h2>
+        <h2 className="font-display text-hf-display-3 text-hf-navy mb-3">Compte Discord</h2>
         <Card className="p-6">
           <div className="flex items-center gap-4">
             {me.avatarUrl && (
@@ -166,15 +166,15 @@ function SettingsContent() {
               />
             )}
             <div className="flex-1 min-w-0">
-              <div className="text-label-md text-text-strong-950">
+              <div className="text-hf-body-lg font-semibold text-hf-navy">
                 {me.username ?? "Utilisateur"}
               </div>
               {me.email && (
-                <div className="text-xs text-text-sub-600 truncate">
+                <div className="text-xs text-hf-navy-soft truncate">
                   {me.email}
                 </div>
               )}
-              <div className="text-xs text-text-sub-600 mt-0.5">
+              <div className="text-xs text-hf-navy-soft mt-0.5">
                 Discord ID · <code className="font-mono">{me.discordId}</code>
               </div>
             </div>
@@ -184,19 +184,19 @@ function SettingsContent() {
 
       {/* Compte Riot */}
       <section className="mb-8">
-        <h2 className="text-label-lg text-text-strong-950 mb-3">Compte Riot</h2>
+        <h2 className="font-display text-hf-display-3 text-hf-navy mb-3">Compte Riot</h2>
         {me.linked ? (
           <Card className="p-6">
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <div className="flex items-center gap-2 flex-wrap mb-1">
-                  <span className="text-label-md text-text-strong-950">
+                  <span className="text-hf-body-lg font-semibold text-hf-navy">
                     {me.gameName}
-                    <span className="text-text-sub-600">#{me.tagLine}</span>
+                    <span className="text-hf-navy-soft">#{me.tagLine}</span>
                   </span>
-                  <Badge variant="accent">Lié</Badge>
+                  <Pill variant="honey">Lié</Pill>
                 </div>
-                <p className="text-xs text-text-sub-600">
+                <p className="text-xs text-hf-navy-soft">
                   Ton historique de réputation est suivi sur ce compte.
                 </p>
               </div>
@@ -204,7 +204,7 @@ function SettingsContent() {
                 <Link
                   href={`/u/${encodeURIComponent(`${me.gameName}-${me.tagLine}`)}`}
                 >
-                  <Button variant="secondary" size="sm">
+                  <Button variant="outline" size="sm">
                     Voir le profil
                   </Button>
                 </Link>
@@ -224,12 +224,12 @@ function SettingsContent() {
             <div className="flex items-start justify-between gap-4 flex-wrap">
               <div>
                 <div className="flex items-center gap-2 mb-1">
-                  <span className="text-label-md text-text-strong-950">
+                  <span className="text-hf-body-lg font-semibold text-hf-navy">
                     Aucun compte lié
                   </span>
-                  <Badge variant="gold">Recommandé</Badge>
+                  <Pill variant="honey">Recommandé</Pill>
                 </div>
-                <p className="text-sm text-text-sub-600">
+                <p className="text-sm text-hf-navy-soft">
                   Lie ton compte Riot pour cumuler tes shrooms, respects et
                   honey.
                 </p>
@@ -244,10 +244,10 @@ function SettingsContent() {
 
       {/* Session */}
       <section>
-        <h2 className="text-label-lg text-text-strong-950 mb-3">Session</h2>
+        <h2 className="font-display text-hf-display-3 text-hf-navy mb-3">Session</h2>
         <Card className="p-6">
           <div className="flex items-center justify-between gap-4 flex-wrap">
-            <p className="text-sm text-text-sub-600">
+            <p className="text-sm text-hf-navy-soft">
               Te déconnecter supprime le token local. Tu pourras te reconnecter
               à tout moment.
             </p>
@@ -266,7 +266,7 @@ export default function SettingsPage() {
     <Suspense
       fallback={
         <main className="max-w-[800px] mx-auto px-6 py-12">
-          <p className="text-text-sub-600">Chargement…</p>
+          <p className="text-hf-navy-soft">Chargement…</p>
         </main>
       }
     >

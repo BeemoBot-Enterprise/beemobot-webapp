@@ -36,9 +36,9 @@ const SCORE_LABEL: Record<LeaderboardType, string> = {
 };
 
 const SCORE_TONE: Record<LeaderboardType, string> = {
-  respects: "text-success-base",
-  shrooms: "text-error-base",
-  honey: "text-warning-base",
+  respects: "text-hf-win",
+  shrooms: "text-hf-loss",
+  honey: "text-hf-honey-text",
 };
 
 function getScore(row: LeaderboardRow, type: LeaderboardType): string {
@@ -87,7 +87,7 @@ function RankCell({ rank }: { rank: number }) {
     );
   }
   return (
-    <span className="inline-flex size-9 items-center justify-center rounded-full bg-bg-white-0/40 text-label-sm text-text-soft-400 tabular-nums">
+    <span className="inline-flex size-9 items-center justify-center rounded-full bg-hf-surface-alt text-label-sm text-hf-navy-soft tabular-nums">
       {rank}
     </span>
   );
@@ -118,17 +118,17 @@ function PlayerRow({
 
       <div className="flex-1 min-w-0 flex flex-col">
         {linked ? (
-          <span className="text-label-sm text-text-strong-950 truncate">
+          <span className="text-label-sm text-hf-navy truncate">
             {row.gameName}
-            <span className="text-text-soft-400">#{row.tagLine}</span>
+            <span className="text-hf-navy-soft">#{row.tagLine}</span>
           </span>
         ) : (
-          <span className="text-label-sm text-text-soft-400 italic">
+          <span className="text-label-sm text-hf-navy-soft italic">
             Compte non lié
           </span>
         )}
         {row.username && row.username !== row.gameName && (
-          <span className="text-paragraph-xs text-text-soft-400 truncate">
+          <span className="text-paragraph-xs text-hf-navy-soft truncate">
             @{row.username}
           </span>
         )}
@@ -143,13 +143,13 @@ function PlayerRow({
         >
           {getScore(row, type)}
         </span>
-        <span className="hidden sm:inline text-paragraph-xs text-text-soft-400">
+        <span className="hidden sm:inline text-paragraph-xs text-hf-navy-soft">
           {SCORE_LABEL[type].toLowerCase()}
         </span>
       </div>
 
       {linked && (
-        <RiArrowRightSLine className="hidden sm:block size-4 text-text-soft-400 transition-transform group-hover:translate-x-0.5 group-hover:text-text-strong-950" />
+        <RiArrowRightSLine className="hidden sm:block size-4 text-hf-navy-soft transition-transform group-hover:translate-x-0.5 group-hover:text-hf-navy" />
       )}
     </div>
   );
@@ -158,7 +158,7 @@ function PlayerRow({
     return (
       <Link
         href={profileHref}
-        className="group block border-b border-stroke-soft-200 last:border-b-0 hover:bg-bg-soft-200 transition-colors"
+        className="group block border-b border-hf-line last:border-b-0 hover:bg-hf-surface-alt transition-colors"
       >
         {inner}
       </Link>
@@ -166,7 +166,7 @@ function PlayerRow({
   }
 
   return (
-    <div className="border-b border-stroke-soft-200 last:border-b-0">
+    <div className="border-b border-hf-line last:border-b-0">
       {inner}
     </div>
   );
@@ -181,8 +181,8 @@ export function LeaderboardTable({
 }) {
   if (rows.length === 0) {
     return (
-      <div className="rounded-20 border border-stroke-soft-200 bg-bg-weak-50 p-12 text-center">
-        <p className="text-paragraph-sm text-text-sub-600">
+      <div className="rounded-hf-card-lg border border-hf-line bg-hf-surface p-12 text-center">
+        <p className="text-paragraph-sm text-hf-navy-soft">
           Personne sur le podium pour le moment.
         </p>
       </div>
@@ -190,7 +190,7 @@ export function LeaderboardTable({
   }
 
   return (
-    <div className="rounded-20 border border-stroke-soft-200 bg-bg-weak-50 overflow-hidden">
+    <div className="rounded-hf-card-lg border border-hf-line bg-hf-surface overflow-hidden">
       {rows.map((row, i) => (
         <PlayerRow key={row.puuid} row={row} rank={i + 1} type={type} />
       ))}

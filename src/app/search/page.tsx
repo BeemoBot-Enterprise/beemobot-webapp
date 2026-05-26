@@ -2,13 +2,32 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Card } from "@/components/atoms/Card";
-import Button from "@/components/atoms/Button";
-import Input from "@/components/atoms/Input";
-import Label from "@/components/atoms/Label";
-import Badge from "@/components/atoms/Badge";
-import Eyebrow from "@/components/atoms/Eyebrow";
+import { Card } from "@/components/_design/Card";
+import { Button } from "@/components/_design/Button";
+import { Pill } from "@/components/_design/Pill";
+import { Eyebrow } from "@/components/_design/Eyebrow";
 import { API_URL } from "@/lib/env";
+
+// Input + Label HF inline (pas d'atoms HF dédiés)
+function Label({ htmlFor, className, children }: { htmlFor?: string; className?: string; children: React.ReactNode }) {
+  return (
+    <label htmlFor={htmlFor} className={className ?? "text-hf-eyebrow uppercase tracking-wider text-hf-navy-soft"}>
+      {children}
+    </label>
+  );
+}
+function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className={
+        "h-10 w-full rounded-hf-btn border border-hf-line bg-hf-surface px-3 text-hf-body text-hf-navy " +
+        "placeholder:text-hf-navy-soft/60 focus-visible:outline-none focus-visible:border-hf-honey " +
+        "focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
+      }
+    />
+  );
+}
 
 interface Summoner {
   puuid: string;
@@ -156,11 +175,11 @@ export default function SearchPage() {
     <main className="max-w-[1200px] mx-auto px-6 py-12">
       <div className="flex flex-col gap-3 mb-10">
         <Eyebrow>Recherche</Eyebrow>
-        <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
+        <h1 className="font-display text-hf-display-2 text-hf-navy !font-[600]">
           Trouve n'importe quel summoner
         </h1>
-        <p className="text-paragraph-md text-text-sub-600 max-w-2xl">
-          Tape un Riot ID au format <span className="text-text-strong-950">GameName#TagLine</span>,
+        <p className="text-hf-body-lg text-hf-navy-soft max-w-2xl">
+          Tape un Riot ID au format <span className="text-hf-navy">GameName#TagLine</span>,
           choisis la région, et BeemoBot ramène stats, ranks et derniers
           matchs depuis l'API officielle.
         </p>
@@ -185,7 +204,7 @@ export default function SearchPage() {
           aria-label="Région"
           value={region}
           onChange={(e) => setRegion(e.target.value)}
-          className="h-10 rounded-md border border-stroke-soft-200 bg-bg-weak-50 px-3 text-sm text-text-strong-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+          className="h-10 rounded-md border border-hf-line bg-hf-surface-alt px-3 text-sm text-hf-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-hf-honey focus-visible:ring-offset-2 focus-visible:ring-offset-hf-bg"
         >
           {REGIONS.map((r) => (
             <option key={r.value} value={r.value}>
@@ -199,8 +218,8 @@ export default function SearchPage() {
       </form>
 
       {error && (
-        <Card className="p-4 mb-8 border-danger/40">
-          <p className="text-sm text-error-base">{error}</p>
+        <Card className="p-4 mb-8 border-hf-loss">
+          <p className="text-sm text-hf-loss">{error}</p>
         </Card>
       )}
 
@@ -208,7 +227,7 @@ export default function SearchPage() {
         <div className="space-y-8">
           {/* Header profil */}
           <section className="flex items-center gap-6">
-            <div className="h-24 w-24 rounded-full bg-bg-weak-50 border border-stroke-soft-200 overflow-hidden flex items-center justify-center">
+            <div className="h-24 w-24 rounded-full bg-hf-surface-alt border border-hf-line overflow-hidden flex items-center justify-center">
               <Image
                 src={`https://ddragon.leagueoflegends.com/cdn/14.1.1/img/profileicon/${profile.summoner.profileIconId}.png`}
                 alt="Profile Icon"
@@ -218,23 +237,23 @@ export default function SearchPage() {
               />
             </div>
             <div>
-              <h2 className="text-title-h5 text-text-strong-950 !font-[600]">
+              <h2 className="font-display text-hf-display-3 text-hf-navy !font-[600]">
                 {profile.summoner.gameName}
               </h2>
-              <p className="text-text-sub-600 text-sm">
+              <p className="text-hf-navy-soft text-sm">
                 #{profile.summoner.tagLine} · Niveau{" "}
                 {profile.summoner.summonerLevel}
               </p>
               <div className="flex gap-2 mt-2 flex-wrap">
                 {profile.ranks?.[0] && (
-                  <Badge variant="accent">
+                  <Pill variant="honey">
                     {profile.ranks[0].tier} {profile.ranks[0].rank}
-                  </Badge>
+                  </Pill>
                 )}
                 {profile.topChampions?.[0] && (
-                  <Badge>
+                  <Pill>
                     Main {profile.topChampions[0].championName}
-                  </Badge>
+                  </Pill>
                 )}
               </div>
             </div>
@@ -243,37 +262,37 @@ export default function SearchPage() {
           {/* Ranks */}
           {profile.ranks && profile.ranks.length > 0 && (
             <section>
-              <h3 className="text-title-h6 text-text-strong-950 !font-[600] mb-4">
+              <h3 className="font-display text-hf-display-3 text-hf-navy !font-[600] mb-4">
                 Classements
               </h3>
               <div className="grid md:grid-cols-2 gap-4">
                 {profile.ranks.map((rank, index) => (
                   <Card key={index} className="p-6">
-                    <div className="text-sm text-text-sub-600">
+                    <div className="text-sm text-hf-navy-soft">
                       {getQueueName(rank.queueType)}
                     </div>
-                    <div className="text-title-h5 text-text-strong-950 !font-[600] mt-1">
+                    <div className="font-display text-hf-display-3 text-hf-navy !font-[600] mt-1">
                       {rank.tier} {rank.rank}{" "}
-                      <span className="text-text-sub-600 text-base font-normal">
+                      <span className="text-hf-navy-soft text-base font-normal">
                         · {rank.leaguePoints} LP
                       </span>
                     </div>
                     <div className="grid grid-cols-3 gap-4 mt-4 text-sm">
                       <div>
-                        <div className="text-text-sub-600">Victoires</div>
-                        <div className="text-text-strong-950 font-medium">
+                        <div className="text-hf-navy-soft">Victoires</div>
+                        <div className="text-hf-navy font-medium">
                           {rank.wins}
                         </div>
                       </div>
                       <div>
-                        <div className="text-text-sub-600">Défaites</div>
-                        <div className="text-text-strong-950 font-medium">
+                        <div className="text-hf-navy-soft">Défaites</div>
+                        <div className="text-hf-navy font-medium">
                           {rank.losses}
                         </div>
                       </div>
                       <div>
-                        <div className="text-text-sub-600">Winrate</div>
-                        <div className="text-text-strong-950 font-medium">
+                        <div className="text-hf-navy-soft">Winrate</div>
+                        <div className="text-hf-navy font-medium">
                           {rank.winRate}%
                         </div>
                       </div>
@@ -287,7 +306,7 @@ export default function SearchPage() {
           {/* Top Champions */}
           {profile.topChampions && profile.topChampions.length > 0 && (
             <section>
-              <h3 className="text-title-h6 text-text-strong-950 !font-[600] mb-4">
+              <h3 className="font-display text-hf-display-3 text-hf-navy !font-[600] mb-4">
                 Meilleurs champions
               </h3>
               <Card className="p-6">
@@ -299,12 +318,12 @@ export default function SearchPage() {
                         alt={champ.championName}
                         width={64}
                         height={64}
-                        className="rounded-full mx-auto mb-2 border border-stroke-soft-200"
+                        className="rounded-full mx-auto mb-2 border border-hf-line"
                       />
-                      <div className="text-sm text-text-strong-950 font-medium">
+                      <div className="text-sm text-hf-navy font-medium">
                         {champ.championName}
                       </div>
-                      <div className="text-xs text-text-sub-600">
+                      <div className="text-xs text-hf-navy-soft">
                         Niv. {champ.championLevel} ·{" "}
                         {champ.championPoints.toLocaleString("fr-FR")} pts
                       </div>
@@ -318,13 +337,13 @@ export default function SearchPage() {
           {/* Recent Matches */}
           {profile.recentMatches && profile.recentMatches.length > 0 && (
             <section>
-              <h3 className="text-title-h6 text-text-strong-950 !font-[600] mb-4">
+              <h3 className="font-display text-hf-display-3 text-hf-navy !font-[600] mb-4">
                 Matchs récents
               </h3>
               <Card className="overflow-hidden">
                 <table className="w-full text-sm">
                   <thead>
-                    <tr className="border-b border-stroke-soft-200 text-text-sub-600">
+                    <tr className="border-b border-hf-line text-hf-navy-soft">
                       <th className="text-left p-3 font-medium">Champion</th>
                       <th className="text-left p-3 font-medium">KDA</th>
                       <th className="text-left p-3 font-medium">Durée</th>
@@ -337,21 +356,21 @@ export default function SearchPage() {
                       return (
                         <tr
                           key={match.matchId}
-                          className="border-b border-stroke-soft-200 last:border-0 hover:bg-bg-soft-200"
+                          className="border-b border-hf-line last:border-0 hover:bg-hf-surface-alt"
                         >
-                          <td className="p-3 text-text-strong-950">
+                          <td className="p-3 text-hf-navy">
                             {participant.championName}
                           </td>
-                          <td className="p-3 text-text-strong-950">
+                          <td className="p-3 text-hf-navy">
                             {participant.kills}/{participant.deaths}/
                             {participant.assists}
                           </td>
-                          <td className="p-3 text-text-sub-600">
+                          <td className="p-3 text-hf-navy-soft">
                             {formatDuration(match.gameDuration)}
                           </td>
                           <td
                             className={`p-3 text-right font-medium ${
-                              participant.win ? "text-text-strong-950" : "text-text-sub-600"
+                              participant.win ? "text-hf-navy" : "text-hf-navy-soft"
                             }`}
                           >
                             {participant.win ? "Victoire" : "Défaite"}
@@ -369,9 +388,9 @@ export default function SearchPage() {
 
       {!profile && !loading && !error && (
         <Card className="p-10 text-center">
-          <p className="text-text-sub-600">
+          <p className="text-hf-navy-soft">
             Recherche un invocateur pour voir ses statistiques. Exemple :{" "}
-            <code className="text-text-strong-950">nunch#N7789</code>
+            <code className="text-hf-navy">nunch#N7789</code>
           </p>
         </Card>
       )}

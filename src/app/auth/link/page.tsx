@@ -9,12 +9,32 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import Button from "@/components/atoms/Button";
-import { Card } from "@/components/atoms/Card";
-import Input from "@/components/atoms/Input";
-import Label from "@/components/atoms/Label";
-import Badge from "@/components/atoms/Badge";
+import { Button } from "@/components/_design/Button";
+import { Card } from "@/components/_design/Card";
+import { Pill } from "@/components/_design/Pill";
 import { API_URL } from "@/lib/env";
+
+// Input et Label HF inline pour ce form (pas d'atoms HF dédiés)
+function Label({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
+  return (
+    <label htmlFor={htmlFor} className="text-hf-eyebrow uppercase tracking-wider text-hf-navy-soft">
+      {children}
+    </label>
+  );
+}
+
+function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <input
+      {...props}
+      className={
+        "h-10 rounded-hf-btn border border-hf-line bg-hf-surface px-3 text-hf-body text-hf-navy " +
+        "placeholder:text-hf-navy-soft/60 focus-visible:outline-none focus-visible:border-hf-honey " +
+        "focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
+      }
+    />
+  );
+}
 
 const REGIONS = [
   "euw1",
@@ -292,34 +312,34 @@ export default function LinkPage() {
 
   return (
     <main className="min-h-[calc(100vh-64px)] flex items-center justify-center px-6 py-12">
-      <Card className="max-w-md w-full p-8 rounded-20 border-stroke-soft-200 bg-bg-weak-50">
+      <Card className="max-w-md w-full p-8 rounded-20 border-hf-line bg-hf-surface-alt">
         {step !== "loading" && step !== "already-linked" && (
           <div className="flex items-center gap-2 mb-6 text-subheading-2xs uppercase tracking-widest">
             <span
               className={
                 step === "search"
-                  ? "text-text-strong-950"
-                  : "text-text-soft-400"
+                  ? "text-hf-navy"
+                  : "text-hf-navy-soft"
               }
             >
               01 · Recherche
             </span>
-            <span className="text-text-soft-400">›</span>
+            <span className="text-hf-navy-soft">›</span>
             <span
               className={
                 step === "preview"
-                  ? "text-text-strong-950"
-                  : "text-text-soft-400"
+                  ? "text-hf-navy"
+                  : "text-hf-navy-soft"
               }
             >
               02 · Confirmation
             </span>
-            <span className="text-text-soft-400">›</span>
+            <span className="text-hf-navy-soft">›</span>
             <span
               className={
                 step === "challenge" || step === "done"
-                  ? "text-text-strong-950"
-                  : "text-text-soft-400"
+                  ? "text-hf-navy"
+                  : "text-hf-navy-soft"
               }
             >
               03 · Vérification
@@ -330,7 +350,7 @@ export default function LinkPage() {
         {step === "loading" && (
           <div className="flex flex-col items-center gap-4 py-12">
             <svg
-              className="animate-spin h-8 w-8 text-text-sub-600"
+              className="animate-spin h-8 w-8 text-hf-navy-soft"
               viewBox="0 0 24 24"
               fill="none"
               aria-hidden="true"
@@ -350,25 +370,25 @@ export default function LinkPage() {
                 strokeLinecap="round"
               />
             </svg>
-            <p className="text-text-sub-600 text-sm">Chargement…</p>
+            <p className="text-hf-navy-soft text-sm">Chargement…</p>
           </div>
         )}
 
         {step === "already-linked" && linkedProfile && (
           <>
-            <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+            <h1 className="text-title-h5 text-hf-navy !font-[600] mb-2">
               Déjà lié ✓
             </h1>
-            <p className="text-text-sub-600 mb-6 text-sm">
+            <p className="text-hf-navy-soft mb-6 text-sm">
               Ton compte Discord est lié à{" "}
-              <strong className="text-text-strong-950">
+              <strong className="text-hf-navy">
                 {linkedProfile.gameName}#{linkedProfile.tagLine}
               </strong>
               . Tu peux donner des shrooms et des respects.
             </p>
 
             {error && (
-              <p className="text-sm text-error-base mb-3" role="alert">
+              <p className="text-sm text-hf-loss mb-3" role="alert">
                 {error}
               </p>
             )}
@@ -393,7 +413,7 @@ export default function LinkPage() {
               </Button>
             </div>
 
-            <p className="text-xs text-text-sub-600 mt-4">
+            <p className="text-xs text-hf-navy-soft mt-4">
               Pour changer de compte Riot, délie d&apos;abord celui-ci.
             </p>
           </>
@@ -401,10 +421,10 @@ export default function LinkPage() {
 
         {step === "search" && (
           <>
-            <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+            <h1 className="text-title-h5 text-hf-navy !font-[600] mb-2">
               Lie ton compte Riot
             </h1>
-            <p className="text-text-sub-600 mb-6 text-sm">
+            <p className="text-hf-navy-soft mb-6 text-sm">
               On va d&apos;abord chercher ton compte, puis vérifier qu&apos;il
               t&apos;appartient via une icône.
             </p>
@@ -430,7 +450,7 @@ export default function LinkPage() {
                   placeholder="N7789"
                   required
                 />
-                <p className="text-xs text-text-sub-600">
+                <p className="text-xs text-hf-navy-soft">
                   Le tag complet, sans le #.
                 </p>
               </div>
@@ -441,7 +461,7 @@ export default function LinkPage() {
                   id="region"
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
-                  className="h-10 rounded-md border border-stroke-soft-200 bg-bg-weak-50 px-3 text-sm text-text-strong-950 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
+                  className="h-10 rounded-md border border-hf-line bg-hf-surface-alt px-3 text-sm text-hf-navy focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-bg"
                 >
                   {REGIONS.map((r) => (
                     <option key={r} value={r}>
@@ -452,7 +472,7 @@ export default function LinkPage() {
               </div>
 
               {error && (
-                <p className="text-sm text-error-base" role="alert">
+                <p className="text-sm text-hf-loss" role="alert">
                   {error}
                 </p>
               )}
@@ -463,7 +483,7 @@ export default function LinkPage() {
                 </Button>
                 <Link
                   href="/"
-                  className="text-sm text-text-sub-600 hover:text-text-strong-950 transition-colors"
+                  className="text-sm text-hf-navy-soft hover:text-hf-navy transition-colors"
                 >
                   Retour
                 </Link>
@@ -474,14 +494,14 @@ export default function LinkPage() {
 
         {step === "preview" && preview && (
           <>
-            <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+            <h1 className="text-title-h5 text-hf-navy !font-[600] mb-2">
               Est-ce bien toi ?
             </h1>
-            <p className="text-text-sub-600 mb-6 text-sm">
+            <p className="text-hf-navy-soft mb-6 text-sm">
               Vérifie le compte avant de lancer la vérification.
             </p>
 
-            <div className="flex items-center gap-4 mb-6 p-4 rounded-md border border-stroke-soft-200 bg-bg-weak-50">
+            <div className="flex items-center gap-4 mb-6 p-4 rounded-md border border-hf-line bg-hf-surface-alt">
               <Image
                 src={iconUrl(preview.profileIconId)}
                 alt="Icône d'invocateur"
@@ -490,16 +510,16 @@ export default function LinkPage() {
                 className="rounded-md"
               />
               <div className="flex-1 min-w-0">
-                <div className="text-label-md text-text-strong-950 truncate">
+                <div className="text-label-md text-hf-navy truncate">
                   {preview.gameName}
-                  <span className="text-text-sub-600">#{preview.tagLine}</span>
+                  <span className="text-hf-navy-soft">#{preview.tagLine}</span>
                 </div>
-                <div className="text-xs text-text-sub-600 mt-0.5">
+                <div className="text-xs text-hf-navy-soft mt-0.5">
                   Niveau {preview.summonerLevel} ·{" "}
                   {preview.region.toUpperCase()}
                 </div>
                 {preview.phantomEvents > 0 && (
-                  <div className="text-xs text-primary-base mt-1">
+                  <div className="text-xs text-hf-discord mt-1">
                     {preview.phantomEvents} évènements en attente
                   </div>
                 )}
@@ -507,24 +527,24 @@ export default function LinkPage() {
             </div>
 
             {preview.alreadyLinkedByMe && (
-              <Card className="p-4 mb-4 border-accent/40">
-                <p className="text-sm text-text-strong-950">
+              <Card className="p-4 mb-4 border-hf-honey">
+                <p className="text-sm text-hf-navy">
                   Ce compte est <strong>déjà lié à ton profil</strong>.
                 </p>
               </Card>
             )}
 
             {preview.alreadyLinkedByOther && (
-              <Card className="p-4 mb-4 border-danger/40 bg-error-base/5">
-                <p className="text-sm text-text-strong-950 mb-2">
+              <Card className="p-4 mb-4 border-hf-loss bg-hf-loss/10">
+                <p className="text-sm text-hf-navy mb-2">
                   <strong>Ce compte Riot est déjà pris.</strong>
                 </p>
-                <p className="text-xs text-text-sub-600">
+                <p className="text-xs text-hf-navy-soft">
                   Quelqu&apos;un l&apos;a déjà associé à son profil BeemoBot. Si
                   tu penses qu&apos;il a été usurpé, contacte le support sur{" "}
                   <a
                     href="https://discord.gg/beemobot"
-                    className="text-primary-base hover:underline"
+                    className="text-hf-discord hover:underline"
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -536,7 +556,7 @@ export default function LinkPage() {
             )}
 
             {error && (
-              <p className="text-sm text-error-base mb-3" role="alert">
+              <p className="text-sm text-hf-loss mb-3" role="alert">
                 {error}
               </p>
             )}
@@ -569,19 +589,19 @@ export default function LinkPage() {
 
         {step === "challenge" && challenge && (
           <>
-            <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+            <h1 className="text-title-h5 text-hf-navy !font-[600] mb-2">
               Prouve que c&apos;est ton compte
             </h1>
-            <p className="text-text-sub-600 mb-6 text-sm">
+            <p className="text-hf-navy-soft mb-6 text-sm">
               Change l&apos;icône d&apos;invocateur sur{" "}
-              <strong className="text-text-strong-950">
+              <strong className="text-hf-navy">
                 {challenge.gameName}#{challenge.tagLine}
               </strong>{" "}
               pour celle ci-dessous, puis clique sur{" "}
-              <strong className="text-text-strong-950">J&apos;ai changé</strong>.
+              <strong className="text-hf-navy">J&apos;ai changé</strong>.
             </p>
 
-            <div className="flex flex-col items-center gap-3 mb-6 p-6 rounded-md border border-accent/40 bg-primary-base/5">
+            <div className="flex flex-col items-center gap-3 mb-6 p-6 rounded-md border border-hf-honey bg-hf-honey-glow">
               <Image
                 src={iconUrl(challenge.expectedIconId)}
                 alt={`Icône ${challenge.expectedIconId}`}
@@ -589,19 +609,19 @@ export default function LinkPage() {
                 height={96}
                 className="rounded-md"
               />
-              <div className="text-xs text-text-sub-600">
+              <div className="text-xs text-hf-navy-soft">
                 Icône #{challenge.expectedIconId}
               </div>
-              <div className="text-xs text-text-sub-600">
+              <div className="text-xs text-hf-navy-soft">
                 Expire dans{" "}
-                <span className="text-text-strong-950 font-mono">
+                <span className="text-hf-navy font-mono">
                   {Math.floor(secondsLeft / 60)}:
                   {String(secondsLeft % 60).padStart(2, "0")}
                 </span>
               </div>
             </div>
 
-            <ol className="text-sm text-text-sub-600 mb-6 flex flex-col gap-1.5 list-decimal list-inside">
+            <ol className="text-sm text-hf-navy-soft mb-6 flex flex-col gap-1.5 list-decimal list-inside">
               <li>Ouvre le client League of Legends.</li>
               <li>Va sur ton profil → clique sur ton icône.</li>
               <li>Sélectionne l&apos;icône ci-dessus.</li>
@@ -609,8 +629,8 @@ export default function LinkPage() {
             </ol>
 
             {verifyMessage && (
-              <Card className="p-3 mb-4 border-accent-gold/40 bg-primary-base-gold/5">
-                <p className="text-sm text-text-strong-950">{verifyMessage}</p>
+              <Card className="p-3 mb-4 border-hf-honey bg-hf-honey-glow">
+                <p className="text-sm text-hf-navy">{verifyMessage}</p>
               </Card>
             )}
 
@@ -635,8 +655,8 @@ export default function LinkPage() {
               </Button>
             </div>
 
-            <p className="text-xs text-text-sub-600 mt-4">
-              <Badge variant="default">Astuce</Badge>{" "}
+            <p className="text-xs text-hf-navy-soft mt-4">
+              <Pill variant="default">Astuce</Pill>{" "}
               <span className="ml-1">
                 Si Riot met du temps à propager le changement, attends 30s puis
                 réessaie. Pas besoin de relancer le challenge.
@@ -647,19 +667,19 @@ export default function LinkPage() {
 
         {step === "done" && doneData && (
           <>
-            <h1 className="text-title-h5 text-text-strong-950 !font-[600] mb-2">
+            <h1 className="text-title-h5 text-hf-navy !font-[600] mb-2">
               Compte lié ✓
             </h1>
-            <p className="text-text-sub-600 mb-6 text-sm">
-              <strong className="text-text-strong-950">
+            <p className="text-hf-navy-soft mb-6 text-sm">
+              <strong className="text-hf-navy">
                 {doneData.gameName}#{doneData.tagLine}
               </strong>{" "}
               est maintenant associé à ton profil.
             </p>
 
             {doneData.phantomEvents > 0 && (
-              <Card className="p-4 mb-4 border-accent/40">
-                <p className="text-sm text-text-strong-950">
+              <Card className="p-4 mb-4 border-hf-honey">
+                <p className="text-sm text-hf-navy">
                   Tu avais{" "}
                   <strong>{doneData.phantomEvents} évènements</strong> de
                   réputation en attente — ils sont maintenant à toi.
@@ -669,7 +689,7 @@ export default function LinkPage() {
 
             {doneData.previousIconId !== null && (
               <Card className="p-4 mb-6">
-                <p className="text-xs text-text-sub-600 mb-2">
+                <p className="text-xs text-hf-navy-soft mb-2">
                   Tu peux remettre ton ancienne icône :
                 </p>
                 <div className="flex items-center gap-3">
@@ -680,7 +700,7 @@ export default function LinkPage() {
                     height={48}
                     className="rounded-md"
                   />
-                  <span className="text-xs text-text-sub-600">
+                  <span className="text-xs text-hf-navy-soft">
                     Icône #{doneData.previousIconId}
                   </span>
                 </div>
