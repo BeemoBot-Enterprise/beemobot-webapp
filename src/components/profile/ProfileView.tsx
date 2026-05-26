@@ -247,27 +247,35 @@ export function ProfileView({
   fallbackTagLine,
   ownerActions,
 }: ProfileViewProps) {
+  // Défense en profondeur : tous les accès passent par des constantes locales
+  // avec fallback, parce qu'on a déjà eu un cas où le payload renvoyé par
+  // l'API d'un compte tout neuf manquait des champs (e.g. recentEvents).
   const lol = profile.lol;
-  const displayName =
-    profile.gameName ?? lol?.summoner.gameName ?? fallbackGameName ?? "?";
-  const displayTag =
-    profile.tagLine ?? lol?.summoner.tagLine ?? fallbackTagLine ?? "?";
-  const netRep = profile.counts.respects - profile.counts.shrooms;
-  const netLabel = netRep >= 0 ? `+${netRep}` : `${netRep}`;
-  const last4 = (lol?.recentMatches ?? []).slice(0, 4);
-  const soloRank = lol?.ranks.find((r) => r.queueType === "RANKED_SOLO_5x5");
-  const flexRank = lol?.ranks.find((r) => r.queueType === "RANKED_FLEX_SR");
-  const ranks = [soloRank, flexRank].filter(Boolean) as LolRank[];
-  const topChampion = lol?.topChampions?.[0];
-
-  // Le given est nouveau (juste pushé côté API). Fallback à 0 si l'API
-  // déployée n'a pas encore le champ — évite un undefined cassant.
+  const summonerData = lol?.summoner;
+  const ranksData = lol?.ranks ?? [];
+  const matchesData = lol?.recentMatches ?? [];
+  const championsData = lol?.topChampions ?? [];
+  const counts = profile.counts ?? { respects: 0, shrooms: 0 };
+  const honey = profile.honey ?? 0;
+  const recentEvents = profile.recentEvents ?? [];
   const givenRespects = (profile as FullProfile & {
     given?: { respects: number; shrooms: number };
   }).given?.respects ?? 0;
   const givenShrooms = (profile as FullProfile & {
     given?: { respects: number; shrooms: number };
   }).given?.shrooms ?? 0;
+
+  const displayName =
+    profile.gameName ?? summonerData?.gameName ?? fallbackGameName ?? "?";
+  const displayTag =
+    profile.tagLine ?? summonerData?.tagLine ?? fallbackTagLine ?? "?";
+  const netRep = counts.respects - counts.shrooms;
+  const netLabel = netRep >= 0 ? `+${netRep}` : `${netRep}`;
+  const last4 = matchesData.slice(0, 4);
+  const soloRank = ranksData.find((r) => r.queueType === "RANKED_SOLO_5x5");
+  const flexRank = ranksData.find((r) => r.queueType === "RANKED_FLEX_SR");
+  const ranks = [soloRank, flexRank].filter(Boolean) as LolRank[];
+  const topChampion = championsData[0];
 
   return (
     <main className="relative">
@@ -297,18 +305,18 @@ export function ProfileView({
         <div className="relative max-w-[1100px] mx-auto px-6 py-12 lg:py-16">
           <div className="flex flex-col lg:flex-row items-start lg:items-end justify-between gap-8">
             <div className="flex items-end gap-5">
-              {lol?.summoner && (
+              {summonerData && (
                 <div className="relative shrink-0">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
-                    src={profileIconUrl(lol.summoner.profileIconId)}
+                    src={profileIconUrl(summonerData!.profileIconId)}
                     alt={`Icône de ${displayName}`}
                     width={104}
                     height={104}
                     className="rounded-hf-card-lg border-4 border-hf-bg shadow-hf-card block bg-hf-surface-alt"
                   />
                   <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-hf-navy text-white text-xs font-bold px-2.5 py-1 whitespace-nowrap border-2 border-hf-bg shadow-hf-card">
-                    Niv. {lol.summoner.summonerLevel}
+                    Niv. {summonerData!.summonerLevel}
                   </span>
                 </div>
               )}
@@ -370,13 +378,13 @@ export function ProfileView({
         <section className="grid md:grid-cols-3 gap-4">
           <ReputationStat
             label="Respects"
-            received={profile.counts.respects}
+            received={counts.respects}
             given={givenRespects}
             toneReceived="win"
           />
           <ReputationStat
             label="Shrooms"
-            received={profile.counts.shrooms}
+            received={counts.shrooms}
             given={givenShrooms}
             toneReceived="loss"
           />
@@ -388,7 +396,7 @@ export function ProfileView({
             <div className="min-w-0">
               <Eyebrow>Honey</Eyebrow>
               <div className="font-display text-4xl md:text-5xl font-extrabold mt-1 leading-none tabular-nums text-hf-honey-text">
-                {profile.honey.toLocaleString("fr-FR")}
+                {honey.toLocaleString("fr-FR")}
               </div>
               <div className="text-hf-body-sm text-hf-navy-soft mt-1">
                 monnaie du shop
@@ -398,14 +406,14 @@ export function ProfileView({
         </section>
 
         {/* Net + ratio si pertinent */}
-        {profile.counts.respects + profile.counts.shrooms > 0 && (
+        {counts.respects + counts.shrooms > 0 && (
           <section>
             <Card className="p-5">
               <div className="flex items-center justify-between gap-4 mb-3">
                 <Eyebrow tone="navy">Ratio de respect</Eyebrow>
                 <span className="text-xs text-hf-navy-soft">
-                  {profile.counts.respects}/
-                  {profile.counts.respects + profile.counts.shrooms} évènements
+                  {counts.respects}/
+                  {counts.respects + counts.shrooms} évènements
                 </span>
               </div>
               <div className="flex items-center gap-3">
@@ -413,8 +421,8 @@ export function ProfileView({
                   <div
                     className="h-full rounded-full transition-all"
                     style={{
-                      width: `${(profile.counts.respects /
-                        (profile.counts.respects + profile.counts.shrooms)) *
+                      width: `${(counts.respects /
+                        (counts.respects + counts.shrooms)) *
                         100
                         }%`,
                       background:
@@ -424,8 +432,8 @@ export function ProfileView({
                 </div>
                 <span className="font-display text-xl font-extrabold text-hf-navy tabular-nums w-14 text-right">
                   {Math.round(
-                    (profile.counts.respects /
-                      (profile.counts.respects + profile.counts.shrooms)) *
+                    (counts.respects /
+                      (counts.respects + counts.shrooms)) *
                     100,
                   )}
                   %
@@ -477,14 +485,14 @@ export function ProfileView({
         )}
 
         {/* Recent rep */}
-        {profile.recentEvents.length > 0 && (
+        {recentEvents.length > 0 && (
           <section>
             <h2 className="font-display text-hf-display-3 text-hf-navy mb-4">
               Réputation reçue récemment
             </h2>
             <Card className="p-5">
               <ul className="flex flex-col gap-2">
-                {profile.recentEvents.slice(0, 10).map((e) => (
+                {recentEvents.slice(0, 10).map((e) => (
                   <li
                     key={e.id}
                     className="flex items-center justify-between gap-3 border-b border-hf-line last:border-b-0 pb-2 last:pb-0"

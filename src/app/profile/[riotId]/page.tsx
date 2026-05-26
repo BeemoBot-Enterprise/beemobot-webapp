@@ -6,6 +6,7 @@
 import { fetchProfileByRiotId } from "@/lib/api";
 import { notFound } from "next/navigation";
 import { ProfileView } from "@/components/profile/ProfileView";
+import { ProfileErrorBoundary } from "@/components/profile/ProfileErrorBoundary";
 
 interface Props {
   params: Promise<{ riotId: string }>;
@@ -23,10 +24,12 @@ export default async function PublicProfilePage({ params }: Props) {
   if (!profile) return notFound();
 
   return (
-    <ProfileView
-      profile={profile}
-      fallbackGameName={gameName}
-      fallbackTagLine={tagLine}
-    />
+    <ProfileErrorBoundary>
+      <ProfileView
+        profile={profile}
+        fallbackGameName={gameName}
+        fallbackTagLine={tagLine}
+      />
+    </ProfileErrorBoundary>
   );
 }

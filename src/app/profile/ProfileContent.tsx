@@ -11,6 +11,7 @@ import { useSearchParams } from "next/navigation";
 import { Card } from "@/components/_design/Card";
 import { Button } from "@/components/_design/Button";
 import { ProfileView } from "@/components/profile/ProfileView";
+import { ProfileErrorBoundary } from "@/components/profile/ProfileErrorBoundary";
 import { API_URL } from "@/lib/env";
 import { fetchProfileByRiotId, type FullProfile } from "@/lib/api";
 
@@ -192,24 +193,26 @@ export default function ProfileContent() {
 
   // Cas plein : compte lié, on rend la vue partagée avec les actions owner.
   return (
-    <ProfileView
-      profile={profile}
-      fallbackGameName={me.gameName ?? undefined}
-      fallbackTagLine={me.tagLine ?? undefined}
-      ownerActions={
-        <>
-          <Link href="/settings">
-            <Button variant="outline" size="sm">
-              Paramètres
-            </Button>
-          </Link>
-          <Link href="/auth/link">
-            <Button variant="ghost" size="sm">
-              Modifier mon Riot ID
-            </Button>
-          </Link>
-        </>
-      }
-    />
+    <ProfileErrorBoundary>
+      <ProfileView
+        profile={profile}
+        fallbackGameName={me.gameName ?? undefined}
+        fallbackTagLine={me.tagLine ?? undefined}
+        ownerActions={
+          <>
+            <Link href="/settings">
+              <Button variant="outline" size="sm">
+                Paramètres
+              </Button>
+            </Link>
+            <Link href="/auth/link">
+              <Button variant="ghost" size="sm">
+                Modifier mon Riot ID
+              </Button>
+            </Link>
+          </>
+        }
+      />
+    </ProfileErrorBoundary>
   );
 }
