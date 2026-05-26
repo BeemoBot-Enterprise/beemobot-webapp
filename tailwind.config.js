@@ -46,26 +46,27 @@ module.exports = {
         "accent-gold": "var(--accent-gold)",
         danger: "var(--danger)",
 
-        // AlignUI — bg scale (page surfaces)
-        "bg-white-0": "#0B0D12",
-        "bg-weak-50": "#151821",
-        "bg-soft-200": "#1B1F2B",
-        "bg-sub-300": "#262A36",
-        "bg-surface-800": "#2A2F3D",
-        "bg-strong-950": "#E8EAF0",
+        // AlignUI — bg scale (page surfaces). CSS vars définies dans globals.css
+        // pour basculer entre light (défaut) et dark (.dark sur <html>).
+        "bg-white-0": "var(--ai-bg-white-0)",
+        "bg-weak-50": "var(--ai-bg-weak-50)",
+        "bg-soft-200": "var(--ai-bg-soft-200)",
+        "bg-sub-300": "var(--ai-bg-sub-300)",
+        "bg-surface-800": "var(--ai-bg-surface-800)",
+        "bg-strong-950": "var(--ai-bg-strong-950)",
 
         // AlignUI — text scale
-        "text-white-0": "#FFFFFF",
-        "text-disabled-300": "#6B7280",
-        "text-soft-400": "#9AA0B0",
-        "text-sub-600": "#C1C5D0",
-        "text-strong-950": "#E8EAF0",
+        "text-white-0": "var(--ai-text-white-0)",
+        "text-disabled-300": "var(--ai-text-disabled-300)",
+        "text-soft-400": "var(--ai-text-soft-400)",
+        "text-sub-600": "var(--ai-text-sub-600)",
+        "text-strong-950": "var(--ai-text-strong-950)",
 
         // AlignUI — stroke scale
-        "stroke-white-0": "#0B0D12",
-        "stroke-soft-200": "#262A36",
-        "stroke-sub-300": "#2F3441",
-        "stroke-strong-950": "#E8EAF0",
+        "stroke-white-0": "var(--ai-stroke-white-0)",
+        "stroke-soft-200": "var(--ai-stroke-soft-200)",
+        "stroke-sub-300": "var(--ai-stroke-sub-300)",
+        "stroke-strong-950": "var(--ai-stroke-strong-950)",
 
         // AlignUI — primary
         "primary-base": "#3B82F6",

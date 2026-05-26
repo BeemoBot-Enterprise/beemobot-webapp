@@ -3,6 +3,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Onest, Geist } from "next/font/google";
 import { HeaderHF } from "@/components/_design/Header";
 import { FooterHF } from "@/components/_design/Footer";
+import { ThemeProvider } from "@/components/_design/ThemeProvider";
 
 const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -41,9 +42,11 @@ export default function RootLayout({
   return (
     <html lang="fr" suppressHydrationWarning className={`${geist.variable} ${bricolage.variable} ${onest.variable}`}>
       <body className="min-h-screen bg-hf-bg text-hf-navy flex flex-col font-body antialiased">
-        <HeaderHF />
-        <main className="flex-grow">{children}</main>
-        <FooterHF />
+        <ThemeProvider>
+          <HeaderHF />
+          <main className="flex-grow">{children}</main>
+          <FooterHF />
+        </ThemeProvider>
       </body>
     </html>
   );

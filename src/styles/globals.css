@@ -2,19 +2,12 @@
 @tailwind components;
 @tailwind utilities;
 
+/* =========================================================================
+   Theme tokens — light par défaut (:root) + override dark (.dark)
+   ========================================================================= */
+
 :root {
-  --bg: #0b0d12;
-  --surface: #151821;
-  --surface-hover: #1b1f2b;
-  --border: #262a36;
-  --text: #e8eaf0;
-  --text-muted: #9aa0b0;
-  --accent: #3b82f6;
-  --accent-hover: #2563eb;
-  --accent-gold: #f5b528;
-  --danger: #ef4444;
-  --radius: 8px;
-  /* Honey Friendly — Phase 1 (additive, doesn't override AlignUI dark) */
+  /* Honey Friendly — palette light (canonique) */
   --hf-bg: #FAFAF7;
   --hf-surface: #FFFFFF;
   --hf-surface-alt: #F5F0E0;
@@ -24,10 +17,96 @@
   --hf-honey: #E5A422;
   --hf-honey-soft: #FFD56E;
   --hf-honey-glow: rgba(229, 164, 34, 0.18);
+  --hf-honey-text: #8B6914;
   --hf-discord: #5865F2;
   --hf-win: #10B981;
   --hf-loss: #F43F5E;
-  --hf-honey-text: #8B6914;
+
+  /* Legacy BeemoBot tokens — aliasés sur HF pour héritage cohérent */
+  --bg: var(--hf-bg);
+  --surface: var(--hf-surface);
+  --surface-hover: var(--hf-surface-alt);
+  --border: var(--hf-line);
+  --text: var(--hf-navy);
+  --text-muted: var(--hf-navy-soft);
+  --accent: var(--hf-honey);
+  --accent-hover: #C68A1E;
+  --accent-gold: var(--hf-honey);
+  --danger: var(--hf-loss);
+  --radius: 8px;
+
+  /* AlignUI scales — bg (surfaces de page) */
+  --ai-bg-white-0: #FFFFFF;
+  --ai-bg-weak-50: var(--hf-bg);
+  --ai-bg-soft-200: var(--hf-surface-alt);
+  --ai-bg-sub-300: var(--hf-line);
+  --ai-bg-surface-800: var(--hf-surface);
+  --ai-bg-strong-950: var(--hf-navy);
+
+  /* AlignUI scales — text */
+  --ai-text-white-0: #FFFFFF;
+  --ai-text-disabled-300: #B5AFA0;
+  --ai-text-soft-400: var(--hf-navy-soft);
+  --ai-text-sub-600: var(--hf-navy-soft);
+  --ai-text-strong-950: var(--hf-navy);
+
+  /* AlignUI scales — stroke */
+  --ai-stroke-white-0: #FFFFFF;
+  --ai-stroke-soft-200: var(--hf-line);
+  --ai-stroke-sub-300: #D9D2C0;
+  --ai-stroke-strong-950: var(--hf-navy);
+
+  /* AlignUI scales — shadow palette (couleur source pour box-shadows) */
+  --ai-shadow-color: 20, 23, 43;       /* HF navy en RGB triplets, pour rgba(var(--ai-shadow-color), 0.X) */
+  --ai-shadow-alpha-strong: 0.18;
+  --ai-shadow-alpha-soft: 0.10;
+}
+
+.dark {
+  /* Honey Friendly — palette dark (cocoa + honey) */
+  --hf-bg: #0F1116;
+  --hf-surface: #181B22;
+  --hf-surface-alt: #21242D;
+  --hf-navy: #E8E3D2;          /* "cream", devient la couleur texte primaire en dark */
+  --hf-navy-soft: #A9A395;
+  --hf-line: #2A2E38;
+  --hf-honey: #E5A422;          /* identique — le miel reste miel */
+  --hf-honey-soft: #FFD56E;
+  --hf-honey-glow: rgba(229, 164, 34, 0.22);
+  --hf-honey-text: #F0B956;     /* éclairci pour contraste sur fond sombre */
+  --hf-discord: #7A86FF;
+  --hf-win: #34D399;
+  --hf-loss: #FB7185;
+
+  /* Legacy tokens (héritage automatique via les alias ci-dessus, mais on
+     re-déclare accent-hover qui n'a pas d'alias HF direct) */
+  --accent-hover: #C68A1E;
+
+  /* AlignUI bg scale en dark */
+  --ai-bg-white-0: #0B0D12;
+  --ai-bg-weak-50: var(--hf-bg);
+  --ai-bg-soft-200: var(--hf-surface);
+  --ai-bg-sub-300: var(--hf-surface-alt);
+  --ai-bg-surface-800: var(--hf-surface-alt);
+  --ai-bg-strong-950: var(--hf-navy);
+
+  /* AlignUI text scale en dark */
+  --ai-text-white-0: #FFFFFF;
+  --ai-text-disabled-300: #6B7280;
+  --ai-text-soft-400: var(--hf-navy-soft);
+  --ai-text-sub-600: var(--hf-navy-soft);
+  --ai-text-strong-950: var(--hf-navy);
+
+  /* AlignUI stroke scale en dark */
+  --ai-stroke-white-0: #0B0D12;
+  --ai-stroke-soft-200: var(--hf-line);
+  --ai-stroke-sub-300: #353A47;
+  --ai-stroke-strong-950: var(--hf-navy);
+
+  /* Shadows : on assombrit la couleur source pour éviter les halos trop voyants */
+  --ai-shadow-color: 0, 0, 0;
+  --ai-shadow-alpha-strong: 0.55;
+  --ai-shadow-alpha-soft: 0.35;
 }
 
 @layer base {
@@ -64,6 +143,6 @@
 }
 
 ::selection {
-  background: rgba(59, 130, 246, 0.3);
+  background: var(--hf-honey-glow);
   color: var(--text);
 }

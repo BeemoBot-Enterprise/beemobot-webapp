@@ -8,6 +8,7 @@ import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { RiDiscordFill, RiMenuLine, RiCloseLine } from "@remixicon/react";
 import { Button } from "./Button";
+import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/design/cn";
 import { BOT_INVITE_URL } from "@/lib/env";
 
@@ -50,6 +51,7 @@ export function HeaderHF({ className }: { className?: string }) {
           >
             Mon profil
           </Link>
+          <ThemeToggle className="hidden sm:flex" />
           <a href={BOT_INVITE_URL} target="_blank" rel="noreferrer" className="hidden md:inline-flex">
             <Button size="sm" variant="primary">
               <RiDiscordFill className="size-4" />
@@ -109,11 +111,15 @@ export function HeaderHF({ className }: { className?: string }) {
                     Mon profil
                   </Link>
                 </nav>
+                <div className="mt-6 flex items-center gap-3">
+                  <ThemeToggle />
+                  <span className="text-hf-body-sm text-hf-navy-soft">Thème</span>
+                </div>
                 <a
                   href={BOT_INVITE_URL}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-6 inline-flex w-full"
+                  className="mt-4 inline-flex w-full"
                   onClick={() => setOpen(false)}
                 >
                   <Button size="lg" variant="primary" className="w-full">
