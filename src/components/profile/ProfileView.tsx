@@ -20,6 +20,7 @@ import {
   profileIconUrl,
 } from "@/lib/ddragon";
 import { HoneyPot } from "./HoneyPot";
+import { CopyProfileLink } from "./CopyProfileLink";
 
 const QUEUE_LABEL: Record<string, string> = {
   RANKED_SOLO_5x5: "Solo / Duo",
@@ -332,29 +333,33 @@ export function ProfileView({
               </div>
             </div>
 
-            {ownerActions ? (
-              <div className="flex flex-wrap items-center gap-2">{ownerActions}</div>
-            ) : (
-              <div className="rounded-hf-card-lg bg-hf-surface/80 backdrop-blur border border-hf-line px-5 py-3 text-right">
-                <div className="text-xs uppercase tracking-wide text-hf-navy-soft font-bold">
-                  Score net
-                </div>
-                <div
-                  className={`font-display text-3xl font-extrabold leading-none mt-1 ${
-                    netRep > 0
-                      ? "text-hf-win"
-                      : netRep < 0
-                        ? "text-hf-loss"
-                        : "text-hf-navy"
-                  }`}
-                >
-                  {netLabel}
-                </div>
-                <div className="text-xs text-hf-navy-soft mt-1">
-                  respects − shrooms
-                </div>
+            <div className="flex flex-col items-stretch lg:items-end gap-3">
+              <div className="flex flex-wrap items-center gap-2 justify-end">
+                <CopyProfileLink riotId={`${displayName}-${displayTag}`} />
+                {ownerActions}
               </div>
-            )}
+              {!ownerActions && (
+                <div className="rounded-hf-card-lg bg-hf-surface/80 backdrop-blur border border-hf-line px-5 py-3 text-right">
+                  <div className="text-xs uppercase tracking-wide text-hf-navy-soft font-bold">
+                    Score net
+                  </div>
+                  <div
+                    className={`font-display text-3xl font-extrabold leading-none mt-1 ${
+                      netRep > 0
+                        ? "text-hf-win"
+                        : netRep < 0
+                          ? "text-hf-loss"
+                          : "text-hf-navy"
+                    }`}
+                  >
+                    {netLabel}
+                  </div>
+                  <div className="text-xs text-hf-navy-soft mt-1">
+                    respects − shrooms
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </section>
@@ -503,23 +508,6 @@ export function ProfileView({
           </section>
         )}
 
-        {/* CTA partage de l'URL */}
-        <Card className="p-5 flex flex-wrap items-center justify-between gap-3">
-          <div>
-            <Eyebrow tone="navy">Partage ce profil</Eyebrow>
-            <p className="text-hf-body-sm text-hf-navy mt-1">
-              URL directe :{" "}
-              <code className="font-mono text-hf-honey-text">
-                /profile/{displayName}-{displayTag}
-              </code>
-            </p>
-          </div>
-          <Link href="/leaderboard">
-            <Button variant="outline" size="sm">
-              Voir le leaderboard
-            </Button>
-          </Link>
-        </Card>
       </div>
     </main>
   );
