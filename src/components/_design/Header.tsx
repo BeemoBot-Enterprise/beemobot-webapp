@@ -6,7 +6,7 @@
 import Link from "next/link";
 import * as React from "react";
 import * as Dialog from "@radix-ui/react-dialog";
-import { RiDiscordFill, RiMenuLine, RiCloseLine, RiSearchLine } from "@remixicon/react";
+import { RiDiscordFill, RiMenuLine, RiCloseLine } from "@remixicon/react";
 import { Button } from "./Button";
 import { ThemeToggle } from "./ThemeToggle";
 import { cn } from "@/lib/design/cn";
@@ -45,14 +45,6 @@ export function HeaderHF({ className }: { className?: string }) {
           ))}
         </nav>
         <div className="flex items-center gap-2">
-          <Link
-            href="/search"
-            aria-label="Rechercher un joueur"
-            title="Rechercher un joueur"
-            className="hidden sm:flex items-center justify-center size-10 rounded-hf-btn border border-hf-line bg-hf-surface text-hf-navy hover:border-hf-honey hover:text-hf-honey-text transition-colors"
-          >
-            <RiSearchLine className="size-5" aria-hidden />
-          </Link>
           <Link
             href="/profile"
             className="hidden sm:inline-block text-hf-body-sm font-medium text-hf-navy-soft hover:text-hf-navy transition-colors"
