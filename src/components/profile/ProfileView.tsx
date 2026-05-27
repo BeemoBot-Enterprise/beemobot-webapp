@@ -319,11 +319,11 @@ export function ProfileView({
                   <img
                     src={profileIconUrl(summonerData.profileIconId)}
                     alt={`Icône de ${displayName}`}
-                    width={104}
-                    height={104}
-                    className="rounded-hf-card-lg border-4 border-hf-bg shadow-hf-card block bg-hf-surface-alt"
+                    width={96}
+                    height={96}
+                    className="rounded-full ring-2 ring-hf-line shadow-hf-card block bg-hf-surface-alt object-cover"
                   />
-                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-hf-navy text-white text-xs font-bold px-2.5 py-1 whitespace-nowrap border-2 border-hf-bg shadow-hf-card">
+                  <span className="absolute -bottom-2 left-1/2 -translate-x-1/2 rounded-full bg-hf-navy text-white text-xs font-bold px-2.5 py-1 whitespace-nowrap shadow-hf-card">
                     Niv. {summonerData.summonerLevel}
                   </span>
                 </div>
@@ -335,9 +335,9 @@ export function ProfileView({
                   <img
                     src={discordAvatarUrl}
                     alt={`Avatar Discord de ${discordName ?? "user"}`}
-                    width={104}
-                    height={104}
-                    className="rounded-hf-card-lg border-4 border-hf-bg shadow-hf-card block bg-hf-surface-alt"
+                    width={96}
+                    height={96}
+                    className="rounded-full ring-2 ring-hf-line shadow-hf-card block bg-hf-surface-alt object-cover"
                   />
                 </div>
               ) : null}
@@ -427,11 +427,12 @@ export function ProfileView({
             given={givenShrooms}
             toneReceived="loss"
           />
-          <Card
-            variant="accent"
-            className="flex items-center gap-5 !p-5"
-          >
-            <HoneyPot size={56} />
+          {/* Honey : la card "accent" embarquait un glow circle pseudo-element
+              qui écrasait le pot de miel sur certains viewports. On garde
+              variant default et on pose un fond honey-glow propre via la
+              classe utility, sans cercle décoratif. */}
+          <Card className="!p-5 bg-hf-honey-glow border-hf-honey/30 flex items-center gap-5">
+            <HoneyPot size={56} className="shrink-0" />
             <div className="min-w-0">
               <Eyebrow>Honey</Eyebrow>
               <div className="font-display text-4xl md:text-5xl font-extrabold mt-1 leading-none tabular-nums text-hf-honey-text">
