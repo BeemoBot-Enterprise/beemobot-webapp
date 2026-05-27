@@ -8,7 +8,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { RiSearchLine } from "@remixicon/react";
+import { RiSearchLine, RiLoader4Line } from "@remixicon/react";
 import { Card } from "@/components/_design/Card";
 import { Pill } from "@/components/_design/Pill";
 import { Eyebrow } from "@/components/_design/Eyebrow";
@@ -33,25 +33,36 @@ function parseRiotId(input: string): { gameName: string; tagLine: string } | nul
   return { gameName: m[1].trim(), tagLine: m[2].trim() };
 }
 
+// Profile URL : route Riot canonique si lié, fallback sur la route Discord
+// pour les utilisateurs qui ont un compte Beemo mais pas encore lié à Riot.
+function profileHref(r: SearchResult): string | null {
+  if (r.linked && r.gameName && r.tagLine) {
+    return `/profile/${encodeURIComponent(`${r.gameName}-${r.tagLine}`)}`;
+  }
+  if (r.discordId) {
+    return `/profile/discord/${encodeURIComponent(r.discordId)}`;
+  }
+  return null;
+}
+
 export default function SearchPage() {
   const router = useRouter();
   const [query, setQuery] = useState("");
   const [results, setResults] = useState<SearchResult[]>([]);
+  const [searching, setSearching] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Un seul mode "both" : on cherche en même temps dans les pseudos Discord
-  // et les Riot IDs BeemoBot. Si la string contient #/-, le backend splitte
-  // pour matcher gameName+tag. Pas de toggle, pas de région — l'utilisateur
-  // clique sur un résultat et c'est lui qui décide.
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) {
       setResults([]);
       setError(null);
+      setSearching(false);
       return;
     }
     const ctrl = new AbortController();
     const id = window.setTimeout(async () => {
+      setSearching(true);
       try {
         setError(null);
         const res = await fetch(
@@ -64,6 +75,8 @@ export default function SearchPage() {
       } catch (e) {
         if ((e as { name?: string }).name === "AbortError") return;
         setError(e instanceof Error ? e.message : "Erreur inconnue.");
+      } finally {
+        setSearching(false);
       }
     }, DEBOUNCE_MS);
     return () => {
@@ -74,8 +87,6 @@ export default function SearchPage() {
 
   const onSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Si Riot ID complet → route directe (le profil server-component
-    // résoudra côté serveur, sans passer par /lol/summoner ici).
     const parsed = parseRiotId(query);
     if (parsed) {
       router.push(
@@ -83,12 +94,12 @@ export default function SearchPage() {
       );
       return;
     }
-    // Sinon, on prend le premier résultat lié de l'autocomplete.
-    const linked = results.find((r) => r.linked && r.gameName && r.tagLine);
-    if (linked) {
-      router.push(
-        `/profile/${encodeURIComponent(`${linked.gameName}-${linked.tagLine}`)}`,
-      );
+    // Premier résultat exploitable (linké ou pas — la route Discord
+    // marche dans les deux cas si on a un discordId).
+    const first = results.find((r) => profileHref(r) !== null);
+    if (first) {
+      const href = profileHref(first);
+      if (href) router.push(href);
       return;
     }
     setError("Aucun résultat. Tape plus de caractères ou utilise le format Nunch#N7789.");
@@ -102,7 +113,7 @@ export default function SearchPage() {
           Trouve un joueur
         </h1>
         <p className="text-hf-body text-hf-navy-soft">
-          Tape un pseudo Discord, un nom Riot, ou un Riot ID
+          Tape un pseudo Discord, un nom Riot, ou un Riot ID complet
           (<span className="font-mono">Nunch#N7789</span>).
         </p>
       </header>
@@ -120,8 +131,14 @@ export default function SearchPage() {
           autoFocus
           autoComplete="off"
           aria-label="Pseudo Discord ou Riot ID"
-          className="h-14 w-full rounded-hf-card border border-hf-line bg-hf-surface pl-12 pr-4 text-hf-body-lg text-hf-navy placeholder:text-hf-navy-soft/60 focus-visible:outline-none focus-visible:border-hf-honey focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
+          className="h-14 w-full rounded-hf-card border border-hf-line bg-hf-surface pl-12 pr-12 text-hf-body-lg text-hf-navy placeholder:text-hf-navy-soft/60 focus-visible:outline-none focus-visible:border-hf-honey focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
         />
+        {searching && (
+          <RiLoader4Line
+            className="absolute right-4 top-1/2 -translate-y-1/2 size-5 text-hf-honey animate-spin pointer-events-none"
+            aria-hidden
+          />
+        )}
       </form>
 
       {error && (
@@ -133,13 +150,10 @@ export default function SearchPage() {
       {results.length > 0 && (
         <section className="flex flex-col gap-2">
           {results.map((r) => {
-            const linkable = r.linked && r.gameName && r.tagLine;
-            const href = linkable
-              ? `/profile/${encodeURIComponent(`${r.gameName}-${r.tagLine}`)}`
-              : null;
+            const href = profileHref(r);
             const inner = (
               <Card
-                variant={linkable ? "interactive" : "default"}
+                variant={href ? "interactive" : "default"}
                 className="!p-4 flex items-center gap-4"
               >
                 {r.avatarUrl ? (
@@ -147,24 +161,46 @@ export default function SearchPage() {
                   <img
                     src={r.avatarUrl}
                     alt={`Avatar de ${r.username ?? ""}`}
-                    width={40}
-                    height={40}
-                    className="size-10 rounded-full border border-hf-line bg-hf-surface-alt shrink-0 object-cover"
+                    width={44}
+                    height={44}
+                    className="size-11 rounded-full border border-hf-line bg-hf-surface-alt shrink-0 object-cover"
                   />
                 ) : (
-                  <div className="size-10 rounded-full bg-hf-surface-alt border border-hf-line shrink-0" />
+                  <div className="size-11 rounded-full bg-hf-surface-alt border border-hf-line shrink-0 flex items-center justify-center text-hf-navy-soft text-hf-body font-bold">
+                    {(r.username ?? r.gameName ?? "?").slice(0, 1).toUpperCase()}
+                  </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <div className="font-semibold text-hf-navy truncate">
+                  <div className="font-semibold text-hf-navy truncate flex items-center gap-2">
                     {r.username ?? r.gameName ?? "Joueur"}
+                    {r.linked && (
+                      <span
+                        className="inline-block size-1.5 rounded-full bg-hf-win shrink-0"
+                        aria-label="Compte lié"
+                        title="Compte lié à Riot"
+                      />
+                    )}
                   </div>
                   <div className="text-hf-body-sm text-hf-navy-soft truncate">
-                    {linkable
-                      ? `${r.gameName}#${r.tagLine}`
-                      : "Pas encore lié à Riot"}
+                    {r.linked && r.gameName ? (
+                      <>
+                        <span className="font-medium text-hf-navy">
+                          {r.gameName}
+                        </span>
+                        <span className="opacity-70">#{r.tagLine}</span>
+                        <span className="opacity-50"> · Riot lié</span>
+                      </>
+                    ) : (
+                      <>
+                        Discord {r.discordId ? `· ID ${r.discordId.slice(-6)}` : ""}
+                        <span className="opacity-50"> · Non lié à Riot</span>
+                      </>
+                    )}
                   </div>
                 </div>
-                {linkable && <Pill variant="honey">Voir →</Pill>}
+                <Pill variant={r.linked ? "honey" : "default"}>
+                  {r.linked ? "Voir →" : "Profil →"}
+                </Pill>
               </Card>
             );
             return href ? (
@@ -178,12 +214,15 @@ export default function SearchPage() {
         </section>
       )}
 
-      {query.trim().length >= 2 && results.length === 0 && !error && (
-        <p className="text-hf-body-sm text-hf-navy-soft text-center">
-          Aucun joueur BeemoBot ne correspond. Si tu connais le Riot ID
-          complet, tape-le pour atterrir directement sur son profil.
-        </p>
-      )}
+      {!searching &&
+        query.trim().length >= 2 &&
+        results.length === 0 &&
+        !error && (
+          <p className="text-hf-body-sm text-hf-navy-soft text-center">
+            Aucun joueur BeemoBot ne correspond. Si tu connais le Riot ID
+            complet, tape-le pour atterrir directement sur son profil.
+          </p>
+        )}
     </main>
   );
 }
