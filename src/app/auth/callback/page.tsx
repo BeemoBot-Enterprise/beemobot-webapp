@@ -96,13 +96,12 @@ function CallbackContent() {
         // On persiste tout de suite le profil pour que useAuth voie l'utilisateur
         // comme connecté sans refaire un /profile/me au prochain mount.
         if (profile) setUser(profile);
-        if (!profile?.linked) {
-          router.replace("/auth/link");
-        } else {
-          router.replace(`/profile/${profile.gameName}-${profile.tagLine}`);
-        }
+        // Toujours rediriger sur /profile (page propre) : elle gère elle-même
+        // le cas non-lié (CTA "Lier mon compte Riot") et le cas lié (vue
+        // complète). Garde une URL canonique stable pour l'utilisateur.
+        router.replace("/profile");
       })
-      .catch(() => router.replace("/auth/link"));
+      .catch(() => router.replace("/profile"));
   }, [params, router]);
 
   if (error) {
