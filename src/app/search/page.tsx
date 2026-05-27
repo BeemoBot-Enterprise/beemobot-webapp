@@ -12,7 +12,10 @@ import { Card } from "@/components/_design/Card";
 import { Button } from "@/components/_design/Button";
 import { Pill } from "@/components/_design/Pill";
 import { Eyebrow } from "@/components/_design/Eyebrow";
+import { cn } from "@/lib/design/cn";
 import { API_URL } from "@/lib/env";
+
+type SearchMode = "discord" | "riot";
 
 const REGIONS: { value: string; label: string }[] = [
   { value: "euw1", label: "EUW" },
@@ -37,28 +40,9 @@ interface SearchResult {
   linked: boolean;
 }
 
-function Label({ htmlFor, children }: { htmlFor?: string; children: React.ReactNode }) {
-  return (
-    <label htmlFor={htmlFor} className="text-hf-eyebrow uppercase tracking-wider text-hf-navy-soft">
-      {children}
-    </label>
-  );
-}
+const MAX_RESULTS = 5;
+const DEBOUNCE_MS = 220;
 
-function Input(props: React.InputHTMLAttributes<HTMLInputElement>) {
-  return (
-    <input
-      {...props}
-      className={
-        "h-11 w-full rounded-hf-btn border border-hf-line bg-hf-surface px-3 text-hf-body text-hf-navy " +
-        "placeholder:text-hf-navy-soft/60 focus-visible:outline-none focus-visible:border-hf-honey " +
-        "focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
-      }
-    />
-  );
-}
-
-// Reconnaît un Riot ID complet : gameName + (# ou -) + tagLine non vides.
 function parseRiotId(input: string): { gameName: string; tagLine: string } | null {
   const trimmed = input.trim();
   const m = trimmed.match(/^([^#-]+)\s*[#-]\s*([^#-]+)$/);
@@ -66,25 +50,61 @@ function parseRiotId(input: string): { gameName: string; tagLine: string } | nul
   return { gameName: m[1].trim(), tagLine: m[2].trim() };
 }
 
+function ModeToggle({
+  mode,
+  onChange,
+}: {
+  mode: SearchMode;
+  onChange: (m: SearchMode) => void;
+}) {
+  return (
+    <div
+      role="radiogroup"
+      aria-label="Type de recherche"
+      className="inline-flex rounded-hf-pill border border-hf-line bg-hf-surface p-1"
+    >
+      {(["discord", "riot"] as SearchMode[]).map((m) => (
+        <button
+          key={m}
+          type="button"
+          role="radio"
+          aria-checked={mode === m}
+          onClick={() => onChange(m)}
+          className={cn(
+            "h-9 px-4 rounded-hf-pill text-hf-body-sm font-semibold transition-colors",
+            mode === m
+              ? m === "discord"
+                ? "bg-hf-discord text-white"
+                : "bg-hf-honey text-hf-navy"
+              : "text-hf-navy-soft hover:text-hf-navy",
+          )}
+        >
+          {m === "discord" ? "Discord" : "Riot"}
+        </button>
+      ))}
+    </div>
+  );
+}
+
 export default function SearchPage() {
   const router = useRouter();
+  const [mode, setMode] = useState<SearchMode>("discord");
   const [query, setQuery] = useState("");
   const [region, setRegion] = useState("euw1");
   const [results, setResults] = useState<SearchResult[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  // Debounce l'autocomplete sur les recherches "libres" (pseudo Discord ou
-  // début de Riot ID). Pas la peine de spammer l'API à chaque frappe.
+  // Reset results quand on switch de mode pour éviter les fantômes.
+  useEffect(() => {
+    setResults([]);
+    setError(null);
+  }, [mode]);
+
+  // Autocomplete debouncé sur le mode courant.
   useEffect(() => {
     const trimmed = query.trim();
     if (trimmed.length < 2) {
-      setResults([]);
-      setError(null);
-      return;
-    }
-    if (parseRiotId(trimmed)) {
-      // Riot ID complet → pas d'autocomplete, c'est résolu au submit.
       setResults([]);
       setError(null);
       return;
@@ -94,35 +114,42 @@ export default function SearchPage() {
       try {
         setError(null);
         const res = await fetch(
-          `${API_URL}/profile/search?q=${encodeURIComponent(trimmed)}`,
+          `${API_URL}/profile/search?q=${encodeURIComponent(trimmed)}&mode=${mode}&limit=${MAX_RESULTS}`,
           { signal: ctrl.signal },
         );
         if (!res.ok) throw new Error("Recherche impossible.");
         const body = await res.json();
-        setResults(body.results ?? []);
+        setResults((body.results ?? []).slice(0, MAX_RESULTS));
       } catch (e) {
         if ((e as { name?: string }).name === "AbortError") return;
         setError(e instanceof Error ? e.message : "Erreur inconnue.");
       }
-    }, 220);
+    }, DEBOUNCE_MS);
     return () => {
       ctrl.abort();
       window.clearTimeout(id);
     };
-  }, [query]);
+  }, [query, mode]);
+
+  const riotIdExact = parseRiotId(query);
 
   const onSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const trimmed = query.trim();
     if (!trimmed) {
-      setError("Entre un nom Discord ou un Riot ID.");
+      setError(
+        mode === "discord"
+          ? "Tape un pseudo Discord."
+          : "Tape un nom Riot (Nunch) ou un Riot ID complet (Nunch#N7789).",
+      );
       return;
     }
 
-    // 1) Riot ID complet → on vérifie auprès de Riot et on redirige sec.
-    const parsed = parseRiotId(trimmed);
-    if (parsed) {
-      const riotId = `${parsed.gameName}-${parsed.tagLine}`;
+    // Si on tape un Riot ID exact ET on est en mode Riot → tentative de
+    // résolution cross-région auprès de Riot (couvre les comptes jamais
+    // vus par BeemoBot).
+    if (riotIdExact && mode === "riot") {
+      const riotId = `${riotIdExact.gameName}-${riotIdExact.tagLine}`;
       setLoading(true);
       setError(null);
       try {
@@ -132,10 +159,10 @@ export default function SearchPage() {
         if (!res.ok) {
           if (res.status === 404) {
             throw new Error(
-              `Aucun invocateur trouvé sur ${region.toUpperCase()} pour ${parsed.gameName}#${parsed.tagLine}. Vérifie la région.`,
+              `Aucun invocateur ${riotIdExact.gameName}#${riotIdExact.tagLine} sur ${region.toUpperCase()}. Vérifie la région.`,
             );
           }
-          throw new Error("Erreur lors de la recherche.");
+          throw new Error("Erreur lors de la résolution Riot.");
         }
         router.push(`/profile/${encodeURIComponent(riotId)}`);
       } catch (err) {
@@ -146,28 +173,31 @@ export default function SearchPage() {
       return;
     }
 
-    // 2) Texte libre → si un seul résultat lié, on y va directement. Sinon
-    //    on laisse l'utilisateur cliquer dans la liste autocomplete.
-    const linked = results.filter((r) => r.linked && r.gameName && r.tagLine);
-    if (linked.length === 1) {
-      const r = linked[0];
-      router.push(
-        `/profile/${encodeURIComponent(`${r.gameName}-${r.tagLine}`)}`,
-      );
-      return;
-    }
-    if (linked.length === 0) {
+    // Sinon : on attend que l'utilisateur clique dans la liste d'autocomplete.
+    if (results.length === 0) {
       setError(
-        "Aucun joueur BeemoBot trouvé. Si tu cherches un Riot ID exact, utilise le format GameName#TagLine.",
+        mode === "discord"
+          ? "Aucun pseudo Discord trouvé sur BeemoBot."
+          : "Aucun Riot ID trouvé sur BeemoBot. Tape le Riot ID complet (Nunch#N7789) + choisis une région pour chercher cross-région.",
       );
       return;
     }
-    setError(
-      `${linked.length} joueurs correspondent — clique sur celui que tu veux.`,
-    );
+    const linked = results.find((r) => r.linked && r.gameName && r.tagLine);
+    if (linked) {
+      router.push(
+        `/profile/${encodeURIComponent(`${linked.gameName}-${linked.tagLine}`)}`,
+      );
+      return;
+    }
+    setError("Aucun résultat n'a de compte Riot lié.");
   };
 
-  const showAutocomplete = results.length > 0 && !parseRiotId(query.trim());
+  const placeholder =
+    mode === "discord"
+      ? "ex. nunch, john.doe, lavarobeu…"
+      : "ex. Nunch ou Nunch#N7789";
+
+  const showRegion = mode === "riot" && riotIdExact !== null;
 
   return (
     <main className="max-w-[820px] mx-auto px-6 py-16 flex flex-col gap-8">
@@ -177,39 +207,45 @@ export default function SearchPage() {
           Trouve un joueur
         </h1>
         <p className="text-hf-body-lg text-hf-navy-soft">
-          Tape un pseudo Discord, un nom Riot, ou un Riot ID complet —
-          on t&apos;envoie sur son profil BeemoBot.
+          Choisis ton mode, tape ton texte — les résultats apparaissent au fur
+          et à mesure.
         </p>
       </header>
 
-      <Card className="p-6">
-        <form onSubmit={onSubmit} className="flex flex-col gap-5">
-          <div className="flex flex-col gap-2">
-            <Label htmlFor="q">Pseudo Discord ou Riot ID</Label>
-            <Input
-              id="q"
-              placeholder="ex. Nunch  ·  Nunch#N7789  ·  john.doe"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              autoFocus
-              autoComplete="off"
-            />
-            <p className="text-hf-body-sm text-hf-navy-soft">
-              Avec un <span className="font-mono">#</span> ou{" "}
-              <span className="font-mono">-</span> on cherche le Riot ID
-              direct (région requise). Sinon on autocomplete sur les comptes
-              BeemoBot.
-            </p>
-          </div>
+      <Card className="p-6 flex flex-col gap-5">
+        <div className="flex items-center gap-3 flex-wrap">
+          <ModeToggle mode={mode} onChange={setMode} />
+          <span className="text-hf-body-sm text-hf-navy-soft">
+            {mode === "discord"
+              ? "Cherche dans les pseudos Discord BeemoBot."
+              : "Cherche dans les Riot IDs BeemoBot. Tape un Riot ID complet pour fouiller cross-région."}
+          </span>
+        </div>
 
-          {parseRiotId(query.trim()) && (
-            <div className="flex flex-col gap-2">
-              <Label htmlFor="region">Région Riot</Label>
+        <form onSubmit={onSubmit} className="flex flex-col gap-4">
+          <input
+            id="q"
+            placeholder={placeholder}
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            autoFocus
+            autoComplete="off"
+            className="h-12 w-full rounded-hf-btn border border-hf-line bg-hf-surface px-4 text-hf-body-lg text-hf-navy placeholder:text-hf-navy-soft/60 focus-visible:outline-none focus-visible:border-hf-honey focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
+          />
+
+          {showRegion && (
+            <div className="flex items-center gap-3 flex-wrap">
+              <label
+                htmlFor="region"
+                className="text-hf-eyebrow uppercase tracking-wider text-hf-navy-soft"
+              >
+                Région Riot
+              </label>
               <select
                 id="region"
                 value={region}
                 onChange={(e) => setRegion(e.target.value)}
-                className="h-11 w-full rounded-hf-btn border border-hf-line bg-hf-surface px-3 text-hf-body text-hf-navy focus-visible:outline-none focus-visible:border-hf-honey focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
+                className="h-10 rounded-hf-btn border border-hf-line bg-hf-surface px-3 text-hf-body text-hf-navy focus-visible:outline-none focus-visible:border-hf-honey focus-visible:ring-2 focus-visible:ring-hf-honey-glow transition-colors"
               >
                 {REGIONS.map((r) => (
                   <option key={r.value} value={r.value}>
@@ -226,16 +262,28 @@ export default function SearchPage() {
             </div>
           )}
 
-          <Button type="submit" variant="primary" size="lg" disabled={loading}>
-            {loading ? "Recherche…" : "Voir le profil"}
-          </Button>
+          <div className="flex items-center gap-2">
+            <Button type="submit" variant="primary" size="md" disabled={loading}>
+              {loading
+                ? "Recherche…"
+                : riotIdExact && mode === "riot"
+                  ? `Chercher ${riotIdExact.gameName}#${riotIdExact.tagLine} sur ${region.toUpperCase()}`
+                  : "Voir le profil"}
+            </Button>
+            <span className="text-hf-body-sm text-hf-navy-soft">
+              ou clique un résultat ci-dessous
+            </span>
+          </div>
         </form>
       </Card>
 
-      {/* Résultats autocomplete (uniquement quand on cherche par texte libre) */}
-      {showAutocomplete && (
+      {/* Résultats autocomplete (5 max) */}
+      {results.length > 0 && (
         <section className="flex flex-col gap-2">
-          <Eyebrow tone="navy">{results.length} résultat{results.length > 1 ? "s" : ""}</Eyebrow>
+          <Eyebrow tone="navy">
+            {results.length} résultat{results.length > 1 ? "s" : ""}
+            {results.length === MAX_RESULTS ? " (les 5 premiers)" : ""}
+          </Eyebrow>
           {results.map((r) => {
             const linkable = r.linked && r.gameName && r.tagLine;
             const href = linkable
@@ -250,7 +298,7 @@ export default function SearchPage() {
                   // eslint-disable-next-line @next/next/no-img-element
                   <img
                     src={r.avatarUrl}
-                    alt={`Avatar Discord de ${r.username ?? ""}`}
+                    alt={`Avatar de ${r.username ?? ""}`}
                     width={44}
                     height={44}
                     className="rounded-full border border-hf-line bg-hf-surface-alt shrink-0"
@@ -260,18 +308,19 @@ export default function SearchPage() {
                 )}
                 <div className="flex-1 min-w-0">
                   <div className="font-semibold text-hf-navy truncate">
-                    {r.username ?? "Joueur"}
+                    {mode === "riot" && r.gameName
+                      ? `${r.gameName}#${r.tagLine ?? "?"}`
+                      : (r.username ?? "Joueur")}
                   </div>
-                  {linkable ? (
-                    <div className="text-hf-body-sm text-hf-navy-soft truncate">
-                      {r.gameName}
-                      <span className="opacity-70">#{r.tagLine}</span>
-                    </div>
-                  ) : (
-                    <div className="text-hf-body-sm text-hf-navy-soft">
-                      Pas encore de compte Riot lié
-                    </div>
-                  )}
+                  <div className="text-hf-body-sm text-hf-navy-soft truncate">
+                    {mode === "riot" && r.gameName
+                      ? r.username
+                        ? `Discord · ${r.username}`
+                        : "Non lié à un Discord"
+                      : linkable
+                        ? `Riot · ${r.gameName}#${r.tagLine}`
+                        : "Pas encore de compte Riot lié"}
+                  </div>
                 </div>
                 {linkable ? (
                   <Pill variant="honey">Voir →</Pill>
@@ -294,11 +343,12 @@ export default function SearchPage() {
       <Card variant="accent" className="p-6">
         <Eyebrow>Astuce</Eyebrow>
         <p className="text-hf-body text-hf-navy mt-2">
-          URL directe :{" "}
-          <code className="font-mono text-hf-honey-text">
-            /profile/Nunch-N7789
-          </code>{" "}
-          (avec un tiret entre le nom et le tag).
+          Tu peux raffiner un Riot ID en tapant son tag :{" "}
+          <code className="font-mono text-hf-honey-text">Nunch#N7</code>{" "}
+          matche{" "}
+          <code className="font-mono text-hf-honey-text">Nunch#N7789</code>.
+          Pour un compte jamais vu par BeemoBot, tape le Riot ID complet en
+          mode Riot.
         </p>
       </Card>
     </main>
