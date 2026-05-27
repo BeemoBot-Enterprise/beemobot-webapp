@@ -7,10 +7,10 @@
 
 import { useEffect, useState } from "react";
 import { API_URL } from "@/lib/env";
-import Button from "@/components/atoms/Button";
-import { Card } from "@/components/atoms/Card";
-import Badge from "@/components/atoms/Badge";
-import Eyebrow from "@/components/atoms/Eyebrow";
+import { Button } from "@/components/_design/Button";
+import { Card } from "@/components/_design/Card";
+import { Pill } from "@/components/_design/Pill";
+import { Eyebrow } from "@/components/_design/Eyebrow";
 
 const TOKEN_KEY = "beemobot_token";
 
@@ -20,6 +20,26 @@ interface CosmeticItem {
   type: string;
   assetUrl: string;
   priceHoney: number;
+  availableUntil: string | null;
+}
+
+function isExpired(item: CosmeticItem): boolean {
+  if (!item.availableUntil) return false;
+  return new Date(item.availableUntil).getTime() < Date.now();
+}
+
+function isLimited(item: CosmeticItem): boolean {
+  return item.availableUntil !== null;
+}
+
+function formatDeadline(iso: string): string {
+  const d = new Date(iso);
+  return d.toLocaleString("fr-FR", {
+    day: "2-digit",
+    month: "short",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
 }
 
 export default function ShopPage() {
@@ -85,31 +105,40 @@ export default function ShopPage() {
     if (r.ok) {
       setOwned(new Set([...owned, cosmeticId]));
       const item = items.find((i) => i.id === cosmeticId);
-      if (item) setBalance((b) => b - item.priceHoney);
+      if (item && item.priceHoney > 0) setBalance((b) => b - item.priceHoney);
     } else if (r.status === 402) {
       setError("Solde insuffisant.");
+    } else if (r.status === 410) {
+      setError("Cet item n'est plus disponible.");
     } else {
-      setError("Erreur lors de l’achat.");
+      setError("Erreur lors de l'achat.");
     }
   };
 
+  // Items limités en premier (pour les mettre en évidence), puis le reste.
+  const sortedItems = [...items].sort((a, b) => {
+    if (isLimited(a) && !isLimited(b)) return -1;
+    if (!isLimited(a) && isLimited(b)) return 1;
+    return 0;
+  });
+
   return (
-    <main className="max-w-[1200px] mx-auto px-6 py-12">
+    <main className="max-w-[1100px] mx-auto px-6 py-12">
       <header className="flex items-end justify-between mb-10 flex-wrap gap-4">
         <div className="flex flex-col gap-3">
           <Eyebrow>Shop</Eyebrow>
-          <h1 className="text-title-h4 md:text-title-h3 text-text-strong-950 !font-[600]">
+          <h1 className="font-display text-hf-display-2 text-hf-navy">
             Personnalise ton profil
           </h1>
-          <p className="text-paragraph-md text-text-sub-600 max-w-2xl">
-            Dépense ton honey en badges, borders et effets. Le honey s'accumule
-            avec ta réputation et ton activité.
+          <p className="text-hf-body-lg text-hf-navy-soft max-w-2xl">
+            Dépense ton honey en badges, borders et effets. Certains items
+            sont gratuits et limités dans le temps — bien joué d&apos;être là.
           </p>
         </div>
         {authed && (
-          <span className="inline-flex items-center gap-2 rounded-full border border-stroke-soft-200 bg-bg-weak-50 px-3 py-1.5">
-            <span className="size-2 rounded-full bg-warning-base" />
-            <span className="text-label-sm text-text-strong-950 tabular-nums">
+          <span className="inline-flex items-center gap-2 rounded-hf-pill border border-hf-line bg-hf-surface px-3 py-1.5">
+            <span className="size-2 rounded-full bg-hf-honey" />
+            <span className="text-hf-body-sm font-semibold text-hf-navy tabular-nums">
               {balance} honey
             </span>
           </span>
@@ -117,54 +146,84 @@ export default function ShopPage() {
       </header>
 
       {error && (
-        <Card className="p-4 mb-6 rounded-20 border-error-base/40 bg-error-lighter">
-          <p className="text-paragraph-sm text-error-base">{error}</p>
+        <Card className="!p-4 mb-6 border-hf-loss/40 bg-hf-loss/10">
+          <p className="text-hf-body-sm text-hf-loss">{error}</p>
         </Card>
       )}
 
-      {items.length === 0 ? (
-        <Card className="p-12 rounded-20 border-stroke-soft-200 bg-bg-weak-50 text-center">
-          <h2 className="text-label-lg text-text-strong-950 mb-1">
+      {sortedItems.length === 0 ? (
+        <Card className="!p-12 text-center">
+          <h2 className="font-display text-hf-display-3 text-hf-navy mb-1">
             Aucun item disponible
           </h2>
-          <p className="text-paragraph-sm text-text-sub-600">
+          <p className="text-hf-body-sm text-hf-navy-soft">
             Le catalogue est vide ou indisponible pour le moment.
           </p>
         </Card>
       ) : (
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {items.map((item) => {
-            const isOwned = owned.has(item.id);
-            const cantAfford = authed && balance < item.priceHoney;
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {sortedItems.map((item) => {
+            const isOwn = owned.has(item.id);
+            const expired = isExpired(item);
+            const limited = isLimited(item);
+            const free = item.priceHoney === 0;
+            const cantAfford = !free && authed && balance < item.priceHoney;
+            const disabled = isOwn || cantAfford || !authed || expired;
+
             return (
               <Card
                 key={item.id}
-                className="p-6 rounded-20 border-stroke-soft-200 bg-bg-weak-50 flex flex-col gap-3 hover:bg-bg-soft-200 transition-colors"
+                variant={limited ? "accent" : "default"}
+                className="flex flex-col gap-3"
               >
-                <p className="text-subheading-2xs text-text-soft-400">
-                  {item.type}
-                </p>
-                <h3 className="text-label-lg text-text-strong-950">
+                <div className="flex items-start justify-between gap-2">
+                  <Eyebrow tone={limited ? "honey" : "navy"}>{item.type}</Eyebrow>
+                  {limited && !expired && (
+                    <Pill variant="honey" className="text-xs">
+                      ⏳ Limité
+                    </Pill>
+                  )}
+                  {expired && (
+                    <Pill variant="default" className="text-xs">
+                      Expiré
+                    </Pill>
+                  )}
+                </div>
+                <h3 className="font-display text-hf-display-3 text-hf-navy">
                   {item.name}
                 </h3>
-                <p className="text-label-sm text-warning-base tabular-nums">
-                  {item.priceHoney} honey
+                <p
+                  className={`text-hf-body-sm font-bold tabular-nums ${
+                    free ? "text-hf-win" : "text-hf-honey-text"
+                  }`}
+                >
+                  {free ? "Gratuit" : `${item.priceHoney} honey`}
                 </p>
+                {limited && item.availableUntil && (
+                  <p className="text-xs text-hf-navy-soft">
+                    {expired ? "Fin : " : "Jusqu'au "}
+                    {formatDeadline(item.availableUntil)}
+                  </p>
+                )}
                 <div className="mt-auto pt-2">
                   <Button
                     onClick={() => buy(item.id)}
-                    disabled={isOwned || cantAfford || !authed}
-                    variant={isOwned ? "secondary" : "primary"}
+                    disabled={disabled}
+                    variant={isOwn ? "outline" : "primary"}
                     size="sm"
                     className="w-full"
                   >
                     {!authed
                       ? "Connexion requise"
-                      : isOwned
-                        ? "Possédé"
-                        : cantAfford
-                          ? "Solde insuffisant"
-                          : "Acheter"}
+                      : isOwn
+                        ? "Possédé ✓"
+                        : expired
+                          ? "Expiré"
+                          : cantAfford
+                            ? "Solde insuffisant"
+                            : free
+                              ? "Récupérer"
+                              : "Acheter"}
                   </Button>
                 </div>
               </Card>

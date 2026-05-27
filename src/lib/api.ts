@@ -5,6 +5,13 @@
 
 import { API_URL } from "@/lib/env";
 
+export interface EquippedCosmetic {
+  id: string;
+  name: string;
+  type: string;
+  assetUrl: string;
+}
+
 export interface Profile {
   puuid: string;
   gameName: string | null;
@@ -23,6 +30,9 @@ export interface Profile {
     weight: number;
     created_at: string;
   }>;
+  /** Cosmétiques actuellement équipés. Optionnel : API plus ancienne ne
+   *  les retournait pas. */
+  equippedCosmetics?: EquippedCosmetic[];
 }
 
 export interface LolRank {

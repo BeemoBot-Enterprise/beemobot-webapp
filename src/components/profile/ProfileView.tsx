@@ -277,6 +277,12 @@ export function ProfileView({
     profile.gameName ?? summonerData?.gameName ?? fallbackGameName ?? "?";
   const displayTag =
     profile.tagLine ?? summonerData?.tagLine ?? fallbackTagLine ?? "?";
+  // Cosmétiques équipés — exposés par l'API depuis mai 2026. Filtre les
+  // badges seulement pour la barre identité (les borders/glows sont gérés
+  // ailleurs côté UI).
+  const equippedBadges = (profile.equippedCosmetics ?? []).filter(
+    (c) => c.type === "badge",
+  );
   const netRep = counts.respects - counts.shrooms;
   const netLabel = netRep >= 0 ? `+${netRep}` : `${netRep}`;
   const last4 = matchesData.slice(0, 4);
@@ -347,8 +353,13 @@ export function ProfileView({
                   // Mon profil : pseudo Discord en titre principal, Riot ID
                   // optionnel en sous-texte (un user n'est pas forcément lié).
                   <>
-                    <h1 className="font-display font-extrabold text-hf-display-2 leading-none text-hf-navy">
-                      {discordName}
+                    <h1 className="font-display font-extrabold text-hf-display-2 leading-none text-hf-navy flex items-center gap-3 flex-wrap">
+                      <span>{discordName}</span>
+                      {equippedBadges.map((b) => (
+                        <Pill key={b.id} variant="honey" className="text-xs uppercase tracking-wide">
+                          {b.name}
+                        </Pill>
+                      ))}
                     </h1>
                     {profile.linked && (
                       <p className="text-hf-body-lg font-semibold text-hf-navy-soft">
@@ -360,9 +371,16 @@ export function ProfileView({
                 ) : (
                   // Profil public : pas de pseudo Discord exposé par l'API,
                   // on garde le Riot ID en titre.
-                  <h1 className="font-display font-extrabold text-hf-display-2 leading-none text-hf-navy">
-                    {displayName}
-                    <span className="text-hf-navy-soft font-semibold"> #{displayTag}</span>
+                  <h1 className="font-display font-extrabold text-hf-display-2 leading-none text-hf-navy flex items-center gap-3 flex-wrap">
+                    <span>
+                      {displayName}
+                      <span className="text-hf-navy-soft font-semibold"> #{displayTag}</span>
+                    </span>
+                    {equippedBadges.map((b) => (
+                      <Pill key={b.id} variant="honey" className="text-xs uppercase tracking-wide">
+                        {b.name}
+                      </Pill>
+                    ))}
                   </h1>
                 )}
                 <div className="flex items-center gap-2 flex-wrap mt-1">
