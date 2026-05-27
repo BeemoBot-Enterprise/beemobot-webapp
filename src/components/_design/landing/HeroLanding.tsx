@@ -20,7 +20,6 @@ export function HeroLanding() {
       <div className="relative mx-auto max-w-[1100px] px-6 pt-20 pb-24 lg:pt-28 lg:pb-32">
         <div className="grid grid-cols-1 lg:grid-cols-[1.3fr_1fr] gap-12 lg:gap-16 items-center">
           <div>
-            <Pill variant="live" className="mb-7">Bot live · 320 serveurs</Pill>
             <h1 className="font-display text-hf-display-1 text-hf-navy mb-6">
               Le bot Discord que ta guilde{" "}
               <span className="bg-[linear-gradient(180deg,transparent_64%,var(--hf-honey-soft)_64%)] px-1 -mx-1">
