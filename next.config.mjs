@@ -7,6 +7,7 @@ const nextConfig = {
   images: {
     remotePatterns: [
       { protocol: "https", hostname: "ddragon.leagueoflegends.com" },
+      { protocol: "https", hostname: "cdn.communitydragon.org" },
       { protocol: "https", hostname: "cdn.discordapp.com" },
     ],
   },

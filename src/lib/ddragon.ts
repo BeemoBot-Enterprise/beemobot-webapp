@@ -2,37 +2,47 @@
  * Copyright (c) 2024-2026 BeemoBot Enterprise
  * All rights reserved.
  *
- * Helpers for Riot Data Dragon CDN URLs. Bump DDRAGON_VERSION when
- * a new LoL patch ships and the app needs the latest icons / data.
+ * Helpers pour les assets champions / icônes de profil.
  *
- * Reference: https://developer.riotgames.com/docs/lol#data-dragon
+ * Historiquement on tapait directement la CDN officielle Riot (Data Dragon)
+ * mais leur chaîne de certificats a régulièrement des problèmes de validation
+ * (cert chain broken, intermediate non renouvelé, etc.) → ERR_CERT_AUTHORITY_INVALID
+ * côté navigateur. Pour éviter ces pannes invisibles, on est passés sur
+ * CommunityDragon qui mirror les mêmes assets avec un cert correct.
+ *
+ * Référence : https://www.communitydragon.org/documentation
  */
 
-export const DDRAGON_VERSION = "15.1.1";
+const CD_BASE = "https://cdn.communitydragon.org/latest";
 
-const BASE = "https://ddragon.leagueoflegends.com/cdn";
-
-/** Square champion portrait (e.g. "Yasuo" → 120×120 PNG). Versioned URL. */
+/** Icône carrée de champion (e.g. "Yasuo" → 120×120 PNG). */
 export function championIconUrl(name: string): string {
-  return `${BASE}/${DDRAGON_VERSION}/img/champion/${name}.png`;
+  return `${CD_BASE}/champion/${encodeURIComponent(name)}/square`;
 }
 
-/** Champion splash art (1215×717 JPG). Version-independent path. */
-export function championSplashUrl(name: string, skin = 0): string {
-  return `${BASE}/img/champion/splash/${name}_${skin}.jpg`;
+/** Splash art recadré (1280×720). */
+export function championLoadingUrl(name: string, _skin = 0): string {
+  // CommunityDragon n'expose pas le numéro de skin directement par nom,
+  // on prend le splash centered par défaut. Le second argument est conservé
+  // pour ne pas casser les call-sites existants.
+  return `${CD_BASE}/champion/${encodeURIComponent(name)}/splash-art/centered`;
 }
 
-/** Centered, pre-cropped splash (1280×720 JPG). Better for banners. */
-export function championLoadingUrl(name: string, skin = 0): string {
-  return `${BASE}/img/champion/loading/${name}_${skin}.jpg`;
+/** Splash art classique. */
+export function championSplashUrl(name: string, _skin = 0): string {
+  return `${CD_BASE}/champion/${encodeURIComponent(name)}/splash-art`;
 }
 
-/** Item icon (e.g. 1001 = Boots, 64×64 PNG). Versioned. */
+/** Item icon (e.g. 1001 = Boots). */
 export function itemIconUrl(itemId: number): string {
-  return `${BASE}/${DDRAGON_VERSION}/img/item/${itemId}.png`;
+  return `${CD_BASE}/item/${itemId}/icon`;
 }
 
-/** Profile icon (1, 2, ..., 588) — used in summoner cards. Versioned. */
+/** Profile icon (1, 2, …, 6800+). */
 export function profileIconUrl(iconId: number): string {
-  return `${BASE}/${DDRAGON_VERSION}/img/profileicon/${iconId}.png`;
+  return `${CD_BASE}/profile-icon/${iconId}`;
 }
+
+// Bumper exposé pour compat avec les anciens imports. Ne sert plus que de
+// libellé dans les commentaires d'asset, n'a plus d'effet sur les URLs.
+export const DDRAGON_VERSION = "communitydragon-latest";
