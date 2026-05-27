@@ -10,7 +10,6 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { RiSearchLine, RiLoader4Line } from "@remixicon/react";
 import { Card } from "@/components/_design/Card";
-import { Pill } from "@/components/_design/Pill";
 import { Eyebrow } from "@/components/_design/Eyebrow";
 import { API_URL } from "@/lib/env";
 
@@ -198,9 +197,6 @@ export default function SearchPage() {
                     )}
                   </div>
                 </div>
-                <Pill variant={r.linked ? "honey" : "default"}>
-                  {r.linked ? "Voir →" : "Profil →"}
-                </Pill>
               </Card>
             );
             return href ? (
